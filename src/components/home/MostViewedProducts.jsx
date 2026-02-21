@@ -50,10 +50,10 @@ export default function MostViewedProducts() {
           ref={sliderRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className="flex gap-10 overflow-hidden"
+          className="flex gap-10 overflow-hidden pb-10"
         >
           {duplicated.map((item, index) => (
-            <div key={index} className="shrink-0 w-64 group cursor-pointer">
+            <div key={index} className="shrink-0 w-52 group cursor-pointer">
               
               <div className="
                 relative bg-white/70 backdrop-blur-xl 
@@ -71,23 +71,23 @@ export default function MostViewedProducts() {
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="h-32 object-contain transition-transform duration-500 group-hover:scale-110"
+                    className="h-16 sm:h-24 object-contain transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
 
                 {/* Text */}
                 <div className="text-center mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800">
+                  <h3 className="text-sm font-semibold text-gray-800 sm:text-lg">
                     {item.name}
                   </h3>
-                  <p className="text-sm text-purple-500 mt-1">
+                  <p className="sm:text-sm text-xs text-purple-500 mt-1">
                     {item.category}
                   </p>
                 </div>
 
                 {/* Add to Cart Button (Hidden by default) */}
                 <div className="
-                  absolute bottom-0 left-0 w-full px-6 pb-6
+                  absolute bottom-0 left-0 w-full px-4 pb-4
                   translate-y-full opacity-0
                   group-hover:translate-y-0
                   group-hover:opacity-100
@@ -110,7 +110,6 @@ export default function MostViewedProducts() {
             </div>
           ))}
         </div>
-
       </div>
     </section>
   );

@@ -44,11 +44,11 @@ export default function AutoSlidingCategories() {
           </h2>
         </div>
 
-        <div
+          <div
           ref={sliderRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className="flex gap-12 overflow-hidden"
+          className="flex gap-16 overflow-hidden pt-6"
         >
           {duplicated.map((item, index) => (
             <div
@@ -57,10 +57,11 @@ export default function AutoSlidingCategories() {
             >
               {/* Gradient Border Circle */}
               <div
-                className={`relative w-40 h-40 rounded-full 
+                className={`relative w-28 h-28 sm:w-32 sm:h-32 rounded-full 
                 bg-gradient-to-br ${item.gradient} 
                 p-[4px]
                 transition-all duration-500
+                will-change-transform
                 group-hover:scale-110 group-hover:-translate-y-2`}
               >
                 {/* Inner White Circle */}
