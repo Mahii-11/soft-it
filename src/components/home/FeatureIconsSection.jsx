@@ -1,36 +1,36 @@
 import { Package, Truck, ShieldCheck, Headphones } from "lucide-react";
+import { getWhyShopWithUs } from "../../services/api";
+import { useEffect, useState } from "react";
+
+
 
 export default function WhyChooseUsSection() {
-  const features = [
-    {
-      icon: Package,
-      title: "100% Authentic Products",
-      desc: "We guarantee genuine and official products directly from trusted brands.",
-      color: "text-blue-600",
-      bg: "bg-blue-100",
-    },
-    {
-      icon: Truck,
-      title: "Fast & Reliable Delivery",
-      desc: "Lightning fast shipping across the country with real-time tracking.",
-      color: "text-orange-600",
-      bg: "bg-orange-100",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Secure Payment",
-      desc: "Multiple safe payment methods with complete data protection.",
-      color: "text-purple-600",
-      bg: "bg-purple-100",
-    },
-    {
-      icon: Headphones,
-      title: "24/7 Customer Support",
-      desc: "Our support team is always ready to help you anytime.",
-      color: "text-emerald-600",
-      bg: "bg-emerald-100",
-    },
+   const [features, setFeatures] = useState([]);
+   const staticFeatures = [
+    { icon: Package, color: "text-blue-600", bg: "bg-blue-100" },
+    { icon: Truck, color: "text-orange-600", bg: "bg-orange-100" },
+    { icon: ShieldCheck, color: "text-purple-600", bg: "bg-purple-100" },
+    { icon: Headphones, color: "text-emerald-600", bg: "bg-emerald-100" },
   ];
+
+  useEffect(() => {
+    const fetchFeatures = async () => {
+      try {
+        const data = await getWhyShopWithUs();
+        // Merge static + dynamic data
+        const merged = staticFeatures.map((item, i) => ({
+          ...item,
+          title: data[i]?.title || "No Title",
+          desc: data[i]?.description || "No Description",
+        }));
+        setFeatures(merged);
+      } catch (error) {
+        console.error("Failed to load features:", error);
+      }
+    };
+    fetchFeatures();
+  }, []);
+ 
 
   return (
     <section className="w-full py-24 bg-white">

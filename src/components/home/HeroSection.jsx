@@ -1,43 +1,75 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { getSliders } from "../../services/api";
+
 
 export default function HeroSection() {
-  const slides = [
-    {
-      id: 1,
-      image:
-        "https://images.unsplash.com/photo-1585790050230-5dd28404ccb9?q=80&w=1600&auto=format&fit=crop",
-    },
-    {
-      id: 2,
-      image:
-        "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=1600&auto=format&fit=crop",
-    },
-    {
-      id: 3,
-      image:
-        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1600&auto=format&fit=crop",
-    },
-  ];
-
   const [current, setCurrent] = useState(0);
+  const [slides, setSlides] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const fetchSliders = async () => {
+      
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getSliders({signal: controller.signal});
+        setSlides(data || []);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          setError("Failed to load sliders. Please try again later.");
+          console.error("Error fetching sliders:", err)
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSliders();
+    return () => controller.abort();
+  }, []);
+
 
   // ✅ PRO LEVEL AUTO SLIDE
+   
   useEffect(() => {
+     if (slides.length === 0) return;
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [slides]);
 
   const nextSlide = () => {
+    if (slides.length === 0) return;
     setCurrent((prev) => (prev + 1) % slides.length);
   };
 
   const prevSlide = () => {
+    if (slides.length === 0) return;
     setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
   };
+
+
+    if (loading) {
+    return (
+      <div className="w-full h-[400px] flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-[400px] flex items-center justify-center text-red-500">
+        <p>{error}</p>
+      </div>
+    );
+  }
+
 
   return (
     <section className="w-full bg-gray-100 py-6">
@@ -46,7 +78,7 @@ export default function HeroSection() {
         <div className="lg:col-span-2 relative overflow-hidden rounded-xl bg-white">
           <motion.div
             className="flex"
-            animate={{ x: `-${current * 100}%` }}
+            animate={{ x: `-${Number(current) * 100}%` }}
             transition={{
               type: "spring",
               stiffness: 60,
@@ -54,12 +86,13 @@ export default function HeroSection() {
               mass: 1,
             }}
           >
-            {slides.map((slide) => (
-              <img
-                key={slide.id}
-                src={slide.image}
-                className="w-full shrink-0 h-[260px] md:h-[380px] lg:h-[420px] object-cover"
-              />
+            {slides.length > 0 &&
+              slides.map((slide) => (
+             <img
+             key={slide.id}
+             src={slide.image}
+             className="w-full shrink-0 h-[260px] md:h-[380px] lg:h-[420px] object-cover"
+             />
             ))}
           </motion.div>
 
