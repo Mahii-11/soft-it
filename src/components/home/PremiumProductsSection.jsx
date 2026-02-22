@@ -1,7 +1,45 @@
 import { Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import {  getProductsByEndpoint } from "../../services/api";
+
+const sections = [
+  { title: "Featured Products", endpoint: "featured-product-data", products: [] },
+  { title: "New Arrivals", endpoint: "new-arrival-product-data", products: [] },
+ // { title: "Best Selling Product", endpoint: "best-selling-data", products: [] },
+];
 
 export default function PremiumProductsSection() {
-  const sections = [
+    const [dataSections, setDataSections] = useState(sections);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const updatedSections = await Promise.all(
+          dataSections.map(async (section) => {
+             const products = await getProductsByEndpoint(section.endpoint);
+            return { ...section, products }; // populate products dynamically
+          })
+        );
+        setDataSections(updatedSections);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAll();
+  }, []);
+
+   if (loading) return <p>Loading...</p>;
+
+
+
+
+
+
+ /* const sections = [
     {
       title: "Featured Products",
       products: [
@@ -26,7 +64,7 @@ export default function PremiumProductsSection() {
         { name: "JBL Live 460nc", price: "$59.99", image: "/images/jbl.png" },
       ],
     },
-  ];
+  ];  */
 
   return (
     <section className="w-full py-24 bg-gradient-to-b from-gray-50 to-gray-100">
@@ -34,7 +72,7 @@ export default function PremiumProductsSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
 
-          {sections.map((section, i) => (
+          {dataSections.map((section, i) => (
             <div key={i}>
               <h2 className="text-2xl font-bold text-gray-900 mb-8">
                 {section.title}

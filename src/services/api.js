@@ -38,3 +38,38 @@ export const getWhyShopWithUs = async () => {
     }
     return res?.data?.data || [];
 }
+
+export const getOfferBanner = async () => {
+    const res = await fetchData("offer-banner-data");
+    if (!res.success) {
+        throw new Error("Offer banner fetch unsuccessful");
+    }
+    return res?.data?.data || [];
+}
+
+export const getPremimumCategories = async () => {
+    const res = await fetchData("popular-category-data");
+    if (!res.success) {
+        throw new Error("Premium categories fetch unsuccessful");
+    }
+    return res?.data?.data || [];
+}
+
+export const getProductsByEndpoint = async (endpoint) => {
+    const res = await fetchData(endpoint);
+
+    if (!res.success) {
+        throw new Error(`${endpoint} fetch unsuccessful`);
+    }
+
+    return res?.data?.data || [];
+};
+
+export const getMostViewedProducts = async () => {
+    const res = await fetchData("most-viewed-product-data");
+    if (!res.success) {
+        throw new Error("Most viewed products fetch unsuccessful");
+    }
+    return res?.data?.data || [];
+}
+

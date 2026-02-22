@@ -1,18 +1,43 @@
 import { useEffect, useRef, useState } from "react";
+import { getPremimumCategories } from "../../services/api";
 
 export default function AutoSlidingCategories() {
   const sliderRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [categories, setCategories] = useState([]);
 
-  const categories = [
-    { name: "Electronics", image: "/images/electronics.png", gradient: "from-purple-500 to-pink-500" },
-    { name: "Appliances", image: "/images/appliances.png", gradient: "from-yellow-400 to-orange-500" },
-    { name: "Kitchen", image: "/images/kitchen.png", gradient: "from-emerald-400 to-teal-500" },
-    { name: "Audio", image: "/images/audio.png", gradient: "from-red-500 to-rose-500" },
-    { name: "Smart Home", image: "/images/smarthome.png", gradient: "from-blue-500 to-indigo-500" },
-    { name: "Game", image: "/images/game.png", gradient: "from-orange-500 to-amber-500" },
-    { name: "Office", image: "/images/office.png", gradient: "from-lime-500 to-green-500" },
+    const staticGradients = [
+    "from-purple-500 to-pink-500",
+    "from-yellow-400 to-orange-500",
+    "from-emerald-400 to-teal-500",
+    "from-red-500 to-rose-500",
+    "from-blue-500 to-indigo-500",
+    "from-orange-500 to-amber-500",
+    "from-lime-500 to-green-500",
   ];
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getPremimumCategories();
+        // Merge Api data with static gradients
+        const merged = data.map((item, index) => ({
+          id: item.id,
+          name: item.name,
+          image: item.final_image,
+          slug: item.slug,
+          gradient:
+            staticGradients[index % staticGradients.length],
+        }));
+        setCategories(merged);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+
 
   const duplicated = [...categories, ...categories];
 

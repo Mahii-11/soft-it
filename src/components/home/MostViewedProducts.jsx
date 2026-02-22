@@ -1,17 +1,44 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { getMostViewedProducts } from "../../services/api";
+
+
+const transformProducts = (apiProducts) => {
+  return apiProducts.map((item) => ({
+    id: item.id,
+    name: item.name,
+    image: item.image,
+    price: item.price // will be shown instead of category
+  }));
+};
 
 export default function MostViewedProducts() {
   const sliderRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [products, setProducts] = useState([]);
+  
 
-  const products = [
+   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const apiProducts = await getMostViewedProducts();
+        setProducts(transformProducts(apiProducts));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+
+  /* const products = [
     { name: "iPhone 15 Pro", category: "Smartphones", image: "/images/iphone.png" },
     { name: "Sony WH-1000XM5", category: "Headphones", image: "/images/headphone.png" },
     { name: "MacBook Air M2", category: "Laptops", image: "/images/macbook.png" },
     { name: "Smart Watch X", category: "Wearables", image: "/images/watch.png" },
     { name: "Gaming Console", category: "Gaming", image: "/images/console.png" },
-  ];
+  ]; */
 
   const duplicated = [...products, ...products];
 
@@ -52,63 +79,63 @@ export default function MostViewedProducts() {
           onMouseLeave={() => setIsHovered(false)}
           className="flex gap-10 overflow-hidden pb-10"
         >
-          {duplicated.map((item, index) => (
-            <div key={index} className="shrink-0 w-52 group cursor-pointer">
-              
-              <div className="
-                relative bg-white/70 backdrop-blur-xl 
-                border border-purple-100
-                rounded-3xl p-6
-                shadow-lg
-                overflow-hidden
-                transition-all duration-500
-                group-hover:-translate-y-3
-                group-hover:shadow-2xl
-              ">
-
-                {/* Image */}
-                <div className="flex justify-center mb-6">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="h-16 sm:h-24 object-contain transition-transform duration-500 group-hover:scale-110"
-                  />
-                </div>
-
-                {/* Text */}
-                <div className="text-center mb-6">
-                  <h3 className="text-sm font-semibold text-gray-800 sm:text-lg">
-                    {item.name}
-                  </h3>
-                  <p className="sm:text-sm text-xs text-purple-500 mt-1">
-                    {item.category}
-                  </p>
-                </div>
-
-                {/* Add to Cart Button (Hidden by default) */}
-                <div className="
-                  absolute bottom-0 left-0 w-full px-4 pb-4
-                  translate-y-full opacity-0
-                  group-hover:translate-y-0
-                  group-hover:opacity-100
-                  transition-all duration-500
-                ">
-                  <Link to="/cart">
-                   <button className="
-                    w-full py-2 rounded-full
-                    bg-gradient-to-r from-purple-500 to-indigo-500
-                    text-white font-medium
-                    shadow-md hover:shadow-lg
-                    hover:scale-105
-                    transition-all duration-300
-                  ">
-                    Add to Cart
-                  </button>
-                  </Link>
-                </div>
+             {duplicated.map((item, index) => (
+               <div key={index} className="shrink-0 w-64 group cursor-pointer">
+               <div className="
+                 relative bg-white/70 backdrop-blur-xl 
+                 border border-purple-100
+                 rounded-xl p-6
+                 shadow-lg
+                 overflow-hidden
+                 transition-all duration-500
+                 group-hover:-translate-y-1
+                 group-hover:shadow-2xl
+                 sm:h-[280px]
+                 h-[230px]  
+                 ">
+              {/* Image */}
+               <div className="flex justify-center mb-4">
+                <img
+                src={item.image}
+                alt={item.name}
+                className="h-16 sm:h-24 object-contain transition-transform duration-500 group-hover:scale-110"
+                />
               </div>
-            </div>
-          ))}
+
+      {/* Text */}
+      <div className="text-center mb-4">
+        <h3 className="text-sm font-semibold text-gray-800 sm:text-base line-clamp-2">
+          {item.name}
+        </h3>
+        <p className="text-purple-500 font-bold mt-1">
+          ৳ {item.price?.toLocaleString()}
+        </p>
+      </div>
+
+      {/* Add to Cart Button */}
+      <div className="
+        absolute bottom-4 left-1/2 -translate-x-1/2
+        w-[90%]  // button width
+        opacity-0
+        group-hover:opacity-100
+        transition-all duration-500
+      ">
+        <Link to="/cart">
+          <button className="
+            w-full py-2 rounded-xl
+            bg-gradient-to-r from-purple-500 to-indigo-500
+            text-white font-medium
+            shadow-md hover:shadow-lg
+            hover:scale-105
+            transition-all duration-300
+          ">
+            Add to Cart
+          </button>
+        </Link>
+      </div>
+    </div>
+  </div>
+))}
         </div>
       </div>
     </section>

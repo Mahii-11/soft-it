@@ -1,7 +1,21 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { getSliders } from "../../services/api";
+import { Link } from "wouter";
 
+
+export const offerBanners = [
+  {
+    id: 1,
+    link: "#",
+    image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=1200&auto=format&fit=crop",
+  },
+  {
+    id: 2,
+    link: "#",
+    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200&auto=format&fit=crop",
+  },
+];
 
 export default function HeroSection() {
   const [current, setCurrent] = useState(0);
@@ -128,17 +142,16 @@ export default function HeroSection() {
         {/* RIGHT SIDE BANNERS */}
         <div className="flex flex-col gap-6">
           <div className="rounded-xl overflow-hidden bg-white">
-            <img
-              src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=1200&auto=format&fit=crop"
-              className="w-full h-[200px] object-cover"
+            {offerBanners.length > 0 && 
+              offerBanners.map((banner) => (
+                <Link key={banner.id} to={banner.link}>
+                    <img
+                     src={banner.image}
+                     className="w-full h-[200px] object-cover"
             />
-          </div>
-
-          <div className="rounded-xl overflow-hidden bg-white">
-            <img
-              src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200&auto=format&fit=crop"
-              className="w-full h-[200px] object-cover"
-            />
+                </Link>
+              ))
+            }
           </div>
         </div>
       </div>
