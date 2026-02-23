@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function ProductDetails() {
   const product = {
@@ -146,10 +147,12 @@ export default function ProductDetails() {
               <button className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
                 Buy Now
               </button>
-
-              <button className="w-full sm:w-auto bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition">
+              <Link 
+              to="/cart">
+               <button className="w-full sm:w-auto bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition">
                 Add to Cart
               </button>
+              </Link>
             </div>
 
           </div>

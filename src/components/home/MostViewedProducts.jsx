@@ -8,7 +8,7 @@ const transformProducts = (apiProducts) => {
     id: item.id,
     name: item.name,
     image: item.image,
-    price: item.price // will be shown instead of category
+    price: item.price 
   }));
 };
 
@@ -34,7 +34,7 @@ export default function MostViewedProducts() {
 
   /* const products = [
     { name: "iPhone 15 Pro", category: "Smartphones", image: "/images/iphone.png" },
-    { name: "Sony WH-1000XM5", category: "Headphones", image: "/images/headphone.png" },
+    { name: "Sony WH-1000XM5", category: "Headphones", image: "/images/headphone.png"},
     { name: "MacBook Air M2", category: "Laptops", image: "/images/macbook.png" },
     { name: "Smart Watch X", category: "Wearables", image: "/images/watch.png" },
     { name: "Gaming Console", category: "Gaming", image: "/images/console.png" },
@@ -80,15 +80,14 @@ export default function MostViewedProducts() {
           className="flex gap-10 overflow-hidden pb-10"
         >
              {duplicated.map((item, index) => (
-               <div key={index} className="shrink-0 w-64 group cursor-pointer">
+               <div key={index} className="shrink-0 w-52 sm:w-64 group cursor-pointer">
                <div className="
                  relative bg-white/70 backdrop-blur-xl 
                  border border-purple-100
                  rounded-xl p-6
                  shadow-lg
                  overflow-hidden
-                 transition-all duration-500
-                 group-hover:-translate-y-1
+                 transition-shadow duration-500
                  group-hover:shadow-2xl
                  sm:h-[280px]
                  h-[230px]  
@@ -115,21 +114,19 @@ export default function MostViewedProducts() {
       {/* Add to Cart Button */}
       <div className="
         absolute bottom-4 left-1/2 -translate-x-1/2
-        w-[90%]  // button width
-        opacity-0
-        group-hover:opacity-100
+        w-[90%]  
         transition-all duration-500
       ">
-        <Link to="/cart">
+        <Link to="/productDetails">
           <button className="
             w-full py-2 rounded-xl
             bg-gradient-to-r from-purple-500 to-indigo-500
             text-white font-medium
-            shadow-md hover:shadow-lg
+            shadow-sm hover:shadow-md
             hover:scale-105
             transition-all duration-300
           ">
-            Add to Cart
+            View Category
           </button>
         </Link>
       </div>
