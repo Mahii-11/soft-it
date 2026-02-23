@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getDealofDayProducts } from "../../services/api";
+import { Link } from "react-router-dom";
 
 
 
@@ -88,16 +89,18 @@ export default function DealofDayProducts() {
               </div>
 
               {/* Add to Cart Button */}
-              <button 
+              <Link to="/productDetails">
+               <button 
                 className="mt-3 w-full py-1 rounded-xl
-            bg-gradient-to-r from-purple-500 to-indigo-500
-            text-white font-medium
-            shadow-md hover:shadow-lg
-            hover:scale-105
-            transition-all duration-300"
+                    bg-gradient-to-r from-purple-500 to-indigo-500
+                    text-white font-medium
+                    shadow-md hover:shadow-lg
+                    hover:scale-105
+                    transition-all duration-300"
               >
-                Add to Cart
+                View Category
               </button>
+              </Link>
             </div>
           ))}
         </div>
