@@ -86,10 +86,10 @@ export default function PremiumProductsSection() {
                   >
                     {/* Image */}
                     <div className="relative w-20 h-20 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden">
-                      {/* Discount Badge */}
+                      {/* Discount Badge
                       <span className="absolute top-1 left-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs px-2 py-0.5 rounded-full">
                         -25%
-                      </span>
+                      </span>  */}
 
                       <img
                         src={product.image}

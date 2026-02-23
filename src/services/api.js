@@ -73,3 +73,11 @@ export const getMostViewedProducts = async () => {
     return res?.data?.data || [];
 }
 
+export const getDealofDayProducts = async () => {
+    const res = await fetchData("deal-of-the-day");
+    if (!res.success) {
+        throw new Error("Deal of the day products fetch unsuccessful")
+    }
+    return res?.data?.data || [];
+}
+
