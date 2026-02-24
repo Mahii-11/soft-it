@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import {  getProductsByEndpoint } from "../../services/api";
+import Loader from "../../loader/Loader";
 
 const sections = [
   { title: "Featured Products", endpoint: "featured-product-data", products: [] },
@@ -32,7 +33,7 @@ export default function PremiumProductsSection() {
     fetchAll();
   }, []);
 
-   if (loading) return <p>Loading...</p>;
+   if (loading) return <Loader type="products" />;
 
 
 

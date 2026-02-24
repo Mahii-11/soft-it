@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { getSliders } from "../../services/api";
 import { Link } from "wouter";
+import Loader from "../../loader/Loader";
 
 
 export const offerBanners = [
@@ -70,9 +71,7 @@ export default function HeroSection() {
 
     if (loading) {
     return (
-      <div className="w-full h-[400px] flex items-center justify-center">
-        <p>Loading...</p>
-      </div>
+      <Loader type="hero" />
     )
   }
 

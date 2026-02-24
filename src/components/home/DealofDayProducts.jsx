@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
 import { getDealofDayProducts } from "../../services/api";
 import { Link } from "react-router-dom";
-
-
-
-
-
-
+import Loader from "../../loader/Loader"
 
 
 export default function DealofDayProducts() {
     const [deal, setDeal] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchDealProducts = async () => {
@@ -27,12 +22,10 @@ export default function DealofDayProducts() {
     fetchDealProducts();
   }, []);
 
-   if (loading) {
+  if (loading) {
     return (
-      <div className="text-center py-20 text-gray-500">
-        Loading deals...
-      </div>
-    );
+      <Loader type="dealofday" count={5} />
+    )
   }
 
   if (!deal) {
@@ -90,7 +83,7 @@ export default function DealofDayProducts() {
           </div>
 
           {/* Add to Cart Button */}
-          <Link to="/productDetails" className="mt-auto">
+          <Link to={`/product/${product.product_slug}`} className="mt-auto">
             <button 
               className="mt-3 w-full py-1 rounded-xl
                   bg-gradient-to-r from-purple-500 to-indigo-500

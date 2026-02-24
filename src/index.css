@@ -4,6 +4,21 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+#nprogress .bar {
+  background: linear-gradient(to right, #a855f7, #6366f1);
+  height: 3px;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #a855f7, 0 0 5px #6366f1;
+}
+
+
+
+
+
 :root {
   --font-sans: 'Inter', sans-serif;
   --font-display: 'Outfit', sans-serif;

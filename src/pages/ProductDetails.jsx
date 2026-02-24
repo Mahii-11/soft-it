@@ -1,8 +1,55 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { getDealofDayProducts } from "../services/api";
+import Loader from "../loader/Loader"
+
+
 
 export default function ProductDetails() {
-  const product = {
+  const { slug } = useParams(); 
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+
+
+  useEffect(()  => {
+    const fetchProduct = async () => {
+      try {
+        const res = await getDealofDayProducts();
+        const deal = res[0];
+        const foundProduct = deal?.products?.find(
+          (item) => item.product_slug === slug
+        );
+        setProduct(foundProduct || null);
+        setSelectedImage(foundProduct?.thum_image ? `/storage/${foundProduct.thum_image}` : "images/motorola.png");
+      } catch (erro) {
+        console.error("Error fetching product details:", erro)
+      } finally {
+        setLoading(false);
+      }
+    } 
+    fetchProduct()
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <Loader type="productdetails" />
+    )
+  }
+
+  if (!product) {
+    return (
+      <div className="text-center py-20 text-red-500">
+        Product not found.
+      </div>
+    );
+  }
+
+
+
+ /* const product = {
     id: 1,
     name: "3MP + 3MP Dual Lens Full HD WiFi Wireless Camera",
     brand: "No Brand",
@@ -18,11 +65,8 @@ export default function ProductDetails() {
       "/images/smarthome.png",
     ],
     colors: ["White", "Black", "Gray"],
-  };
+  }; */
 
-  const [selectedImage, setSelectedImage] = useState(product.images[0]);
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
-  const [quantity, setQuantity] = useState(1);
 
   return (
     <div className="bg-gray-100 min-h-screen py-6 md:py-10 px-4">
@@ -35,11 +79,11 @@ export default function ProductDetails() {
           <div className="w-full lg:w-2/5">
             <img
               src={selectedImage}
-              alt="Main Product"
+              alt={product.product_name}
               className="w-full border rounded-md object-cover"
             />
 
-            <div className="flex flex-wrap gap-3 mt-4">
+           {/* <div className="flex flex-wrap gap-3 mt-4">
               {product.images.map((img, index) => (
                 <img
                   key={index}
@@ -54,14 +98,14 @@ export default function ProductDetails() {
                   }`}
                 />
               ))}
-            </div>
+            </div> */}
           </div>
 
           {/* RIGHT SIDE */}
           <div className="w-full lg:w-3/5">
 
             <h2 className="text-xl sm:text-2xl font-semibold mb-3">
-              {product.name}
+              {product.product_name}
             </h2>
 
             <p className="text-gray-600 mb-2">
@@ -84,10 +128,10 @@ export default function ProductDetails() {
             {/* Price */}
             <div className="flex flex-wrap items-center gap-4 mb-6">
               <h3 className="text-2xl sm:text-3xl text-orange-500 font-bold">
-                ৳ {product.price}
+               ৳ {Number(product.discount_price).toLocaleString()}
               </h3>
               <p className="line-through text-gray-400">
-                ৳ {product.regularPrice}
+               ৳ {Number(product.original_price).toLocaleString()}
               </p>
             </div>
 
@@ -95,7 +139,7 @@ export default function ProductDetails() {
             <div className="mb-6">
               <p className="font-medium mb-2">Color:</p>
               <div className="flex flex-wrap gap-3">
-                {product.colors.map((color, index) => (
+                {product.colors?.map((color, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedColor(color)}

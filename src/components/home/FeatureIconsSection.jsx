@@ -1,11 +1,13 @@
 import { Package, Truck, ShieldCheck, Headphones } from "lucide-react";
 import { getWhyShopWithUs } from "../../services/api";
 import { useEffect, useState } from "react";
+import Loader from "../../loader/Loader";
 
 
 
 export default function WhyChooseUsSection() {
    const [features, setFeatures] = useState([]);
+   const [loading, setLoading] = useState(true);
    const staticFeatures = [
     { icon: Package, color: "text-blue-600", bg: "bg-blue-100" },
     { icon: Truck, color: "text-orange-600", bg: "bg-orange-100" },
@@ -16,6 +18,7 @@ export default function WhyChooseUsSection() {
   useEffect(() => {
     const fetchFeatures = async () => {
       try {
+        setLoading(true);
         const data = await getWhyShopWithUs();
         // Merge static + dynamic data
         const merged = staticFeatures.map((item, i) => ({
@@ -24,18 +27,28 @@ export default function WhyChooseUsSection() {
           desc: data[i]?.description || "No Description",
         }));
         setFeatures(merged);
+        
       } catch (error) {
         console.error("Failed to load features:", error);
       }
+        finally {
+          setLoading(false);
+        }
     };
     fetchFeatures();
   }, []);
+
+    if (loading) {
+      return (
+       <Loader type="whychooseus" count={4} />
+      )
+    }
  
 
   return (
     <section className="w-full py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4">
-        
+     
+          <div className="max-w-7xl mx-auto px-4">
         {/* Section Heading */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
@@ -90,7 +103,7 @@ export default function WhyChooseUsSection() {
           </button>
         </div>
 
-      </div>
+       </div>
     </section>
   );
 }

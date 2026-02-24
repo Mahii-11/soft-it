@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { getMostViewedProducts } from "../../services/api";
+import Loader from "../../loader/Loader"
 
 
 const transformProducts = (apiProducts) => {
@@ -14,6 +15,7 @@ const transformProducts = (apiProducts) => {
 
 export default function MostViewedProducts() {
   const sliderRef = useRef(null);
+  const [loading, setLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [products, setProducts] = useState([]);
   
@@ -21,10 +23,13 @@ export default function MostViewedProducts() {
    useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true)
         const apiProducts = await getMostViewedProducts();
         setProducts(transformProducts(apiProducts));
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -57,6 +62,12 @@ export default function MostViewedProducts() {
 
     return () => clearInterval(interval);
   }, [isHovered]);
+
+  if (loading) {
+    return (
+      <Loader type="mostviewed" />
+    )
+  }
 
   return (
     <section className="w-full py-24 bg-gradient-to-b from-white to-purple-50">

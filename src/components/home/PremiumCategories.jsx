@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { getPremimumCategories } from "../../services/api";
+import Loader from "../../loader/Loader";
 
 export default function AutoSlidingCategories() {
   const sliderRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
 
     const staticGradients = [
@@ -19,6 +21,7 @@ export default function AutoSlidingCategories() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        setLoading(true);
         const data = await getPremimumCategories();
         // Merge Api data with static gradients
         const merged = data.map((item, index) => ({
@@ -32,6 +35,8 @@ export default function AutoSlidingCategories() {
         setCategories(merged);
       } catch (error) {
         console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchCategories();
@@ -57,6 +62,13 @@ export default function AutoSlidingCategories() {
 
     return () => clearInterval(interval);
   }, [isHovered]);
+
+
+  if (loading) {
+    return (
+      <Loader type="categories" />
+    )
+  }
 
   return (
     <section className="w-full py-24 bg-gradient-to-b from-gray-50 to-gray-100">
