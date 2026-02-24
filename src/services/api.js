@@ -81,3 +81,36 @@ export const getDealofDayProducts = async () => {
     return res?.data?.data || [];
 }
 
+export const getProductDetailsBySlugg = async (slug) => {
+  const res = await fetchData(`product-details/${slug}`);
+  if (!res.success) {
+    throw new Error(`Product details fetch unsuccessful for slug: ${slug}`);
+  }
+  return res?.data?.product || null;
+};
+
+
+// Fetch product details by slug
+export const getProductDetailsBySlug = async (slug) => {
+  try {
+    const res = await fetch(`${BASE_URL}product-details/${slug}`);
+    
+    // Check if response is JSON
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("API did not return JSON. Check the endpoint or server error.");
+    }
+
+    const data = await res.json();
+
+    if (!data.product) {
+      throw new Error(`Product details fetch unsuccessful for slug: ${slug}`);
+    }
+
+    return data.product;
+
+  } catch (error) {
+    console.error("Error in getProductDetailsBySlug:", error);
+    throw error;
+  }
+};

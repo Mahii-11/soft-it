@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getDealofDayProducts } from "../services/api";
+import { getDealofDayProducts, getProductDetailsBySlug } from "../services/api";
 import Loader from "../loader/Loader"
 
 
@@ -17,15 +17,14 @@ export default function ProductDetails() {
   useEffect(()  => {
     const fetchProduct = async () => {
       try {
-        const res = await getDealofDayProducts();
-        const deal = res[0];
-        const foundProduct = deal?.products?.find(
-          (item) => item.product_slug === slug
-        );
-        setProduct(foundProduct || null);
-        setSelectedImage(foundProduct?.thum_image ? `/storage/${foundProduct.thum_image}` : "images/motorola.png");
+        const res = await getProductDetailsBySlug(slug);
+        if (!res) throw new Error("Product not found");
+        setProduct(res);
+          setSelectedImage(res.thumbnail || "/images/motorola.png");
+          setSelectedColor(res.colors?.[0] || null);
       } catch (erro) {
         console.error("Error fetching product details:", erro)
+        setProduct(null);
       } finally {
         setLoading(false);
       }
@@ -79,12 +78,13 @@ export default function ProductDetails() {
           <div className="w-full lg:w-2/5">
             <img
               src={selectedImage}
-              alt={product.product_name}
+              alt={product.name}
               className="w-full border rounded-md object-cover"
             />
 
-           {/* <div className="flex flex-wrap gap-3 mt-4">
-              {product.images.map((img, index) => (
+            <div className="flex flex-wrap gap-3 mt-4">
+              {product.gallery?.length > 0 ?
+                product.gallery.map((img, index) => (
                 <img
                   key={index}
                   src={img}
@@ -97,64 +97,65 @@ export default function ProductDetails() {
                       : "border-gray-300"
                   }`}
                 />
-              ))}
-            </div> */}
+              )) : (
+                null
+              )
+            
+            }
+            </div> 
           </div>
 
           {/* RIGHT SIDE */}
           <div className="w-full lg:w-3/5">
 
             <h2 className="text-xl sm:text-2xl font-semibold mb-3">
-              {product.product_name}
+              {product.name}
             </h2>
 
             <p className="text-gray-600 mb-2">
               Brand:{" "}
               <span className="text-blue-600 font-medium">
-                {product.brand}
+                  {product.brand?.name || "No Brand"}
               </span>
             </p>
 
             <p
               className={`mb-4 font-medium ${
-                product.status === "In Stock"
-                  ? "text-green-600"
-                  : "text-red-600"
+                product.stock?.in_stock ? "text-green-600" : "text-red-600"
               }`}
             >
-              Status: {product.status}
+              Status: {product.stock?.in_stock ? "In Stock" : "Out of Stock"}
             </p>
-
             {/* Price */}
             <div className="flex flex-wrap items-center gap-4 mb-6">
               <h3 className="text-2xl sm:text-3xl text-orange-500 font-bold">
-               ৳ {Number(product.discount_price).toLocaleString()}
+                ৳ {Number(product.price?.offer || product.price?.final).toLocaleString()}
               </h3>
               <p className="line-through text-gray-400">
-               ৳ {Number(product.original_price).toLocaleString()}
+                ৳ {Number(product.price?.regular || 0).toLocaleString()}
               </p>
             </div>
 
             {/* Color */}
-            <div className="mb-6">
-              <p className="font-medium mb-2">Color:</p>
-              <div className="flex flex-wrap gap-3">
-                {product.colors?.map((color, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedColor(color)}
-                    className={`px-4 py-1 border rounded text-sm sm:text-base
-                    ${
-                      selectedColor === color
+            {product.colors?.length > 0 && (
+              <div className="mb-6">
+                <p className="font-medium mb-2">Color:</p>
+                <div className="flex flex-wrap gap-3">
+                  {product.colors.map((color, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-4 py-1 border rounded text-sm sm:text-base
+                      ${selectedColor === color
                         ? "border-orange-500 text-orange-500"
-                        : "border-gray-300"
-                    }`}
-                  >
-                    {color}
-                  </button>
-                ))}
+                        : "border-gray-300"}`}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Quantity */}
             <div className="mb-6">
@@ -178,13 +179,15 @@ export default function ProductDetails() {
               </div>
             </div>
 
-            {/* Description */}
+              {/* Description */}
             <div className="mb-8">
               <h4 className="font-semibold mb-2">Description:</h4>
-              <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
-                {product.description}
-              </p>
+              <div
+                className="text-gray-600 leading-relaxed text-sm sm:text-base"
+                dangerouslySetInnerHTML={{ __html: product.description || "" }}
+              />
             </div>
+
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
@@ -198,7 +201,6 @@ export default function ProductDetails() {
               </button>
               </Link>
             </div>
-
           </div>
         </div>
       </div>

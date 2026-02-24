@@ -83,7 +83,7 @@ export default function DealofDayProducts() {
           </div>
 
           {/* Add to Cart Button */}
-          <Link to={`/product/${product.product_slug}`} className="mt-auto">
+          <Link to={`/product-details/${product.product_slug}`} className="mt-auto">
             <button 
               className="mt-3 w-full py-1 rounded-xl
                   bg-gradient-to-r from-purple-500 to-indigo-500
