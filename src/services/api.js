@@ -107,7 +107,7 @@ export const getProductDetailsBySlug = async (slug) => {
       throw new Error(`Product details fetch unsuccessful for slug: ${slug}`);
     }
 
-    return data.product;
+    return data;
 
   } catch (error) {
     console.error("Error in getProductDetailsBySlug:", error);
