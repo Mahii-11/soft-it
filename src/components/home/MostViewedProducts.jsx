@@ -128,7 +128,7 @@ export default function MostViewedProducts() {
         w-[90%]  
         transition-all duration-500
       ">
-        <Link to="/productDetails">
+        <Link to="/cart">
           <button className="
             w-full py-2 rounded-xl
             bg-gradient-to-r from-purple-500 to-indigo-500
@@ -137,7 +137,7 @@ export default function MostViewedProducts() {
             hover:scale-105
             transition-all duration-300
           ">
-            View Category
+             Add to Cart
           </button>
         </Link>
       </div>

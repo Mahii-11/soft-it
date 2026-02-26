@@ -64,8 +64,12 @@ export default function ProductDetails() {
     product.price?.final ||
     0;
 
+  function handleAddToCart() {
+    console.log(product_slug)
+  }  
+
   return (
-    <div className="bg-gray-100 min-h-screen py-6 md:py-10 px-4">
+    <div className="bg-gray-100 min-h-screen py-20 px-4">
           <div className="max-w-7xl mx-auto bg-white px-4 shadow-sm">
              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -250,11 +254,15 @@ export default function ProductDetails() {
                 Buy Now
               </button>
 
-              <Link to="/cart">
-                <button className="w-full sm:w-auto bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition">
+              
+                <button
+                 className="w-full sm:w-auto bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition"
+                 onClick={handleAddToCart}
+                 
+                 >
                   Add to Cart
                 </button>
-              </Link>
+              
             </div>
           </div>
           </div>
@@ -376,7 +384,7 @@ export default function ProductDetails() {
            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {relatedProducts.map((rp) => (
                <Link to={`/product-details/${rp.slug}`} key={rp.id} 
-                 className="bg-white p-3 rounded-md border hover:shadow-lg transition duration-300 cursor-pointer group flex flex-col">
+                 className="bg-white p-3 rounded-md border hover:shadow-lg transition duration-300 cursor-pointer group flex flex-col h-full">
                   <div className="h-28 sm:h-40 flex items-center justify-center mb-2 overflow-hidden relative">
                    <img
                    src={rp.thumbnail || "/images/motorola.png"}
@@ -401,7 +409,7 @@ export default function ProductDetails() {
                   {rp.stock?.in_stock ? "In Stock" : "Out of Stock"}
                  </p>
 
-                  <Link to={`/product-details/${product.product_slug}`} className="mt-auto">
+                  <Link to="/cart" className="mt-auto">
                    <button 
                    className="mt-3 w-full py-1 rounded-xl
                   bg-gradient-to-r from-purple-500 to-indigo-500

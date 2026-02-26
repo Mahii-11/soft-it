@@ -11,9 +11,14 @@ import { Input } from "./ui/input";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import {  getTotalCartQuantity } from "../cart/cartSlice";
 
 export default function Navbar() {
   const [openDropdown, setOpenDropdown] = useState(null);
+
+  const totalCartQuantity = useSelector(getTotalCartQuantity);
 
 
 
@@ -51,7 +56,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b b  bg-[#9F28E3] backdrop-blur-md text-stone-100">
+    <nav className="fixed  z-40 w-full border-b b  bg-[#9F28E3] backdrop-blur-md text-stone-100">
       <div className="container-custom h-14 flex items-center gap-4">
 
         {/* Mobile Menu */}
@@ -232,12 +237,14 @@ export default function Navbar() {
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
           
           {/* Cart */}
+          <Link to="/cart">
           <Button variant="ghost" size="icon" className="relative">
             <ShoppingBag className="h-5 w-5" />
             <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-white text-[10px] flex items-center justify-center">
-              0
+              {totalCartQuantity}
             </span>
           </Button>
+           </Link>
 
           {/* User */}
           <Button variant="ghost" size="icon">

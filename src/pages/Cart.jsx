@@ -1,31 +1,12 @@
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
 import { Trash2, Minus, Plus, ArrowRight } from "lucide-react";
+import { useSelector } from "react-redux";
+import { getCart } from "../cart/cartSlice";
 
 export default function Cart() {
   // Static Cart Data
-  const cartItems = [
-    {
-      id: 1,
-      product: {
-        id: 101,
-        name: "Premium Wireless Headphones",
-        price: "89.99",
-        images: "/images/headphone.png",
-      },
-      quantity: 2,
-    },
-    {
-      id: 2,
-      product: {
-        id: 102,
-        name: "Smart Fitness Watch",
-        price: "59.99",
-        images: "/images/cmwatch.png",
-      },
-      quantity: 1,
-    },
-  ];
+  const cartItems = useSelector(getCart);
 
   // Static Summary Data
   const summary = {
@@ -54,7 +35,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/10 pb-20">
+    <div className="min-h-screen bg-muted/10 py-12">
       <div className="container-custom py-12">
         <h1 className="text-3xl font-bold font-display mb-8">
           Shopping Cart
@@ -65,25 +46,29 @@ export default function Cart() {
           <div className="lg:col-span-2 space-y-4">
             {cartItems.map((item) => (
               <div
-                key={item.id}
+                key={item.product_slug}
                 className="bg-background p-4 rounded-xl border flex gap-4 items-center"
               >
                 <div className="h-24 w-24 bg-muted/20 rounded-lg overflow-hidden shrink-0">
                   <img
-                    src={item.product.images}
-                    alt={item.product.name}
+                    src={item.image || "/images/motorola.png"}
+                    alt={item.product_name}
                     className="w-full h-full object-cover"
+                      onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/images/motorola.png";
+                    }}
                   />
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <Link href={`/product/${item.product.id}`}>
+                  <Link to={`/product-details/${item.product_slug}`}>
                     <h3 className="font-semibold hover:text-primary transition-colors truncate">
-                      {item.product.name}
+                      {item.product_name}
                     </h3>
                   </Link>
                   <p className="text-muted-foreground text-sm mt-1">
-                    ${item.product.price}
+                    ${item.original_price}
                   </p>
                 </div>
 

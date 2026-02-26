@@ -85,7 +85,7 @@ export default function HeroSection() {
 
 
   return (
-    <section className="w-full bg-gray-100 py-6">
+    <section className="w-full bg-gray-100 py-6 mt-16">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* LEFT BIG SLIDER */}
         <div className="lg:col-span-2 relative overflow-hidden rounded-xl bg-white">

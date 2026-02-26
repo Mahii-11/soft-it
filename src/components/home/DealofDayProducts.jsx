@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import { getDealofDayProducts } from "../../services/api";
 import { Link } from "react-router-dom";
 import Loader from "../../loader/Loader"
+import { useDispatch } from "react-redux";
+import { addItem } from "../../cart/cartSlice";
 
 
 export default function DealofDayProducts() {
+    const dispatch = useDispatch();
     const [deal, setDeal] = useState(null);
     const [loading, setLoading] = useState(true)
 
@@ -36,9 +39,25 @@ export default function DealofDayProducts() {
     );
   }
 
+  function handleAddToCart(product) {
+    const quantity = 1;
+    const original_price = Number(product.original_price ?? 0);
+    const totalPrice = original_price * quantity;
+    const newItem = {
+      product_slug: product.product_slug,
+      product_name: product.product_name,
+      image: product.thumb_image || "/images/motorola.png",
+      quantity: quantity,
+      original_price: original_price,
+      totalPrice: totalPrice,
+    };
+    dispatch(addItem(newItem));
+  }
+
 
   return (
-    <section className="bg-[#f3f3f3] py-10">
+  <section className="bg-[#f3f3f3] py-10">
+     
   <div className="max-w-7xl mx-auto px-4">
     {/* Section Header */}
     <div className="mb-6">
@@ -46,12 +65,16 @@ export default function DealofDayProducts() {
     </div>
 
     {/* Product Grid */}
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 auto-rows-fr">
+       
       {deal.products?.map((product, i) => (
-        <div
+        
+          <div
+
           key={i}
-          className="bg-white p-3 rounded-md border hover:shadow-lg transition duration-300 cursor-pointer group flex flex-col"
+          className="bg-white p-3 rounded-md border hover:shadow-lg transition duration-300 cursor-pointer group flex flex-col h-full"
         >
+           <Link to={`/product-details/${product.product_slug}`} >
           {/* Discount Badge */}
           <span className="absolute bg-red-600 text-white text-xs px-2 py-1 rounded-sm z-10">
             {deal.deal_offer}% OFF
@@ -81,10 +104,12 @@ export default function DealofDayProducts() {
               ৳{Number(product?.orginal_price ?? 0).toLocaleString()}
             </p>
           </div>
+           </Link>  
 
           {/* Add to Cart Button */}
-          <Link to={`/product-details/${product.product_slug}`} className="mt-auto">
+          <div className="mt-auto">
             <button 
+               onClick={() => handleAddToCart(product)}
               className="mt-3 w-full py-1 rounded-xl
                   bg-gradient-to-r from-purple-500 to-indigo-500
                   text-white font-medium
@@ -93,13 +118,16 @@ export default function DealofDayProducts() {
                   hover:scale-105
                   transition-all duration-300"
             >
-              View Category
+               Add to Cart
             </button>
-          </Link>
-        </div>
+            </div>
+    
+         </div>
+        
       ))}
+      
     </div>
   </div>
-</section>
+  </section>
   );
 }
