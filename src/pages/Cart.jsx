@@ -1,19 +1,15 @@
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
 import { Trash2, Minus, Plus, ArrowRight } from "lucide-react";
-import { useSelector } from "react-redux";
-import { getCart } from "../cart/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { decreaseItemQuantity, deleteItem, getCart, getTotalCartPrice, increaseItemQuantity } from "../cart/cartSlice";
 
 export default function Cart() {
-  // Static Cart Data
   const cartItems = useSelector(getCart);
-
-  // Static Summary Data
-  const summary = {
-    subtotal: 239.97,
-    shipping: 0,
-    total: 239.97,
-  };
+  const dispatch = useDispatch();
+  const subtotal = useSelector(getTotalCartPrice);
+  const shipping = subtotal > 1000 ? 0 : 70;
+  const total = subtotal + shipping;
 
   if (cartItems.length === 0) {
     return (
@@ -25,7 +21,7 @@ export default function Cart() {
         <p className="text-muted-foreground mb-8 text-center max-w-sm">
           Looks like you haven't added anything to your cart yet.
         </p>
-        <Link href="/shop">
+        <Link to="/">
           <Button size="lg" className="rounded-full px-8">
             Start Shopping
           </Button>
@@ -68,24 +64,29 @@ export default function Cart() {
                     </h3>
                   </Link>
                   <p className="text-muted-foreground text-sm mt-1">
-                    ${item.original_price}
+                    ৳{item.totalPrice}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <div className="flex items-center border rounded-lg bg-background">
-                    <button className="p-2 hover:bg-muted transition-colors rounded-l-lg">
+                    <button
+                    onClick={() => dispatch(decreaseItemQuantity(item.product_slug))} 
+                    className="p-2 hover:bg-muted transition-colors rounded-l-lg">
                       <Minus className="h-3 w-3" />
                     </button>
                     <span className="w-8 text-center text-sm font-medium">
                       {item.quantity}
                     </span>
-                    <button className="p-2 hover:bg-muted transition-colors rounded-r-lg">
+                    <button 
+                    onClick={() => dispatch(increaseItemQuantity(item.product_slug))}
+                    className="p-2 hover:bg-muted transition-colors rounded-r-lg">
                       <Plus className="h-3 w-3" />
                     </button>
                   </div>
 
                   <Button
+                    onClick={() => dispatch(deleteItem(item.product_slug))}
                     variant="ghost"
                     size="icon"
                     className="text-muted-foreground hover:text-destructive"
@@ -105,19 +106,19 @@ export default function Cart() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-muted-foreground">
                   <span>Subtotal</span>
-                  <span>${summary.subtotal.toFixed(2)}</span>
+                  <span>৳{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
                   <span>Shipping</span>
                   <span>
-                    {summary.shipping === 0
+                    {shipping === 0
                       ? "Free"
-                      : `$${summary.shipping.toFixed(2)}`}
+                      : `$${total.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="border-t pt-4 flex justify-between font-bold text-lg">
                   <span>Total</span>
-                  <span>${summary.total.toFixed(2)}</span>
+                  <span>৳{total.toFixed(2)}</span>
                 </div>
               </div>
 

@@ -1,33 +1,20 @@
+import { useSelector } from "react-redux";
+import { getCart, getTotalCartPrice } from "../cart/cartSlice";
 
-// Static Product Object
-const products = [
-  {
-    id: 1,
-    name: "Dermaroller 1mm Titanium Steel 540 Needles",
-    qty: 1,
-    price: 109,
-    image: "/images/motorola.png",
-  },
-  {
-    id: 2,
-    name: "Vitamin C Serum 30ml",
-    qty: 2,
-    price: 299,
-    image: "/images/audio.png",
-  },
-  {
-    id: 3,
-    name: "Facial Cleansing Brush",
-    qty: 1,
-    price: 450,
-    image: "/images/macbook.png",
-  },
-];
+
 
 
 
 
 export default function CheckoutPage() {
+  const cartItems = useSelector(getCart);
+  const subtotal = useSelector(getTotalCartPrice);
+  const deliveryFee = subtotal > 1000 ? 0 : 70;
+  const total = subtotal + deliveryFee;
+
+
+
+
   return (
     <div className="bg-gray-100 min-h-screen py-6 md:py-10 px-4">
       <div className="max-w-6xl mx-auto bg-white p-6 md:p-10 rounded-lg shadow-lg">
@@ -98,17 +85,23 @@ export default function CheckoutPage() {
 
             {/* Items */}
            <div className="flex flex-col gap-4 mb-4">
-             {products.map((product) => (
-             <div key={product.id} className="flex items-center gap-4">
+             {cartItems.map((product) => (
+             <div key={product.product_slug} className="flex items-center gap-4">
              <img
-             src={product.image}
-             alt={product.name}
+             src={product.image || "/images/motorola.png"}
+             alt={product.product_name}
              className="w-16 h-16 object-cover rounded"
+              onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/images/motorola.png";
+                    }}
              />
             <div className="flex-1">
-            <p className="font-medium">{product.name}</p>
-            <p className="text-gray-500 text-sm">Qty: {product.qty}</p>
-            <p className="text-red-500 font-semibold">৳{product.price}</p>
+            <p className="font-medium">{product.product_name}</p>
+            <p className="text-gray-500 text-sm">Qty: {product.quantity}</p>
+            <p className="text-red-500 font-semibold">
+             ৳{(product.quantity * product.discount_price).toFixed(2)}
+            </p>
             </div>
             </div>
              ))}
@@ -117,13 +110,15 @@ export default function CheckoutPage() {
             {/* Delivery Fee */}
             <div className="flex justify-between mb-2">
               <span>Delivery Fee</span>
-              <span>৳70</span>
+             <span>
+              {deliveryFee === 0 ? "Free" : `৳${deliveryFee}`}
+             </span>
             </div>
 
             {/* Total */}
             <div className="flex justify-between font-bold text-lg mb-4">
               <span>Total:</span>
-              <span>৳179</span>
+              <span>৳{total.toFixed(2)}</span>
             </div>
 
             <button className="w-full bg-gray-400 text-white py-2 rounded cursor-not-allowed">

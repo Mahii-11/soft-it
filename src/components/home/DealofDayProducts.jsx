@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { getDealofDayProducts } from "../../services/api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loader from "../../loader/Loader"
 import { useDispatch } from "react-redux";
 import { addItem } from "../../cart/cartSlice";
+import { normalizeProductForCart } from "../../utils/cartAdapter";
+
 
 
 export default function DealofDayProducts() {
     const dispatch = useDispatch();
     const [deal, setDeal] = useState(null);
     const [loading, setLoading] = useState(true)
+    const navigate  = useNavigate();
 
   useEffect(() => {
     const fetchDealProducts = async () => {
@@ -39,19 +42,15 @@ export default function DealofDayProducts() {
     );
   }
 
-  function handleAddToCart(product) {
-    const quantity = 1;
-    const original_price = Number(product.original_price ?? 0);
-    const totalPrice = original_price * quantity;
-    const newItem = {
-      product_slug: product.product_slug,
-      product_name: product.product_name,
-      image: product.thumb_image || "/images/motorola.png",
-      quantity: quantity,
-      original_price: original_price,
-      totalPrice: totalPrice,
-    };
-    dispatch(addItem(newItem));
+  function handleAddToCart(e, product) {
+    e.stopPropagation();
+
+    if (product.product_type === "variable") {
+      navigate(`/product-details/${product.product_slug}`);
+      return;
+    }
+    const normalizedProduct = normalizeProductForCart(product);
+    dispatch(addItem(normalizedProduct));
   }
 
 
@@ -101,7 +100,7 @@ export default function DealofDayProducts() {
               ৳{Number(product?.discount_price ?? 0).toLocaleString()}
             </p>
             <p className="text-xs text-gray-500 line-through">
-              ৳{Number(product?.orginal_price ?? 0).toLocaleString()}
+              ৳{Number(product?.original_price ?? 0).toLocaleString()}
             </p>
           </div>
            </Link>  
@@ -109,7 +108,7 @@ export default function DealofDayProducts() {
           {/* Add to Cart Button */}
           <div className="mt-auto">
             <button 
-               onClick={() => handleAddToCart(product)}
+              onClick={(e) => handleAddToCart(e, product)}
               className="mt-3 w-full py-1 rounded-xl
                   bg-gradient-to-r from-purple-500 to-indigo-500
                   text-white font-medium
@@ -118,7 +117,9 @@ export default function DealofDayProducts() {
                   hover:scale-105
                   transition-all duration-300"
             >
-               Add to Cart
+                 {product.product_type === "single"
+                 ? "Add to Cart"
+                 : "View Details"}
             </button>
             </div>
     

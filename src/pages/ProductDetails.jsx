@@ -10,11 +10,14 @@ import {
   ShieldAlert,
   MessageSquare,
 } from 'lucide-react';
+import { useDispatch } from "react-redux";
+import { normalizeProductForCart } from "../utils/cartAdapter";
+import { addItem } from "../cart/cartSlice";
 
 
 export default function ProductDetails() {
   const { slug } = useParams();
-
+  const dispatch = useDispatch();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -64,9 +67,10 @@ export default function ProductDetails() {
     product.price?.final ||
     0;
 
-  function handleAddToCart() {
-    console.log(product_slug)
-  }  
+   function handleAddToCart(product) {
+        const normalizedProduct = normalizeProductForCart(product);
+        dispatch(addItem(normalizedProduct));
+      }
 
   return (
     <div className="bg-gray-100 min-h-screen py-20 px-4">
@@ -257,7 +261,7 @@ export default function ProductDetails() {
               
                 <button
                  className="w-full sm:w-auto bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition"
-                 onClick={handleAddToCart}
+                 onClick={() => handleAddToCart(product)}
                  
                  >
                   Add to Cart

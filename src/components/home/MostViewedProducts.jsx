@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { getMostViewedProducts } from "../../services/api";
 import Loader from "../../loader/Loader"
+import { normalizeProductForCart } from "../../utils/cartAdapter";
+import { useDispatch } from "react-redux";
+import { addItem } from "../../cart/cartSlice";
 
 
 const transformProducts = (apiProducts) => {
@@ -18,6 +21,8 @@ export default function MostViewedProducts() {
   const [loading, setLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [products, setProducts] = useState([]);
+  const navigate  = useNavigate();
+  const dispatch = useDispatch();
   
 
    useEffect(() => {
@@ -36,14 +41,19 @@ export default function MostViewedProducts() {
     fetchProducts();
   }, []);
 
+   function handleAddToCart(e, product) {
+      e.stopPropagation();
+  
+      if (product.product_type === "variable") {
+        navigate(`/product-details/${product.product_slug}`);
+        return;
+      }
+      const normalizedProduct = normalizeProductForCart(product);
+      dispatch(addItem(normalizedProduct));
+    }
 
-  /* const products = [
-    { name: "iPhone 15 Pro", category: "Smartphones", image: "/images/iphone.png" },
-    { name: "Sony WH-1000XM5", category: "Headphones", image: "/images/headphone.png"},
-    { name: "MacBook Air M2", category: "Laptops", image: "/images/macbook.png" },
-    { name: "Smart Watch X", category: "Wearables", image: "/images/watch.png" },
-    { name: "Gaming Console", category: "Gaming", image: "/images/console.png" },
-  ]; */
+
+ 
 
   const duplicated = [...products, ...products];
 
@@ -128,8 +138,10 @@ export default function MostViewedProducts() {
         w-[90%]  
         transition-all duration-500
       ">
-        <Link to="/cart">
-          <button className="
+      
+          <button 
+           onClick={(e) => handleAddToCart(e, item)}
+           className="
             w-full py-2 rounded-xl
             bg-gradient-to-r from-purple-500 to-indigo-500
             text-white font-medium
@@ -139,7 +151,6 @@ export default function MostViewedProducts() {
           ">
              Add to Cart
           </button>
-        </Link>
       </div>
     </div>
   </div>
