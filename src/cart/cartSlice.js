@@ -16,9 +16,13 @@ const cartSlice = createSlice({
 
         addItem(state, action) {
             const newItem = action.payload;
+            
 
             const existingItem = state.cart.find(
-                (item) => item.product_slug === newItem.product_slug
+                (item) => 
+                    item.product_slug === newItem.product_slug &&
+                    item.variation_id === newItem.variation_id &&
+                    item.color_id === newItem.color_id
             );
 
             if (existingItem) {

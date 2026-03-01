@@ -67,9 +67,25 @@ export default function ProductDetails() {
     product.price?.final ||
     0;
 
-   function handleAddToCart(product) {
-        const normalizedProduct = normalizeProductForCart(product);
+   function handleAddToCart(product, selectedVariation, selectedColor, quantity = 1) {
+          if (!selectedVariation && product.variations?.length > 0) {
+           alert("Please select a size!");
+          return;
+          }
+  if (!selectedColor && product.colors?.length > 0) {
+    alert("Please select a color!");
+    return;
+  }
+
+         const normalizedProduct = normalizeProductForCart(
+         product,
+         selectedVariation,
+         selectedColor,
+         quantity
+         );
+         console.log("Selected Variation at Add:", selectedVariation);
         dispatch(addItem(normalizedProduct));
+        
       }
 
   return (
@@ -181,9 +197,10 @@ export default function ProductDetails() {
                   {product.variations.map((variation) => (
                     <button
                       key={variation.id}
-                      onClick={() =>
-                        setSelectedVariation(variation)
-                      }
+                      onClick={() => {
+                        setSelectedVariation(variation);
+                        console.log("Selected Variation:", variation);
+                       }}
                       className={`px-4 py-1 border rounded text-sm
                       ${
                         selectedVariation?.id === variation.id
@@ -223,7 +240,7 @@ export default function ProductDetails() {
               </div>
             )}
 
-            {/* Quantity */}
+            {/* Quantity 
             <div className="mb-6">
               <p className="font-medium mb-2">Quantity:</p>
               <div className="flex items-center gap-3">
@@ -250,7 +267,7 @@ export default function ProductDetails() {
                   +
                 </button>
               </div>
-            </div>
+            </div> */}
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
@@ -261,7 +278,7 @@ export default function ProductDetails() {
               
                 <button
                  className="w-full sm:w-auto bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition"
-                 onClick={() => handleAddToCart(product)}
+                 onClick={() => handleAddToCart(product, selectedVariation, selectedColor, )}
                  
                  >
                   Add to Cart
@@ -387,7 +404,9 @@ export default function ProductDetails() {
            <h3 className="text-xl font-semibold mb-4">Related Products</h3>
            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {relatedProducts.map((rp) => (
-               <Link to={`/product-details/${rp.slug}`} key={rp.id} 
+              
+               
+               <div 
                  className="bg-white p-3 rounded-md border hover:shadow-lg transition duration-300 cursor-pointer group flex flex-col h-full">
                   <div className="h-28 sm:h-40 flex items-center justify-center mb-2 overflow-hidden relative">
                    <img
@@ -412,9 +431,10 @@ export default function ProductDetails() {
                  <p className={`mt-1 text-sm font-medium ${rp.stock?.in_stock ? "text-green-600" : "text-red-600"}`}>
                   {rp.stock?.in_stock ? "In Stock" : "Out of Stock"}
                  </p>
+                
 
-                  <Link to="/cart" className="mt-auto">
-                   <button 
+                  <button 
+                   onClick={() => handleAddToCart(product)}
                    className="mt-3 w-full py-1 rounded-xl
                   bg-gradient-to-r from-purple-500 to-indigo-500
                   text-white font-medium
@@ -425,10 +445,11 @@ export default function ProductDetails() {
                  >
                   Add to Cart
                  </button>
-                  </Link>
-                 </Link>
+                  </div>
+               
                 ))}
                 </div>
+                
               </div>
              )}
           </div>
