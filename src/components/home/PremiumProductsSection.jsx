@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import {  getProductsByEndpoint } from "../../services/api";
 import Loader from "../../loader/Loader";
@@ -68,14 +68,28 @@ export default function PremiumProductsSection() {
   ];  */
 
   return (
-    <section className="w-full py-24 bg-gradient-to-b from-gray-50 to-gray-100">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="min-h-screen bg-[#F8FAFC] relative overflow-hidden font-sans">
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div className="absolute right-0 top-0 bottom-0 w-[45%] lg:w-[35%] z-0 hidden md:block">
+        <div className="w-full h-full relative">
+          <img
+            src="/images/laptop-desk3.png"
+            alt="Desk setup"
+            className="object-cover object-left-top w-full h-full absolute inset-0"
+          />
+          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#F8FAFC] to-transparent z-10" />
+        </div>
+      </div>
 
-          {dataSections.map((section, i) => (
-            <div key={i}>
-              <h2 className="text-2xl font-bold text-gray-900 mb-8">
+
+
+
+      <div className="container mx-auto px-4 md:px-8 lg:px-12 py-16 relative z-10 h-full flex flex-col justify-center min-h-screen">
+        <div className="w-full md:w-[60%] lg:w-[65%] xl:w-[60%] pr-0 md:pr-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5">
+             {dataSections.map((section, i) => (
+            <div key={i} >
+              <h2 className="text-xl text-[#0F172A] font-semibold mb-8">
                 {section.title}
               </h2>
 
@@ -83,48 +97,51 @@ export default function PremiumProductsSection() {
                 {section.products.map((product, index) => (
                   <div
                     key={index}
-                    className="group flex items-center gap-5 bg-white p-5 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                    className="bg-white rounded-xl p-3 flex gap-4 items-center border border-[#E2E8F0] shadow-sm hover:shadow-md transition duration-300"
                   >
                     {/* Image */}
-                    <div className="relative w-20 h-20 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden">
-                      {/* Discount Badge
-                      <span className="absolute top-1 left-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs px-2 py-0.5 rounded-full">
-                        -25%
-                      </span>  */}
-
+                     <div className="w-24 h-24 sm:w-[100px] sm:h-[100px] flex-shrink-0 relative bg-white rounded-lg overflow-hidden flex items-center justify-center p-2  border border-[#E2E8F0]">
                       <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-16 h-16 object-contain group-hover:scale-110 transition-transform duration-300"
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-contain"
                       />
                     </div>
-
                     {/* Info */}
-                    <div className="flex-1">
-                      <h3 className="text-sm font-semibold text-gray-800 line-clamp-2">
+                     <div className="flex flex-col flex-grow py-1 justify-center">
+                        <h3 className="text-[13px] sm:text-sm font-semibold text-[#0F172A] leading-snug line-clamp-2 mb-2">
                         {product.name}
-                      </h3>
+                       </h3>
 
-                      {/* Rating */}
-                      <div className="flex items-center gap-1 mt-1">
-                        {[...Array(4)].map((_, idx) => (
-                          <Star key={idx} size={14} className="text-yellow-400 fill-yellow-400" />
-                        ))}
-                        <Star size={14} className="text-gray-300 fill-gray-300" />
-                        <span className="text-xs text-gray-400 ml-1">(1,234)</span>
-                      </div>
 
-                      <p className="mt-2 font-bold text-gray-900">
-                        {product.price}
-                      </p>
+                      <div className="flex items-center gap-2.5 mb-2">
+                        <span className="text-[#5B3DF5] font-bold text-[15px]">
+                        ৳{product.price.toLocaleString()}
+                       </span>
+                      </div> 
+
+                      
+                  <div className="flex items-center gap-1">
+                    <div className="flex text-[#FFA41C]">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="w-3 h-3 fill-current"
+                          strokeWidth={1}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[#64748B] text-[10px] font-medium ml-1">
+                      (99)
+                    </span>
+                  </div>
                     </div>
                   </div>
                 ))}
               </div>
-
             </div>
           ))}
-
+          </div>
         </div>
       </div>
     </section>

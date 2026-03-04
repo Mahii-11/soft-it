@@ -1,34 +1,44 @@
 import { useEffect, useRef, useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getMostViewedProducts } from "../../services/api";
-import Loader from "../../loader/Loader"
+import Loader from "../../loader/Loader";
 import { normalizeProductForCart } from "../../utils/cartAdapter";
 import { useDispatch } from "react-redux";
 import { addItem } from "../../cart/cartSlice";
 
-
-const transformProducts = (apiProducts) => {
-  return apiProducts.map((item) => ({
+const transformProducts = (apiProducts) =>
+  apiProducts.map((item) => ({
     id: item.id,
     name: item.name,
     image: item.image,
-    price: item.price 
+    price: item.price,
   }));
-};
 
 export default function MostViewedProducts() {
   const sliderRef = useRef(null);
+  const animationRef = useRef(null);
+
   const [loading, setLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [products, setProducts] = useState([]);
-  const navigate  = useNavigate();
-  const dispatch = useDispatch();
-  
+  const [isMobile, setIsMobile] = useState(false);
 
-   useEffect(() => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Detect Mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Fetch products
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setLoading(true)
+        setLoading(true);
         const apiProducts = await getMostViewedProducts();
         setProducts(transformProducts(apiProducts));
       } catch (error) {
@@ -37,126 +47,103 @@ export default function MostViewedProducts() {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
-   function handleAddToCart(e, product) {
-      e.stopPropagation();
-  
-      if (product.product_type === "variable") {
-        navigate(`/product-details/${product.product_slug}`);
-        return;
-      }
-      const normalizedProduct = normalizeProductForCart(product);
-      dispatch(addItem(normalizedProduct));
-    }
-
-
- 
+  const handleAddToCart = (e, product) => {
+    e.stopPropagation();
+    const normalizedProduct = normalizeProductForCart(product);
+    dispatch(addItem(normalizedProduct));
+  };
 
   const duplicated = [...products, ...products];
 
+  // Smooth Infinite Scroll (Desktop)
   useEffect(() => {
+    if (isMobile) return;
+
     const slider = sliderRef.current;
     if (!slider) return;
 
-    const interval = setInterval(() => {
+    const speed = 0.5;
+    const animate = () => {
       if (!isHovered) {
-        slider.scrollLeft += 1;
-        if (slider.scrollLeft >= slider.scrollWidth / 2) {
-          slider.scrollLeft = 0;
-        }
+        slider.scrollLeft += speed;
+        if (slider.scrollLeft >= slider.scrollWidth / 2) slider.scrollLeft = 0;
       }
-    }, 15);
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    animationRef.current = requestAnimationFrame(animate);
 
-    return () => clearInterval(interval);
-  }, [isHovered]);
+    return () => cancelAnimationFrame(animationRef.current);
+  }, [isHovered, isMobile]);
 
-  if (loading) {
-    return (
-      <Loader type="mostviewed" />
-    )
-  }
+  if (loading) return <Loader type="mostviewed" />;
 
   return (
-    <section className="w-full py-24 bg-gradient-to-b from-white to-purple-50">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="w-full py-20 md:py-28 bg-[#F1F5F9]">
+  <div className="max-w-7xl mx-auto px-4">
+    {/* Heading */}
+    <div className="text-center mb-14">
+      <h2 className="text-3xl md:text-4xl font-extrabold text-[#0F172A]">
+        Most{" "}
+        <span className="text-[#5B3DF5]">
+          Viewed Products
+        </span>
+      </h2>
+     
+    </div>
 
-        {/* Heading */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900">
-            Most{" "}
-            <span className="bg-gradient-to-r from-purple-400 to-indigo-500 bg-clip-text text-transparent">
-              Viewed Products
-            </span>
-          </h2>
-        </div>
-
-        {/* Slider */}
+    {/* Slider */}
+    <div
+      ref={sliderRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`flex gap-3 sm:gap-4 md:gap-6 pb-6 ${
+        isMobile
+          ? "overflow-x-auto scroll-smooth snap-x snap-mandatory"
+          : "overflow-hidden"
+      }`}
+    >
+      {duplicated.map((item, index) => (
         <div
-          ref={sliderRef}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          className="flex gap-10 overflow-hidden pb-10"
+          key={`${item.id}-${index}`}
+          className={`shrink-0 group cursor-pointer ${
+            isMobile ? "w-1/2 snap-start" : "w-1/5"
+          }`}
         >
-             {duplicated.map((item, index) => (
-               <div key={index} className="shrink-0 w-52 sm:w-64 group cursor-pointer">
-               <div className="
-                 relative bg-white/70 backdrop-blur-xl 
-                 border border-purple-100
-                 rounded-xl p-6
-                 shadow-lg
-                 overflow-hidden
-                 transition-shadow duration-500
-                 group-hover:shadow-2xl
-                 sm:h-[280px]
-                 h-[230px]  
-                 ">
-              {/* Image */}
-               <div className="flex justify-center mb-4">
-                <img
+          <div className="relative bg-white border border-[#E2E8F0] shadow-sm hover:shadow-md rounded-2xl p-3 md:p-4  transition-all duration-500 hover:-translate-y-0.5 h-auto">
+            {/* Image */}
+            <div className="flex justify-center items-center mb-2 md:mb-3 h-24 md:h-28">
+              <img
                 src={item.image}
                 alt={item.name}
-                className="h-16 sm:h-24 object-contain transition-transform duration-500 group-hover:scale-110"
-                />
-              </div>
+                className="object-contain h-full transition-transform duration-500 group-hover:scale-105"
+              />
+            </div>
 
-      {/* Text */}
-      <div className="text-center mb-4">
-        <h3 className="text-sm font-semibold text-gray-800 sm:text-base line-clamp-2">
-          {item.name}
-        </h3>
-        <p className="text-purple-500 font-bold mt-1">
-          ৳ {item.price?.toLocaleString()}
-        </p>
-      </div>
+            {/* Text */}
+            <div className="text-center mb-2">
+              <h3 className="text-xs sm:text-sm  font-semibold text-[#0F172A] line-clamp-2 h-[40px] md:h-[44px]">
+                {item.name}
+              </h3>
+              <p className="text-[#5B3DF5] font-bold mt-1 text-sm sm:text-base md:text-lg">
+                ৳ {item.price?.toLocaleString()}
+              </p>
+            </div>
 
-      {/* Add to Cart Button */}
-      <div className="
-        absolute bottom-4 left-1/2 -translate-x-1/2
-        w-[90%]  
-        transition-all duration-500
-      ">
-      
-          <button 
-           onClick={(e) => handleAddToCart(e, item)}
-           className="
-            w-full py-2 rounded-xl
-            bg-gradient-to-r from-purple-500 to-indigo-500
-            text-white font-medium
-            shadow-sm hover:shadow-md
-            hover:scale-105
-            transition-all duration-300
-          ">
-             Add to Cart
-          </button>
-      </div>
+            {/* Compact Button */}
+            <button
+              onClick={(e) => handleAddToCart(e, item)}
+             className="mt-2 w-full py-1.5 md:py-2 rounded-xl bg-[#5B3DF5] text-white font-medium text-xs sm:text-sm shadow-sm hover:bg-[#4338CA] transition-all duration-300 flex items-center justify-center"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   </div>
-))}
-        </div>
-      </div>
-    </section>
+</section>
   );
 }

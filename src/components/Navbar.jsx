@@ -56,7 +56,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed  z-40 w-full border-b b  bg-[#9F28E3] backdrop-blur-md text-stone-100">
+    <nav className="fixed z-40 w-full border-b  bg-white border-[#E2E8F0] text-[#0F172A]">
       <div className="container-custom h-14 flex items-center gap-4">
 
         {/* Mobile Menu */}
@@ -85,7 +85,7 @@ export default function Navbar() {
               {navItems.map((item) => (
                 <p
                   key={item.children}
-                  className="cursor-pointer text-muted-foreground hover:text-primary transition font-medium"
+                  className="cursor-pointer text-[#0F172A] hover:text-[#5B3DF5] transition font-medium"
                 >
                      {item.children ? (
                       <div>
@@ -117,8 +117,8 @@ export default function Navbar() {
                                   key={child.label}
                                   to={child.href}
                                   className={({ isActive }) =>
-                                    `block py-2 text-gray-300 hover:text-white ${
-                                      isActive ? "text-rose-50" : ""
+                                    `block py-2 text-[#64748B] hover:text-[#5B3DF5] ${
+                                      isActive ? "text-[#5B3DF5]" : ""
                                     }`
                                   }
                                   onClick={() => setIsOpen(false)}
@@ -152,11 +152,11 @@ export default function Navbar() {
         </Sheet>
 
         {/* Desktop Links */}
-        <div className="hidden lg:flex items-center gap-6 text-sm font-medium  text-white">
+        <div className="hidden lg:flex items-center gap-6 text-sm font-medium  text-[#0F172A]">
           {navItems.map((item) => (
             <div
               key={item}
-              className="relative hover:text-gray-900 cursor-pointer transition"
+              className="relative hover:text-[#5B3DF5] cursor-pointer transition"
               onMouseEnter={() => 
                 item.children && setOpenDropdown(item.label)
               }
@@ -165,11 +165,7 @@ export default function Navbar() {
               
                 {item.children ? (
                   <button
-                    className={`flex items-center gap-1 text-[13px] font-medium transition-colors ${
-                      item.children.some((c) => c.href === location)
-                        ? "text-rose-50"
-                        : "text-gray-100 hover:text-white"
-                    }`}
+                   className="flex items-center gap-1 text-[13px] font-medium text-[#0F172A] hover:text-[#5B3DF5] transition-colors"
                     data-testid={`nav-${item.label
                       .toLowerCase()
                       .replace(" ", "-")}`}
@@ -182,12 +178,12 @@ export default function Navbar() {
                    to={item.href}
                    className={({ isActive }) =>
                    item.isButton
-                 ? "ml-4 rounded-sm bg-pink-500 px-5 py-2 text-sm font-semibold text-gray-200 hover:bg-pink-600 transition whitespace-nowrap"
+                 ? "ml-4 rounded-sm px-5 py-2 text-sm font-semibol transition whitespace-nowrap"
                  : `text-sm font-medium transition-colors ${
                  isActive
-                 ? "text-gray-200"
-                : "text-gray-200 hover:text-white"
-                }`
+                 ? "text-[#5B3DF5]"
+                 : "text-[#0F172A] hover:text-[#5B3DF5]"
+                 }`
              }
             >
            {item.label}
@@ -201,17 +197,19 @@ export default function Navbar() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-md py-2 min-w-40 z-50"
+                      className="absolute top-full left-0 mt-2 bg-white border border-[#E2E8F0] shadow-sm rounded-md py-2 min-w-40 z-50"
                     >
                       {item.children.map((child) => (
                         <NavLink
                           key={child.label}
                           to={child.href}
-                          className={({ isActive }) =>
-                            `block whitespace-nowrap px-4 py-2 text-sm text-gray-400  hover:text-pink-500 transition-colors ${
-                              isActive ? "text-pink-600" : ""
+                           className={({ isActive }) =>
+                           `block whitespace-nowrap px-4 py-2 text-sm transition-colors ${
+                            isActive
+                            ? "text-[#5B3DF5]"
+                            : "text-[#0F172A] hover:text-[#5B3DF5]"
                             }`
-                          }
+                           }
                           data-testid={`nav-${child.label
                             .toLowerCase()
                             .replace(" ", "-")}`}
@@ -229,7 +227,7 @@ export default function Navbar() {
 
         {/* Center Search */}
         <div className="flex-1 max-w-xl relative mx-auto sm:hidden md:hidden lg:hidden">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
           <Input placeholder="Search products..." className="pl-9" />
         </div>
 
@@ -238,16 +236,16 @@ export default function Navbar() {
           
           {/* Cart */}
           <Link to="/cart">
-          <Button variant="ghost" size="icon" className="relative">
+          <Button variant="ghost" size="icon" className="relative text-[#64748B] hover:text-[#5B3DF5]">
             <ShoppingBag className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-white text-[10px] flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#5B3DF5] text-white text-[10px] flex items-center justify-center">
               {totalCartQuantity}
             </span>
           </Button>
            </Link>
 
           {/* User */}
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="text-[#64748B] hover:text-[#5B3DF5]">
             <User className="h-5 w-5" />
           </Button>
         </div>

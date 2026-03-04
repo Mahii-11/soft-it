@@ -55,12 +55,12 @@ export default function DealofDayProducts() {
 
 
   return (
-  <section className="bg-[#f3f3f3] py-10">
+  <section className="bg-[#F8FAFC] py-10">
      
   <div className="max-w-7xl mx-auto px-4">
     {/* Section Header */}
     <div className="mb-6">
-      <h2 className="text-2xl font-bold text-gray-800">{deal.deal_title}</h2>
+      <h2 className="text-2xl font-bold text-[#0F172A]">{deal.deal_title}</h2>
     </div>
 
     {/* Product Grid */}
@@ -71,11 +71,11 @@ export default function DealofDayProducts() {
           <div
 
           key={i}
-          className="bg-white p-3 rounded-md border hover:shadow-lg transition duration-300 cursor-pointer group flex flex-col h-full"
+          className="relative bg-white p-3 rounded-xl border border-[#E2E8F0] shadow-sm hover:shadow-md transition duration-300 cursor-pointer group flex flex-col h-full"
         >
            <Link to={`/product-details/${product.product_slug}`} >
           {/* Discount Badge */}
-          <span className="absolute bg-red-600 text-white text-xs px-2 py-1 rounded-sm z-10">
+          <span className="absolute top-2 left-2 bg-[#EF4444] text-white text-xs px-2 py-1 rounded-md font-medium">
             {deal.deal_offer}% OFF
           </span>
 
@@ -90,16 +90,16 @@ export default function DealofDayProducts() {
           </div>
 
           {/* Product Name */}
-          <h3 className="text-sm text-gray-700 line-clamp-2 mb-1">
+          <h3 className="text-sm text-[#0F172A] line-clamp-2 mb-1">
             {product.product_name}
           </h3>
 
           {/* Price Section */}
           <div className="flex items-center gap-2">
-            <p className="text-sm sm:text-base font-semibold text-gray-900">
+            <p className="text-sm sm:text-base font-semibold text-[#0F172A]">
               ৳{Number(product?.discount_price ?? 0).toLocaleString()}
             </p>
-            <p className="text-xs text-gray-500 line-through">
+            <p className="text-xs text-[#64748B] line-through">
               ৳{Number(product?.original_price ?? 0).toLocaleString()}
             </p>
           </div>
@@ -109,13 +109,13 @@ export default function DealofDayProducts() {
           <div className="mt-auto">
             <button 
               onClick={(e) => handleAddToCart(e, product)}
-              className="mt-3 w-full py-1 rounded-xl
-                  bg-gradient-to-r from-purple-500 to-indigo-500
-                  text-white font-medium
-                  text-sm sm:text-base 
-                  shadow-md hover:shadow-lg
-                  hover:scale-105
-                  transition-all duration-300"
+              className="mt-3 w-full py-2 rounded-xl 
+             bg-[#5B3DF5] 
+             text-white font-medium
+              text-sm sm:text-base 
+             hover:bg-[#4338CA]
+              transition-colors duration-300"
+            
             >
                  {product.product_type === "single"
                  ? "Add to Cart"

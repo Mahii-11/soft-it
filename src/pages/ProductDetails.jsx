@@ -408,6 +408,7 @@ export default function ProductDetails() {
                
                <div 
                  className="bg-white p-3 rounded-md border hover:shadow-lg transition duration-300 cursor-pointer group flex flex-col h-full">
+                 <Link to={`/product-details/${rp.slug}`}>
                   <div className="h-28 sm:h-40 flex items-center justify-center mb-2 overflow-hidden relative">
                    <img
                    src={rp.thumbnail || "/images/motorola.png"}
@@ -431,8 +432,7 @@ export default function ProductDetails() {
                  <p className={`mt-1 text-sm font-medium ${rp.stock?.in_stock ? "text-green-600" : "text-red-600"}`}>
                   {rp.stock?.in_stock ? "In Stock" : "Out of Stock"}
                  </p>
-                
-
+                 </Link>
                   <button 
                    onClick={() => handleAddToCart(product)}
                    className="mt-3 w-full py-1 rounded-xl
@@ -445,11 +445,9 @@ export default function ProductDetails() {
                  >
                   Add to Cart
                  </button>
-                  </div>
-               
+                </div>
                 ))}
                 </div>
-                
               </div>
              )}
           </div>
