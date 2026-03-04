@@ -9,7 +9,7 @@ export const offerBanners = [
   {
     id: 1,
     link: "#",
-    image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=1200&auto=format&fit=crop",
+    image: "/images/heroImage-4.jpg",
   },
   {
     id: 2,
@@ -139,20 +139,19 @@ export default function HeroSection() {
         </div>
 
         {/* RIGHT SIDE BANNERS */}
+
         <div className="flex flex-col gap-6">
-          <div className="rounded-xl overflow-hidden bg-white">
-            {offerBanners.length > 0 && 
-              offerBanners.map((banner) => (
-                <Link key={banner.id} to={banner.link}>
-                    <img
-                     src={banner.image}
-                     className="w-full h-[200px] object-cover"
+             {offerBanners.length > 0 && 
+             offerBanners.map((banner) => (
+             <Link key={banner.id} to={banner.link} className="rounded-xl overflow-hidden bg-white">
+            <img
+            src={banner.image}
+            className="w-full h-[200px] object-cover"
             />
-                </Link>
-              ))
-            }
-          </div>
-        </div>
+           </Link>
+            ))
+           }
+        </div> 
       </div>
     </section>
   );

@@ -86,11 +86,11 @@ export default function BannerSection() {
 
                 <div className="mt-6">
                   {item.isLink ? (
-                    <button className="px-6 py-2.5 rounded-full border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-50 transition-colors">
+                    <button className="px-3 py-1.5 sm:px-4 sm:py-2 text-sm rounded-full border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-50 transition-colors">
                       {item.buttonText}
                     </button>
                   ) : (
-                    <button className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold hover:bg-blue-700 transition-colors">
+                    <button className="bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 text-sm  rounded-xl font-bold hover:bg-blue-700 transition-colors">
                       {item.buttonText}
                     </button>
                   )}
