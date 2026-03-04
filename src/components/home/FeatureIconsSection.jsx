@@ -52,7 +52,7 @@ export default function WhyChooseUsSection() {
         {/* Section Heading */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Why Shop {""}<span className="text-[#5B3DF5] bg-clip-text text-transparent">With Us?</span>
+            Why Shop {""}<span className="text-[#5B3DF5]">With Us?</span>
           </h2>
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
             We provide the best shopping experience with high-quality products,

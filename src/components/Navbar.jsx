@@ -9,7 +9,7 @@ import {
 } from "../components/ui/sheet";
 import { Input } from "./ui/input";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -17,8 +17,29 @@ import {  getTotalCartQuantity } from "../cart/cartSlice";
 
 export default function Navbar() {
   const [openDropdown, setOpenDropdown] = useState(null);
-
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const totalCartQuantity = useSelector(getTotalCartQuantity);
+
+
+  useEffect(() => {
+  const handleScroll = () => {
+    if (window.scrollY > lastScrollY) {
+      // Scrolling down
+      setShowNavbar(false);
+    } else {
+      // Scrolling up
+      setShowNavbar(true);
+    }
+    setLastScrollY(window.scrollY);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+  };
+}, [lastScrollY]);
 
 
 
@@ -56,7 +77,9 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed z-40 w-full border-b  bg-white border-[#E2E8F0] text-[#0F172A]">
+    <nav className={`fixed z-40 w-full border-b bg-white border-[#E2E8F0] text-[#0F172A] transition-transform duration-300 ${
+    showNavbar ? "translate-y-0" : "-translate-y-full"
+  }`}>
       <div className="container-custom h-14 flex items-center gap-4">
 
         {/* Mobile Menu */}

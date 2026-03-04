@@ -4,6 +4,8 @@ import { Input } from "./ui/input";
 import { Link } from "react-router-dom";
 
 export default function Header() {
+  
+
   return (
     <nav className="sticky top-0 z-50 w-full border border-[#E2E8F0] bg-[#F8FAFC] backdrop-blur-md">
       <div className="container-custom flex h-16 items-center justify-between gap-4">
@@ -31,7 +33,7 @@ export default function Header() {
             />
           </div>
         </div>
-
+       
          <div className="flex items-center gap-2 sm:gap-4">
          <span className="text-[#5B3DF5] bg-clip-text  text-xl font-bold font-display hidden sm:block tracking-tight">
           Online 
@@ -44,7 +46,7 @@ export default function Header() {
         {/* Actions */}
         <div className="sm:flex items-center gap-2 sm:gap-4 hidden">
          <MapPin className="h-5 w-5 text-[#94A3B8]" /> 
-         <span className="text-[#64748B] bg-clip-text text-transparent  text-xl font-bold font-display hidden sm:block tracking-tight">
+         <span className="text-[#64748B] text-xl font-bold font-display hidden sm:block tracking-tight">
           Our Store
          </span>
         </div>
