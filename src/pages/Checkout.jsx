@@ -1,5 +1,10 @@
 import { useSelector } from "react-redux";
 import { getCart, getTotalCartPrice } from "../cart/cartSlice";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/lebel";
+import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
+import { Button } from "../components/ui/button";
+
 
 
 
@@ -16,198 +21,135 @@ export default function CheckoutPage() {
 
 
   return (
-    <div className="bg-gray-100 min-h-screen py-6 md:py-10 px-4">
-      <div className="max-w-6xl mx-auto bg-white p-6 md:p-10 rounded-lg shadow-lg">
+   
+  <div className="bg-gray-100 min-h-screen py-16 px-3 sm:px-4 md:px-6">
+    
+    <div className="max-w-7xl mx-auto">
+      
+      <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 lg:p-10">
+        
+        {/* Main Responsive Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
 
-        {/* Top Section: Delivery Info + Order Summary */}
-        <div className="flex flex-col lg:flex-row gap-8">
+          {/* ================= LEFT SIDE ================= */}
+          <div className="lg:col-span-2 space-y-6">
 
-          {/* Left Side: Delivery Information */}
-          <div className="w-full lg:w-2/3 bg-gray-50 p-6 rounded-lg shadow-inner">
-            <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Shipping Address */}
+            <div className="bg-background p-4 sm:p-6 rounded-2xl border">
+              <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">
+                Shipping Address
+              </h2>
 
-              <Input label="Full Name" name="fullname"/>
-               <Select 
-               label="Region"
-               name="region"
-               options={[
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                <div className="sm:col-span-2 space-y-2">
+                  <Label>Street Address</Label>
+                  <Input className="h-11" />
+                </div>
 
-                {value: "dhaka", label: "Dhaka"},
-                {value: "sylhet", label: "Sylhet"}
+                <div className="space-y-2">
+                  <Label>City</Label>
+                  <Input className="h-11" />
+                </div>
 
-               ]}
-               />
-
-               <Input label="Phone Number" name="phone" />
-               <Select 
-                label="City" 
-                name="city" 
-                options={[
-                { value: "dhaka", label: "Dhaka" },
-                { value: "tangail", label: "Tangail" },
-                 ]}
-                 />
-
-               <Input label="Building / House No / Floor / Street" name="building" />
-                <Select 
-                label="Area" 
-                name="area" 
-                options={[
-                { value: "agargaon", label: "Agargaon" },
-                { value: "shewrapara", label: "Shewrapara" },
-                { value: "kazipara", label: "Kazipara"}
-                ]}
-                 />
-
-              <Input label="Colony / Suburb / Locality / Landmark"  name="colony" />
-              <Input label="Address"  name="address" />
+                <div className="space-y-2">
+                  <Label>State</Label>
+                  <Input className="h-11" />
+                </div>
+              </div>
             </div>
 
-            {/* Label Selection */}
-            <div className="flex gap-4 mt-4">
-              <button className="flex-1 py-2 border border-blue-500 rounded text-blue-500 font-medium hover:bg-blue-50">
-                OFFICE
-              </button>
-              <button className="flex-1 py-2 border border-red-500 rounded text-red-500 font-medium hover:bg-red-50">
-                HOME
-              </button>
+            {/* Payment Method */}
+            <div className="bg-background p-4 sm:p-6 rounded-2xl border">
+              <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">
+                Payment Method
+              </h2>
+
+              <RadioGroup defaultValue="card" className="flex flex-col gap-4">
+                
+                <div className="flex items-center gap-3 rounded-xl border p-4 cursor-pointer hover:bg-muted/50 transition">
+                  <RadioGroupItem value="card" />
+                  <Label className="font-normal cursor-pointer flex-1 text-sm sm:text-base">
+                    Credit/Debit Card (Simulated)
+                  </Label>
+                </div>
+
+                <div className="flex items-center gap-3 rounded-xl border p-4 cursor-pointer hover:bg-muted/50 transition">
+                  <RadioGroupItem value="cod" />
+                  <Label className="font-normal cursor-pointer flex-1 text-sm sm:text-base">
+                    Cash on Delivery
+                  </Label>
+                </div>
+              </RadioGroup>
             </div>
 
-            <button className="mt-6 bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600">
-              SAVE
-            </button>
           </div>
 
-          {/* Right Side: Order Summary */}
-          <div className="w-full lg:w-1/3 bg-gray-50 p-6 rounded-lg shadow-inner">
-            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+          {/* ================= RIGHT SIDE ================= */}
+          <div className="bg-[#F8FAFC] p-4 sm:p-6 rounded-2xl shadow-inner h-fit lg:sticky lg:top-24">
 
-            {/* Items */}
-           <div className="flex flex-col gap-4 mb-4">
-             {cartItems.map((product) => (
-             <div key={product.product_slug} className="flex items-center gap-4">
-             <img
-             src={product.image || "/images/motorola.png"}
-             alt={product.product_name}
-             className="w-16 h-16 object-cover rounded"
-              onError={(e) => {
+            <h2 className="text-lg sm:text-xl font-semibold mb-4">
+              Order Summary
+            </h2>
+
+            {/* Cart Items */}
+            <div className="flex flex-col gap-4 mb-4 max-h-[300px] overflow-y-auto pr-2">
+              {cartItems.map((product) => (
+                <div
+                  key={product.product_slug}
+                  className="flex items-start gap-3"
+                >
+                  <img
+                    src={product.image || "/images/motorola.png"}
+                    alt={product.product_name}
+                    className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg"
+                    onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = "/images/motorola.png";
                     }}
-             />
-            <div className="flex-1">
-            <p className="font-medium">{product.product_name}</p>
-            <p className="text-gray-500 text-sm">Qty: {product.quantity}</p>
-            <p className="text-red-500 font-semibold">
-             ৳{(product.quantity * product.discount_price).toFixed(2)}
-            </p>
-            </div>
-            </div>
-             ))}
+                  />
+
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm sm:text-base truncate">
+                      {product.product_name}
+                    </p>
+
+                    <p className="text-gray-500 text-xs sm:text-sm">
+                      Qty: {product.quantity}
+                    </p>
+
+                    <p className="text-red-500 font-semibold text-sm sm:text-base">
+                      ৳{(product.quantity * product.discount_price).toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Delivery Fee */}
-            <div className="flex justify-between mb-2">
+            <div className="flex justify-between text-sm sm:text-base mb-2">
               <span>Delivery Fee</span>
-             <span>
-              {deliveryFee === 0 ? "Free" : `৳${deliveryFee}`}
-             </span>
+              <span>
+                {deliveryFee === 0 ? "Free" : `৳${deliveryFee}`}
+              </span>
             </div>
 
             {/* Total */}
-            <div className="flex justify-between font-bold text-lg mb-4">
+            <div className="flex justify-between font-bold text-base sm:text-lg mb-4 border-t pt-3">
               <span>Total:</span>
               <span>৳{total.toFixed(2)}</span>
             </div>
 
-            <button className="w-full bg-gray-400 text-white py-2 rounded cursor-not-allowed">
+            <Button className="w-full h-11 text-sm sm:text-base">
               Proceed to Pay
-            </button>
+            </Button>
           </div>
-        </div>
 
-        {/* Bottom Section: Promotion / Additional Info */}
-        <div className="mt-8 bg-gray-50 p-6 rounded-lg shadow-inner">
-          <h2 className="text-lg font-semibold mb-2">Promotion</h2>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Enter Store Code"
-              className="flex-1 p-3 border rounded"
-            />
-            <button className="bg-blue-500 text-white px-4 rounded">APPLY</button>
-          </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }
 
-
-
-
-function Input({label, type="text", name}) {
-  const isPhone = name === "phone";
-
-  const placeholderMap = {
-    fullName: "Enter your full name",
-    phone: "01XXXXXXXXX",
-    building: "Please enter",
-    colony: "Colony / Suburb / Locality / Landmark",
-
-    
-  }
-
-  return (
-    <div>
-      <label  className="block text-sm font-medium text-gray-600 mb-2">
-        {label}
-      </label>
-        <input
-        type={type}
-        name={name}
-        required
-        placeholder={placeholderMap[name] || `Enter ${label}`}
-        pattern={
-             isPhone
-            ? "^(\\+8801[3-9]\\d{8}|01[3-9]\\d{8})$"
-            : undefined
-        }
-        className="w-full rounded-xl border border-gray-300 px-4 py-3 
-        focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-        invalid:border-red-500 invalid:ring-red-400
-        transition duration-300 outline-none shadow-sm hover:shadow-md"
-      />
-    </div>
-  )
-}
-
-
-function Select({label, name, options = []}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium text-gray-600 mb-2">
-        {label}
-      </label>
-      <select
-      name={name}
-      required
-      className="w-full rounded-xl border border-gray-300 px-4 py-3
-        focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-        transition duration-300 outline-none shadow-sm hover:shadow-md"
-      defaultValue="" 
-      >
-         <option value="" disabled>
-          Select {label}
-        </option>
-        {options.map((opt, i) => (
-          <option key={i} value={opt.value || opt}>
-            {opt.label || opt}
-          </option>
-        ))}
-      </select>
-    </div>
-  )
-}
 
