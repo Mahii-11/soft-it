@@ -4,6 +4,8 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/lebel";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import { Button } from "../components/ui/button";
+import { useState } from "react";
+import { createOrder } from "../services/api";
 
 
 
@@ -14,9 +16,69 @@ import { Button } from "../components/ui/button";
 export default function CheckoutPage() {
   const cartItems = useSelector(getCart);
   const subtotal = useSelector(getTotalCartPrice);
-  const deliveryFee = subtotal > 1000 ? 0 : 70;
+  const [deliveryType, setDeliveryType] = useState("inside");
+  const deliveryFee = deliveryType === "inside" ? 60 : 120;
   const total = subtotal + deliveryFee;
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+     shipping_name: "",
+     order_phone: "",
+     shipping_address: "",
+    
 
+  });
+
+  const handleChange = (e) => {
+  setFormData({
+    ...formData,
+    [e.target.name]: e.target.value,
+  });
+};
+
+const handleOrderSubmit = async () => {
+  try {
+    setLoading(true); // button disabled
+
+    const data = new FormData();
+    data.append("shipping_name", formData.shipping_name);
+    data.append("order_phone", formData.order_phone);
+    data.append("shipping_address", formData.shipping_address);
+    data.append("total_amount", total); 
+    data.append("shipping_cost", deliveryFee);
+    data.append("shipping_method", deliveryType === "inside" ? 21 : 22);
+    data.append("payment_method", 1);
+
+    cartItems.forEach((product, index) => {
+      data.append(`product_data[${index}][product_id]`, product.id);
+      data.append(`product_data[${index}][unit_price]`, product.discount_price);
+      data.append(`product_data[${index}][qty]`, product.quantity);
+      data.append(`product_data[${index}][variation_color_id]`, product.color_name);
+      data.append(`product_data[${index}][variation]`, product.variation_size);
+      data.append(`product_data[${index}][size_id]`, product.size_id);
+      data.append(`product_data[${index}][color_id]`, product.color_id);
+      data.append(`product_data[${index}][product_image]`, product.image);
+      data.append(`product_data[${index}][product_name]`, product.product_name);
+    });
+
+    // 🔹 Debug: FormData entries check
+    console.log("===== FormData Entries =====");
+    for (let [key, value] of data.entries()) {
+      console.log(key, value);
+    }
+    console.log("============================");
+
+    const result = await createOrder(data);
+
+    console.log("Order Result:", result);
+    alert("Order placed successfully 🔥");
+
+  } catch (error) {
+    console.error("Error in createOrder:", error);
+    alert("Order failed ❌");
+  } finally {
+    setLoading(false);
+  }
+};
 
 
 
@@ -43,18 +105,32 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
                 <div className="sm:col-span-2 space-y-2">
-                  <Label>Street Address</Label>
-                  <Input className="h-11" />
+                  <Label>Your Name</Label>
+                  <Input
+                    name="shipping_name"
+                    value={formData.shipping_name}
+                    onChange={handleChange}
+                    className="h-11"
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>City</Label>
-                  <Input className="h-11" />
+                  <Label>Your Phone</Label>
+                  <Input className="h-11"
+                  name="order_phone"
+                  value={formData.order_phone}
+                  onChange={handleChange}
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>State</Label>
-                  <Input className="h-11" />
+                  <Label>Your Address</Label>
+                  <Input className="h-11"
+                   name="shipping_address"
+                   value={formData.shipping_address}
+                   onChange={handleChange}
+                  
+                  />
                 </div>
               </div>
             </div>
@@ -65,19 +141,22 @@ export default function CheckoutPage() {
                 Payment Method
               </h2>
 
-              <RadioGroup defaultValue="card" className="flex flex-col gap-4">
+              <RadioGroup 
+              value={deliveryType}
+              onValueChange={setDeliveryType}
+              className="flex flex-col gap-4">
                 
                 <div className="flex items-center gap-3 rounded-xl border p-4 cursor-pointer hover:bg-muted/50 transition">
-                  <RadioGroupItem value="card" />
+                  <RadioGroupItem value="inside" />
                   <Label className="font-normal cursor-pointer flex-1 text-sm sm:text-base">
-                    Credit/Debit Card (Simulated)
+                    Inside Dhaka - 60Tk
                   </Label>
                 </div>
 
                 <div className="flex items-center gap-3 rounded-xl border p-4 cursor-pointer hover:bg-muted/50 transition">
-                  <RadioGroupItem value="cod" />
+                  <RadioGroupItem value="outside" />
                   <Label className="font-normal cursor-pointer flex-1 text-sm sm:text-base">
-                    Cash on Delivery
+                    Outside Dhaka - 120TK
                   </Label>
                 </div>
               </RadioGroup>
@@ -117,7 +196,10 @@ export default function CheckoutPage() {
                     <p className="text-gray-500 text-xs sm:text-sm">
                       Qty: {product.quantity}
                     </p>
-
+                    <div className="text-muted-foreground text-xs sm:text-sm mt-0.5 flex flex-wrap gap-2">
+                      {product.variation_size && <span>Size: {product.variation_size}</span>}
+                      {product.color_name && <span>Color: {product.color_name}</span>}
+                     </div>
                     <p className="text-red-500 font-semibold text-sm sm:text-base">
                       ৳{(product.quantity * product.discount_price).toFixed(2)}
                     </p>
@@ -140,9 +222,13 @@ export default function CheckoutPage() {
               <span>৳{total.toFixed(2)}</span>
             </div>
 
-            <Button className="w-full h-11 text-sm sm:text-base">
-              Proceed to Pay
-            </Button>
+              <Button
+                 onClick={handleOrderSubmit}
+                 disabled={loading}
+                 className="w-full h-11 text-sm sm:text-base"
+               >
+                 {loading ? "Processing..." : "Proceed to Pay"}
+               </Button>
           </div>
 
         </div>

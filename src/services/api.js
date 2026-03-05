@@ -114,3 +114,28 @@ export const getProductDetailsBySlug = async (slug) => {
     throw error;
   }
 };
+
+// Post Api
+
+export async function createOrder(orderData) {
+  try {
+    console.log("Creating order with data:", orderData);
+
+    const response = await fetch(`${BASE_URL}store-order`, {
+      method: "POST",
+      body: orderData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text(); // read server error message
+      throw new Error(`Server Error ${response.status}: ${errorText}`);
+    }
+
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    console.error("Error in createOrder:", error);
+    throw error;
+  }
+}

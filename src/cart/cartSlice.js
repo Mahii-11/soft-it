@@ -32,7 +32,13 @@ const cartSlice = createSlice({
                 state.cart.push({
                     ...newItem,
                     quantity: newItem.quantity || 1,
-                    totalPrice: (newItem.quantity || 1) * newItem.discount_price
+                    totalPrice: (newItem.quantity || 1) * newItem.discount_price,
+                    id: newItem.id || 0,
+                    size_id: newItem.size_id || 0,
+                    color_id: newItem.color_id || 0,
+                    variation_id: newItem.variation_id || 0,
+                    color_name: newItem.color_name || "",
+                    variation_size: newItem.variation_size || "",
                 });
             }
         },
