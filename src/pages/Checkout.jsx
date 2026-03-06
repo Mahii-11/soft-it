@@ -1,3 +1,4 @@
+import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import { getCart, getTotalCartPrice } from "../cart/cartSlice";
 import { Input } from "../components/ui/input";
@@ -6,6 +7,8 @@ import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import { Button } from "../components/ui/button";
 import { useState } from "react";
 import { createOrder } from "../services/api";
+import { useDispatch } from "react-redux";
+import { clearCart } from "../cart/cartSlice";
 
 
 
@@ -15,6 +18,7 @@ import { createOrder } from "../services/api";
 
 export default function CheckoutPage() {
   const cartItems = useSelector(getCart);
+  const dispatch = useDispatch();
   const subtotal = useSelector(getTotalCartPrice);
   const [deliveryType, setDeliveryType] = useState("inside");
   const deliveryFee = deliveryType === "inside" ? 60 : 120;
@@ -24,9 +28,8 @@ export default function CheckoutPage() {
      shipping_name: "",
      order_phone: "",
      shipping_address: "",
-    
-
   });
+
 
   const handleChange = (e) => {
   setFormData({
@@ -36,8 +39,49 @@ export default function CheckoutPage() {
 };
 
 const handleOrderSubmit = async () => {
+
+   if (loading) return;
+
+  if (cartItems.length === 0) {
+    Swal.fire({
+      icon: "warning",
+      title: "Cart is Empty",
+      text: "Please add product to cart first",
+    });
+    return;
+  }
+
+   if (!formData.shipping_name || !formData.order_phone || !formData.shipping_address) {
+    Swal.fire({
+      icon: "warning",
+      title: "Missing Information",
+      text: "Please fill all required fields",
+    });
+    return;
+  }
+
+   const phoneRegex = /^01[3-9]\d{8}$/;
+
+  if (!phoneRegex.test(formData.order_phone)) {
+    Swal.fire({
+      icon: "error",
+      title: "Invalid Phone Number",
+      text: "Please enter a valid Bangladeshi phone number",
+    });
+    return;
+  }
+
   try {
-    setLoading(true); // button disabled
+      setLoading(true);
+
+      Swal.fire({
+      title: "Processing Order...",
+      text: "Please wait while we place your order",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
 
     const data = new FormData();
     data.append("shipping_name", formData.shipping_name);
@@ -69,13 +113,26 @@ const handleOrderSubmit = async () => {
 
     const result = await createOrder(data);
 
-    console.log("Order Result:", result);
-    alert("Order placed successfully 🔥");
+     console.log("Order Result:", result);
+     Swal.fire({
+      icon: "success",
+      title: "Order Placed Successfully 🎉",
+      text: "Your order has been confirmed!",
+      confirmButtonColor: "#16a34a",
+    }).then(() => {
+      dispatch(clearCart());
+    
+    });
 
   } catch (error) {
-    console.error("Error in createOrder:", error);
-    alert("Order failed ❌");
-  } finally {
+     console.error("Error in createOrder:", error);
+     Swal.fire({
+      icon: "error",
+      title: "Order Failed ❌",
+      text: "Something went wrong. Please try again.",
+      confirmButtonColor: "#dc2626",
+    });
+  }  finally {
     setLoading(false);
   }
 };
