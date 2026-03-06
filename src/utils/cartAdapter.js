@@ -18,12 +18,14 @@ export function normalizeProductForCart(product, selectedVariation, selectedColo
     product_name: product.product_name || product.name || "Unknown Product",
     image: product.thumb_image || product.image || product.thumbnail || "/images/motorola.png",
     variation_id: selectedVariation?.id || null,
+    size_id: selectedVariation?.size_id || null,
     variation_size_id: selectedVariation?.size_id || null, // backend match
     variation_size: selectedVariation?.size || null,
     color_id: selectedColor?.color_id || selectedColor?.id || null, // backend match
     color_name: selectedColor?.name || null,
     quantity: quantity,
     discount_price: numericPrice,
+    unit_price: numericPrice,
     totalPrice: numericPrice,
   };
 }

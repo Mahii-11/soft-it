@@ -93,36 +93,46 @@ const handleOrderSubmit = async () => {
     data.append("payment_method", 1);
 
     cartItems.forEach((product, index) => {
-      data.append(`product_data[${index}][product_id]`, product.id);
-      data.append(`product_data[${index}][unit_price]`, product.discount_price);
+      data.append(`product_data[${index}][product_id]`, product.product_id);
+      data.append(`product_data[${index}][unit_price]`, product.unit_price);
       data.append(`product_data[${index}][qty]`, product.quantity);
       data.append(`product_data[${index}][variation_color_id]`, product.color_name);
       data.append(`product_data[${index}][variation]`, product.variation_size);
       data.append(`product_data[${index}][size_id]`, product.size_id);
       data.append(`product_data[${index}][color_id]`, product.color_id);
       data.append(`product_data[${index}][product_image]`, product.image);
+      //data.append(`product_data[${index}][product_image]`,product.image.split("/").pop());
       data.append(`product_data[${index}][product_name]`, product.product_name);
     });
 
     // 🔹 Debug: FormData entries check
     console.log("===== FormData Entries =====");
-    for (let [key, value] of data.entries()) {
-      console.log(key, value);
+   for (let pair of data.entries()) {
+    console.log(pair[0], pair[1]);
     }
     console.log("============================");
 
     const result = await createOrder(data);
 
-     console.log("Order Result:", result);
-     Swal.fire({
-      icon: "success",
-      title: "Order Placed Successfully 🎉",
-      text: "Your order has been confirmed!",
-      confirmButtonColor: "#16a34a",
-    }).then(() => {
-      dispatch(clearCart());
-    
-    });
+console.log("Order Result:", result);
+
+if (result.success) {
+  Swal.fire({
+    icon: "success",
+    title: "Order Placed Successfully 🎉",
+    text: "Your order has been confirmed!",
+    confirmButtonColor: "#16a34a",
+  }).then(() => {
+    dispatch(clearCart());
+  });
+
+} else {
+  Swal.fire({
+    icon: "error",
+    title: "Order Failed ❌",
+    text: result.msg || "Order creation failed!",
+  });
+}
 
   } catch (error) {
      console.error("Error in createOrder:", error);
