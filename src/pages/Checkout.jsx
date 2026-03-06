@@ -87,6 +87,7 @@ const handleOrderSubmit = async () => {
     data.append("shipping_name", formData.shipping_name);
     data.append("order_phone", formData.order_phone);
     data.append("shipping_address", formData.shipping_address);
+    data.append("product_qty", cartItems.reduce((sum, item) => sum + item.quantity, 0));
     data.append("total_amount", total); 
     data.append("shipping_cost", deliveryFee);
     data.append("shipping_method", deliveryType === "inside" ? 21 : 22);
@@ -107,14 +108,14 @@ const handleOrderSubmit = async () => {
 
     // 🔹 Debug: FormData entries check
     console.log("===== FormData Entries =====");
-   for (let pair of data.entries()) {
-    console.log(pair[0], pair[1]);
-    }
+   for (let [key, value] of data.entries()) {
+   console.log(key, value);
+   }
     console.log("============================");
 
     const result = await createOrder(data);
 
-console.log("Order Result:", result);
+     console.log("Order Result:", result);
 
 if (result.success) {
   Swal.fire({
