@@ -117,7 +117,7 @@ export const getProductDetailsBySlug = async (slug) => {
 
 // Post Api
 
-export async function createOrder(orderData) {
+/*export async function createOrder(orderData) {
   try {
     console.log("Creating order with data:", orderData);
 
@@ -133,6 +133,34 @@ export async function createOrder(orderData) {
 
     const data = await response.json();
     return data;
+
+  } catch (error) {
+    console.error("Error in createOrder:", error);
+    throw error;
+  }
+} */
+
+
+export async function createOrder(orderData) {
+  try {
+    const response = await fetch(`${BASE_URL}store-order`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: orderData,
+    });
+
+    console.log("STATUS:", response.status);
+
+    const text = await response.text();
+    console.log("SERVER RESPONSE:", text);
+
+    if (!text) {
+      return { success: false, msg: "Empty response from server" };
+    }
+
+    return JSON.parse(text);
 
   } catch (error) {
     console.error("Error in createOrder:", error);

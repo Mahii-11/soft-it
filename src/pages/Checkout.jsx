@@ -101,8 +101,8 @@ const handleOrderSubmit = async () => {
       data.append(`product_data[${index}][variation]`, product.variation_size);
       data.append(`product_data[${index}][size_id]`, product.size_id);
       data.append(`product_data[${index}][color_id]`, product.color_id);
-      data.append(`product_data[${index}][product_image]`, product.image);
-      //data.append(`product_data[${index}][product_image]`,product.image.split("/").pop());
+     // data.append(`product_data[${index}][product_image]`, product.image);
+      data.append(`product_data[${index}][product_image]`,product.image.split("/").pop());
       data.append(`product_data[${index}][product_name]`, product.product_name);
     });
 
