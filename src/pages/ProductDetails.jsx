@@ -433,7 +433,8 @@ export default function ProductDetails() {
                   {rp.stock?.in_stock ? "In Stock" : "Out of Stock"}
                  </p>
                  </Link>
-                  <button 
+                <div className="mt-auto">
+                    <button 
                    onClick={() => handleAddToCart(product)}
                    className="mt-3 w-full py-1 rounded-xl
                   bg-gradient-to-r from-purple-500 to-indigo-500
@@ -445,6 +446,7 @@ export default function ProductDetails() {
                  >
                   Add to Cart
                  </button>
+                </div>
                 </div>
                 ))}
                 </div>

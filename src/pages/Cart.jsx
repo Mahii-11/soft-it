@@ -40,23 +40,23 @@ export default function Cart() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-  {cartItems.map((item) => (
-    <div
-      key={item.product_slug + item.variation_id + item.color_id}
-      className="bg-white p-4 sm:p-5 md:p-6 rounded-xl border flex  flex-row gap-4 items-start sm:items-center transition-shadow hover:shadow-lg"
-    >
-      {/* Image */}
-      <div className="w-24 h-24 sm:w-24 md:w-28 lg:w-32  sm:h-24 md:h-28 lg:h-32 bg-muted/20 rounded-lg overflow-hidden flex-shrink-0">
-        <img
-          src={item.image || "/images/motorola.png"}
-          alt={item.product_name}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "/images/motorola.png";
-          }}
-        />
-      </div>
+             {cartItems.map((item) => (
+                <div
+                key={item.product_slug + item.variation_id + item.color_id}
+               className="bg-white p-4 sm:p-5 md:p-6 rounded-xl border flex  flex-row gap-4 items-start sm:items-center transition-shadow hover:shadow-lg"
+                >
+               {/* Image */}
+               <div className="w-24 h-24 sm:w-24 md:w-28 lg:w-32  sm:h-24 md:h-28 lg:h-32 bg-muted/20 rounded-lg overflow-hidden flex-shrink-0">
+                    <img
+                       src={item.image || "/images/motorola.png"}
+                       alt={item.product_name}
+                       className="w-full h-full object-cover"
+                       onError={(e) => {
+                       e.target.onerror = null;
+                       e.target.src = "/images/motorola.png";
+                      }}
+                      />
+                      </div>
 
       {/* Product Details */}
       <div className="flex-1 min-w-0 flex flex-col gap-1">
@@ -105,7 +105,7 @@ export default function Cart() {
       </div>
     </div>
   ))}
-</div>
+          </div>
 
           {/* Summary */}
           <div className="lg:col-span-1">
