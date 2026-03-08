@@ -6,15 +6,29 @@ export default function AuthPage() {
   const [showPass, setShowPass] = useState(false);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 mt-8">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+    <div className="min-h-screen flex  justify-center pt-20 bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4">
+      <div className="w-full max-w-md min-h-[520px] bg-white/90 backdrop-blur rounded-3xl shadow-xl border border-gray-200 p-8">
+
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            {isLogin ? "Welcome Back 👋" : "Create Account"}
+          </h2>
+          <p className="text-gray-500 text-sm mt-1">
+            {isLogin
+              ? "Login to continue shopping"
+              : "Register to start your journey"}
+          </p>
+        </div>
 
         {/* Toggle */}
-        <div className="flex bg-gray-200 rounded-full p-1 mb-8">
+        <div className="flex bg-gray-100 rounded-full p-1 mb-8">
           <button
             onClick={() => setIsLogin(true)}
-            className={`flex-1 py-2 rounded-full font-medium transition ${
-              isLogin ? "bg-white text-blue-600 shadow" : "text-gray-600"
+            className={`flex-1 py-2 text-sm rounded-full font-medium transition ${
+              isLogin
+                ? "bg-blue-600 text-white shadow"
+                : "text-gray-600 hover:text-gray-800"
             }`}
           >
             Login
@@ -22,8 +36,10 @@ export default function AuthPage() {
 
           <button
             onClick={() => setIsLogin(false)}
-            className={`flex-1 py-2 rounded-full font-medium transition ${
-              !isLogin ? "bg-white text-blue-600 shadow" : "text-gray-600"
+            className={`flex-1 py-2 text-sm rounded-full font-medium transition ${
+              !isLogin
+                ? "bg-blue-600 text-white shadow"
+                : "text-gray-600 hover:text-gray-800"
             }`}
           >
             Register
@@ -33,71 +49,46 @@ export default function AuthPage() {
         {/* FORM */}
         <form className="space-y-4">
 
-          {/* NAME */}
           {!isLogin && (
-            <div className="relative">
-              <User className="absolute left-3 top-3 text-gray-400" size={18}/>
-              <input
-                type="text"
-                placeholder="Full Name"
-                className="w-full border rounded-lg py-2 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            <InputField icon={<User size={18} />} placeholder="Full Name" />
           )}
 
-          {/* PHONE */}
           {!isLogin && (
-            <div className="relative">
-              <Phone className="absolute left-3 top-3 text-gray-400" size={18}/>
-              <input
-                type="text"
-                placeholder="Phone Number"
-                className="w-full border rounded-lg py-2 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            <InputField icon={<Phone size={18} />} placeholder="Phone Number" />
           )}
 
-          {/* EMAIL */}
+          <InputField icon={<Mail size={18} />} placeholder="Email Address" />
+
+          {/* Password */}
           <div className="relative">
-            <Mail className="absolute left-3 top-3 text-gray-400" size={18}/>
-            <input
-              type="text"
-              placeholder="Enter your email"
-              className="w-full border rounded-lg py-2 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <Lock
+              size={18}
+              className="absolute left-3 top-3 text-gray-400"
             />
-          </div>
 
-          {/* PASSWORD */}
-          <div className="relative">
-            <Lock className="absolute left-3 top-3 text-gray-400" size={18}/>
             <input
               type={showPass ? "text" : "password"}
               placeholder="Password"
-              className="w-full border rounded-lg py-2 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-200 rounded-xl py-2.5 pl-10 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
 
             <button
               type="button"
               onClick={() => setShowPass(!showPass)}
-              className="absolute right-3 top-3 text-gray-400"
+              className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
             >
-              {showPass ? <EyeOff size={18}/> : <Eye size={18}/>}
+              {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
 
-          {/* CONFIRM PASSWORD */}
           {!isLogin && (
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 text-gray-400" size={18}/>
-              <input
-                type="password"
-                placeholder="Confirm Password"
-                className="w-full border rounded-lg py-2 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            <InputField
+              icon={<Lock size={18} />}
+              placeholder="Confirm Password"
+              type="password"
+            />
           )}
 
-          {/* FORGOT PASSWORD */}
           {isLogin && (
             <div className="text-right">
               <button className="text-blue-600 text-sm hover:underline">
@@ -106,23 +97,22 @@ export default function AuthPage() {
             </div>
           )}
 
-          {/* BUTTON */}
-          <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
-            {isLogin ? "Log In" : "Register"}
+          {/* Button */}
+          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition shadow-md">
+            {isLogin ? "Log In" : "Create Account"}
           </button>
-
         </form>
 
-        {/* FOOTER */}
-        <p className="text-center text-sm mt-6">
+        {/* Footer */}
+        <p className="text-center text-sm text-gray-500 mt-6">
           {isLogin ? (
             <>
               Don’t have an account?{" "}
               <button
                 onClick={() => setIsLogin(false)}
-                className="text-blue-600 font-medium"
+                className="text-blue-600 font-medium hover:underline"
               >
-                Register Here
+                Register
               </button>
             </>
           ) : (
@@ -130,15 +120,28 @@ export default function AuthPage() {
               Already have an account?{" "}
               <button
                 onClick={() => setIsLogin(true)}
-                className="text-blue-600 font-medium"
+                className="text-blue-600 font-medium hover:underline"
               >
                 Login
               </button>
             </>
           )}
         </p>
-
       </div>
+    </div>
+  );
+}
+
+function InputField({ icon, placeholder, type = "text" }) {
+  return (
+    <div className="relative">
+      <div className="absolute left-3 top-3 text-gray-400">{icon}</div>
+
+      <input
+        type={type}
+        placeholder={placeholder}
+        className="w-full border border-gray-200 rounded-xl py-2.5 pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+      />
     </div>
   );
 }
