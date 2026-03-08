@@ -259,8 +259,8 @@ export default function Navbar() {
           
           {/* Cart */}
           <Link to="/cart">
-          <Button variant="ghost" size="icon" className="relative text-[#64748B] hover:text-[#5B3DF5]">
-            <ShoppingBag className="h-5 w-5" />
+          <Button variant="ghost" size="icon"  className="relative text-[#64748B] hover:text-[#5B3DF5]">
+            <ShoppingBag className="h-5 w-5"  />
             <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#5B3DF5] text-white text-[10px] flex items-center justify-center">
               {totalCartQuantity}
             </span>

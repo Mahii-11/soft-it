@@ -7,6 +7,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   cart: [],
+  showCartPopup: false,
 };
 
 const cartSlice = createSlice({
@@ -14,34 +15,37 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
 
-        addItem(state, action) {
-            const newItem = action.payload;
-            
 
-            const existingItem = state.cart.find(
-                (item) => 
-                    item.product_slug === newItem.product_slug &&
-                    item.variation_id === newItem.variation_id &&
-                    item.color_id === newItem.color_id
-            );
+       addItem(state, action) {
 
-            if (existingItem) {
-                existingItem.quantity += newItem.quantity || 1;
-                existingItem.totalPrice = existingItem.quantity * existingItem.discount_price;
-            } else {
-                state.cart.push({
-                    ...newItem,
-                    quantity: newItem.quantity || 1,
-                    totalPrice: (newItem.quantity || 1) * newItem.discount_price,
-                    product_id: newItem.product_id,
-                    size_id: newItem.size_id || 0,
-                    color_id: newItem.color_id || 0,
-                    variation_id: newItem.variation_id || 0,
-                    color_name: newItem.color_name,
-                    variation_size: newItem.variation_size,
-                });
-            }
-        },
+           const newItem = action.payload;
+
+                const existingItem = state.cart.find(
+                 (item) =>
+                 item.product_slug === newItem.product_slug &&
+                 (item.variation_id || 0) === (newItem.variation_id || 0) &&
+                 (item.color_id || 0) === (newItem.color_id || 0)
+                );
+
+                if (existingItem) {
+                existingItem.quantity += newItem.quantity ?? 1;
+                existingItem.totalPrice =
+                existingItem.quantity * existingItem.discount_price;
+                } else {
+
+                 state.cart.push({
+                 ...newItem,
+                 quantity: newItem.quantity ?? 1,
+                 totalPrice: (newItem.quantity ?? 1) * newItem.discount_price,
+                 size_id: newItem.size_id || 0,
+                 color_id: newItem.color_id || 0,
+                 variation_id: newItem.variation_id || 0,
+                 });
+
+                }
+                 state.showCartPopup = true;
+
+               },
         
 
 
@@ -72,11 +76,13 @@ const cartSlice = createSlice({
         clearCart(state) {
             state.cart = [];
         },
-        
+         hideCartPopup(state) {
+      state.showCartPopup = false;
+    }
     },
 });
 
-export const {addItem, deleteItem, increaseItemQuantity, decreaseItemQuantity, clearCart} = cartSlice.actions;
+export const {addItem, deleteItem, increaseItemQuantity, decreaseItemQuantity, clearCart, hideCartPopup} = cartSlice.actions;
 
 export default cartSlice.reducer;
 

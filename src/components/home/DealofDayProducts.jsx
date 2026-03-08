@@ -5,6 +5,7 @@ import Loader from "../../loader/Loader"
 import { useDispatch } from "react-redux";
 import { addItem } from "../../cart/cartSlice";
 import { normalizeProductForCart } from "../../utils/cartAdapter";
+import CartPopup from "../CartPopup";
 
 
 
@@ -13,6 +14,7 @@ export default function DealofDayProducts() {
     const [deal, setDeal] = useState(null);
     const [loading, setLoading] = useState(true)
     const navigate  = useNavigate();
+    const [cartPopup, setCartPopup] = useState(null);
 
   useEffect(() => {
     const fetchDealProducts = async () => {
@@ -49,12 +51,24 @@ export default function DealofDayProducts() {
       navigate(`/product-details/${product.product_slug}`);
       return;
     }
+
     const normalizedProduct = normalizeProductForCart(product);
     dispatch(addItem(normalizedProduct));
+
+
+    setCartPopup({
+    image: product.thumb_image,
+    price: product.discount_price
+  });
+
+  setTimeout(() => {
+    setCartPopup(null);
+  }, 3000);
   }
 
 
   return (
+    <>
   <section className="bg-[#F8FAFC] py-10">
      
   <div className="max-w-7xl mx-auto px-4">
@@ -109,6 +123,7 @@ export default function DealofDayProducts() {
           <div className="mt-auto">
             <button 
               onClick={(e) => handleAddToCart(e, product)}
+
               className="mt-3 w-full py-1 rounded-xl 
              bg-[#5B3DF5] 
              text-white font-medium
@@ -130,5 +145,15 @@ export default function DealofDayProducts() {
     </div>
   </div>
   </section>
+
+
+<CartPopup
+  popup={cartPopup}
+  onClose={() => setCartPopup(null)}
+/>
+
+</>
   );
+
+  
 }
