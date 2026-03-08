@@ -9,6 +9,7 @@ import { useState } from "react";
 import { createOrder } from "../services/api";
 import { useDispatch } from "react-redux";
 import { clearCart } from "../cart/cartSlice";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -17,6 +18,7 @@ import { clearCart } from "../cart/cartSlice";
 
 
 export default function CheckoutPage() {
+  const navigate = useNavigate();
   const cartItems = useSelector(getCart);
   const dispatch = useDispatch();
   const subtotal = useSelector(getTotalCartPrice);
@@ -125,7 +127,9 @@ if (result.success) {
     confirmButtonColor: "#16a34a",
   }).then(() => {
     dispatch(clearCart());
+    navigate("/thank-you");
   });
+
 
 } else {
   Swal.fire({

@@ -13,7 +13,7 @@ export default function Cart() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-4">
+      <div className="min-h-[60vh] flex flex-col items-center justify-center p-4 mt-16">
         <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-6">
           <Trash2 className="h-10 w-10 text-muted-foreground" />
         </div>
