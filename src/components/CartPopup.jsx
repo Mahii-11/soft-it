@@ -7,20 +7,20 @@ export default function CartPopup({ popup, onClose }) {
     <AnimatePresence>
       {popup && (
         <motion.div
-          initial={{ x: 400, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 400, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 260, damping: 22 }}
+          initial={{ x: 120, opacity: 0, scale: 0.95 }}
+          animate={{ x: 0, opacity: 1, scale: 1 }}
+          exit={{ x: 120, opacity: 0, scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 300, damping: 24 }}
           className="
           fixed 
-          top-4 right-4
-          sm:top-6 sm:right-6
-          w-[92%] sm:w-[360px]
-          bg-white/90 backdrop-blur-lg
+          top-4 right-3
+          sm:right-5 sm:top-6
+          w-[260px] sm:w-[320px]
+          bg-white/95 backdrop-blur-md
           border border-gray-100
-          shadow-[0_10px_40px_rgba(0,0,0,0.15)]
-          rounded-2xl
-          p-4 sm:p-5
+          shadow-[0_8px_30px_rgba(0,0,0,0.12)]
+          rounded-xl
+          p-3 sm:p-4
           z-[9999]
           "
         >
@@ -28,27 +28,33 @@ export default function CartPopup({ popup, onClose }) {
           {/* close button */}
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition"
+            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition"
           >
-            <X size={18} />
+            <X size={16} />
           </button>
 
-          {/* Product Info */}
-          <div className="flex items-center gap-4">
+          {/* product info */}
+          <div className="flex items-center gap-3">
 
             <img
               src={popup.image}
               alt="product"
-              className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-xl border"
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg object-cover border"
             />
 
-            <div className="flex flex-col">
+            <div className="flex flex-col leading-tight">
 
-              <p className="text-green-600 text-sm font-medium">
-                ✔ Added to Cart
+              <p className="text-green-600 text-xs font-medium">
+                Added to Cart
               </p>
 
-              <p className="text-lg font-semibold text-gray-800">
+              {popup.name && (
+                <p className="text-sm font-medium text-gray-700 line-clamp-1">
+                  {popup.name}
+                </p>
+              )}
+
+              <p className="text-sm font-semibold text-gray-900">
                 ৳{popup.price}
               </p>
 
@@ -56,20 +62,17 @@ export default function CartPopup({ popup, onClose }) {
 
           </div>
 
-          {/* Divider */}
-          <div className="my-4 h-[1px] bg-gray-100"></div>
-
-          {/* Buttons */}
-          <div className="flex gap-3">
+          {/* buttons */}
+          <div className="flex gap-2 mt-3">
 
             <button
               onClick={onClose}
               className="
-              flex-1 
+              flex-1
+              text-xs sm:text-sm
               border border-gray-200
-              rounded-xl 
-              py-2.5
-              text-sm font-medium
+              rounded-lg
+              py-1.5 sm:py-2
               hover:bg-gray-50
               transition
               "
@@ -80,13 +83,13 @@ export default function CartPopup({ popup, onClose }) {
             <Link
               to="/cart"
               className="
-              flex-1 
+              flex-1
               text-center
+              text-xs sm:text-sm
               bg-[#5B3DF5]
               text-white
-              rounded-xl
-              py-2.5
-              text-sm font-medium
+              rounded-lg
+              py-1.5 sm:py-2
               hover:bg-[#4338CA]
               transition
               "
