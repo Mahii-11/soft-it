@@ -135,7 +135,7 @@ export default function MostViewedProducts() {
             {/* Compact Button */}
             <button
               onClick={(e) => handleAddToCart(e, item)}
-             className="mt-2 w-full py-1.5 md:py-2 rounded-xl bg-[#5B3DF5] text-white font-medium text-xs sm:text-sm shadow-sm hover:bg-[#4338CA] transition-all duration-300 flex items-center justify-center"
+             className="mt-2 w-full  py-1 rounded-xl bg-[#5B3DF5] text-white  text-xs sm:text-base shadow-sm hover:bg-[#4338CA] transition-all duration-300 flex items-center justify-center"
             >
               Add to Cart
             </button>

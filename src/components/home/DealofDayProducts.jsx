@@ -109,7 +109,7 @@ export default function DealofDayProducts() {
           <div className="mt-auto">
             <button 
               onClick={(e) => handleAddToCart(e, product)}
-              className="mt-3 w-full py-2 rounded-xl 
+              className="mt-3 w-full py-1 rounded-xl 
              bg-[#5B3DF5] 
              text-white font-medium
               text-sm sm:text-base 
