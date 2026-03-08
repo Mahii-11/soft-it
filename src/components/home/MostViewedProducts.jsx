@@ -81,7 +81,7 @@ export default function MostViewedProducts() {
   if (loading) return <Loader type="mostviewed" />;
 
   return (
-    <section className="w-full py-20 md:py-28 bg-[#F1F5F9]">
+    <section className="w-full py-16 md:py-28 bg-[#F1F5F9]">
   <div className="max-w-7xl mx-auto px-4">
     {/* Heading */}
     <div className="text-center mb-14">
