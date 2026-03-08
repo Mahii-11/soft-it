@@ -6,6 +6,7 @@ import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
 import ProductDetails from "./pages/ProductDetails";
 import ThankYouPage from "./pages/ThankYouPage";
+import AuthPage from "./pages/AuthPage";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,11 @@ const router = createBrowserRouter([
 
         path: "/thank-you",
         element: <ThankYouPage/>
+      },
+
+      {
+        path: "/login",
+        element: <AuthPage/>
       }
 
 
