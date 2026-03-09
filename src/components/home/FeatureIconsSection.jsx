@@ -97,7 +97,7 @@ export default function WhyChooseUsSection() {
 
         {/* CTA Button */}
         <div className="mt-16 text-center">
-          <button c  className="mt-3 px-4 py-2 rounded-xl 
+          <button   className="mt-3 px-4 py-2 rounded-xl 
              bg-[#5B3DF5] 
              text-white font-medium
               text-sm sm:text-base 
