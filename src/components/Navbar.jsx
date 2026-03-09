@@ -24,21 +24,22 @@ export default function Navbar() {
 
   useEffect(() => {
   const handleScroll = () => {
-    if (window.scrollY > lastScrollY) {
-      // Scrolling down
+
+    if (window.scroll < 1024) return;
+
+    const currentScroll = window.scrollY;
+    if (currentScroll > lastScrollY && currentScroll > 80) {
       setShowNavbar(false);
     } else {
-      // Scrolling up
       setShowNavbar(true);
     }
-    setLastScrollY(window.scrollY);
-  };
 
+   setLastScrollY(currentScroll);
+
+  };
   window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
 
-  return () => {
-    window.removeEventListener("scroll", handleScroll);
-  };
 }, [lastScrollY]);
 
 
@@ -77,8 +78,8 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className={`fixed z-40 w-full border-b bg-white border-[#E2E8F0] text-[#0F172A] transition-transform duration-300 ${
-    showNavbar ? "translate-y-0" : "-translate-y-full"
+    <nav className={`fixed z-40 bottom-0 left-0 w-full lg:top-[64px] lg:bottom-auto border-b bg-white border-[#E2E8F0] text-[#0F172A] transition-transform duration-300 ${
+    showNavbar ? "lg:translate-y-0" : "lg:-translate-y-full"
   }`}>
       <div className="container-custom h-14 flex items-center gap-4">
 
@@ -107,7 +108,7 @@ export default function Navbar() {
               {/* Links */}
               {navItems.map((item) => (
                 <p
-                  key={item.children}
+                  key={item.label}
                   className="cursor-pointer text-[#0F172A] hover:text-[#5B3DF5] transition font-medium"
                 >
                      {item.children ? (
