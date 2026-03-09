@@ -105,43 +105,44 @@ export default function MostViewedProducts() {
           : "overflow-hidden"
       }`}
     >
-      {duplicated.map((item, index) => (
+      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          {duplicated.map((item, index) => (
         <div
           key={`${item.id}-${index}`}
-          className={`shrink-0 group cursor-pointer ${
-            isMobile ? "w-1/2 snap-start" : "w-1/5"
-          }`}
+           className="bg-white rounded-3xl p-5 flex flex-col transition duration-300 hover:shadow-lg"
+              style={{
+              boxShadow:
+                "0 2px 8px rgba(0,0,0,0.04), 0 8px 20px rgba(0,0,0,0.05)",
+            }}
         >
-          <div className="relative bg-white border border-[#E2E8F0] shadow-sm hover:shadow-md rounded-2xl p-3 md:p-4  transition-all duration-500 hover:-translate-y-0.5 h-auto">
+          
             {/* Image */}
-            <div className="flex justify-center items-center mb-2 md:mb-3 h-24 md:h-28">
+            <div className="h-[130px] flex items-center justify-center mb-4">
               <img
                 src={item.image}
                 alt={item.name}
                 className="object-contain h-full transition-transform duration-500 group-hover:scale-105"
               />
             </div>
-
-            {/* Text */}
-            <div className="text-center mb-2">
-              <h3 className="text-xs sm:text-sm  font-semibold text-[#0F172A] line-clamp-2 h-[40px] md:h-[44px]">
+              <h3 className="text-[11px] md:text-[13px]  text-center text-gray-700 leading-snug line-clamp-2 min-h-[52px]">
                 {item.name}
               </h3>
-              <p className="text-[#5B3DF5] font-bold mt-1 text-sm sm:text-base md:text-lg">
-                ৳ {item.price?.toLocaleString()}
-              </p>
+                <div className="flex items-center justify-center gap-2 mt-2">
+                <span className="text-blue-600 font-semibold text-[16px]">
+                 Tk.{item.price?.toLocaleString()}
+              </span>
             </div>
-
             {/* Compact Button */}
             <button
               onClick={(e) => handleAddToCart(e, item)}
-             className="mt-2 w-full  py-1 rounded-xl bg-[#5B3DF5] text-white  text-xs sm:text-base shadow-sm hover:bg-[#4338CA] transition-all duration-300 flex items-center justify-center"
+              className="mt-5 rounded-full border border-blue-500 bg-blue-50 text-blue-600 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition"
             >
               Add to Cart
             </button>
           </div>
-        </div>
+        
       ))}
+      </div>
     </div>
   </div>
 </section>

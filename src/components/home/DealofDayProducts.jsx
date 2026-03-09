@@ -78,14 +78,15 @@ export default function DealofDayProducts() {
     </div>
 
     {/* Product Grid */}
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 auto-rows-fr">
-       
+    <div className="max-w-7xl mx-auto grid grid-cols-2  md:grid-cols-3 lg:grid-cols-5 gap-6">
       {deal.products?.map((product, i) => (
-        
           <div
-
           key={i}
-          className="relative bg-white p-3 rounded-xl border border-[#E2E8F0] shadow-sm hover:shadow-md transition duration-300 cursor-pointer group flex flex-col h-full"
+          className="bg-white rounded-3xl p-4 md:p-6 shadow-lg transition duration-300 cursor-pointer group flex flex-col"
+           style={{
+              boxShadow:
+                "0 2px 8px rgba(0,0,0,0.04), 0 8px 20px rgba(0,0,0,0.05)",
+            }}
         >
            <Link to={`/product-details/${product.product_slug}`} >
           {/* Discount Badge */}
@@ -94,7 +95,7 @@ export default function DealofDayProducts() {
           </span>
 
           {/* Image */}
-          <div className="h-28 sm:h-40 flex items-center justify-center mb-2 overflow-hidden relative">
+          <div className="h-[130px] flex items-center justify-center mb-4">
             <img
               src={product.thumb_image || "/images/motorola.png"}
               alt={product.product_name}
@@ -104,39 +105,36 @@ export default function DealofDayProducts() {
           </div>
 
           {/* Product Name */}
-          <h3 className="text-sm text-[#0F172A] line-clamp-2 mb-1">
+          <h3 className="text-[11px] md:text-[12px]  text-center text-gray-700 leading-snug line-clamp-2 min-h-10">
             {product.product_name}
           </h3>
 
           {/* Price Section */}
-          <div className="flex items-center gap-2">
-            <p className="text-sm sm:text-base font-semibold text-[#0F172A]">
-              ৳{Number(product?.discount_price ?? 0).toLocaleString()}
-            </p>
-            <p className="text-xs text-[#64748B] line-through">
-              ৳{Number(product?.original_price ?? 0).toLocaleString()}
-            </p>
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <span className="text-blue-600 font-semibold text-[16px]">
+               ৳{Number(product?.discount_price ?? 0).toLocaleString()}
+            </span>
+
+            {product?.original_price && (
+                <span className="text-gray-400 text-xs line-through">
+               ৳{Number(product?.original_price ?? 0).toLocaleString()}
+               </span>
+            )}
           </div>
            </Link>  
 
           {/* Add to Cart Button */}
-          <div className="mt-auto">
+          
             <button 
               onClick={(e) => handleAddToCart(e, product)}
 
-              className="mt-3 w-full py-1 rounded-xl 
-             bg-[#5B3DF5] 
-             text-white font-medium
-              text-sm sm:text-base 
-             hover:bg-[#4338CA]
-              transition-colors duration-300"
-            
-            >
+              className="mt-5 rounded-full border border-blue-500 bg-blue-50 text-blue-600 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition duration-300"
+               >
                  {product.product_type === "single"
                  ? "Add to Cart"
                  : "View Details"}
             </button>
-            </div>
+        
     
          </div>
         

@@ -7,6 +7,7 @@ import Profile from "./pages/Profile";
 import ProductDetails from "./pages/ProductDetails";
 import ThankYouPage from "./pages/ThankYouPage";
 import AuthPage from "./pages/AuthPage";
+import SearchPage from "./pages/SearchPage";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,11 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <AuthPage/>
+      },
+
+      {
+        path: "/search",
+        element: <SearchPage/>
       }
 
 

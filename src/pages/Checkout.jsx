@@ -156,7 +156,7 @@ if (result.success) {
 
   return (
    
-  <div className="bg-gray-100 min-h-screen py-16 px-3 sm:px-4 md:px-6">
+  <div className="bg-gray-100 min-h-screen py-4 md:py-8 lg:py-16 px-3 sm:px-4 md:px-6">
     
     <div className="max-w-7xl mx-auto">
       

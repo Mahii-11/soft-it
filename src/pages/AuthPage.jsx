@@ -12,7 +12,7 @@ export default function AuthPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h2 className="text-2xl font-semibold text-gray-800">
-            {isLogin ? "Welcome Back 👋" : "Create Account"}
+            {isLogin ? "Welcome Back" : "Create Account"}
           </h2>
           <p className="text-gray-500 text-sm mt-1">
             {isLogin
@@ -27,7 +27,7 @@ export default function AuthPage() {
             onClick={() => setIsLogin(true)}
             className={`flex-1 py-2 text-sm rounded-full font-medium transition ${
               isLogin
-                ? "bg-blue-600 text-white shadow"
+                ? "bg-[#5B3DF5] text-white shadow"
                 : "text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -38,7 +38,7 @@ export default function AuthPage() {
             onClick={() => setIsLogin(false)}
             className={`flex-1 py-2 text-sm rounded-full font-medium transition ${
               !isLogin
-                ? "bg-blue-600 text-white shadow"
+                ? "bg-[#5B3DF5] text-white shadow"
                 : "text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -98,7 +98,7 @@ export default function AuthPage() {
           )}
 
           {/* Button */}
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition shadow-md">
+          <button className="w-full bg-[#5B3DF5] hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition shadow-md">
             {isLogin ? "Log In" : "Create Account"}
           </button>
         </form>

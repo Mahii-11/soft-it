@@ -2,6 +2,7 @@ import {  Search  } from "lucide-react";
 import { MapPin } from "lucide-react";
 import { Input } from "./ui/input";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Header() {
   
@@ -12,7 +13,7 @@ export default function Header() {
         
         {/* Logo */}
         <Link to="/">
-         <div className="flex items-center gap-2 cursor-pointer">
+     { /*  <div className="flex items-center gap-2 cursor-pointer">
          <div className="flex items-center cursor-pointer">
            <img
             src="/images/logo-softit.png"
@@ -20,7 +21,16 @@ export default function Header() {
             className="h-8 md:h-9 w-auto object-contain"
              />
            </div>
-        </div>
+        </div> */}
+            <div className="flex items-center gap-2">
+               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center text-white font-bold text-xl">
+              
+                G
+            </div>
+             
+              <span className="text-xl font-bold font-display text-gray-950 tracking-tight">GadgetGlobe</span>
+              
+            </div>
         
         </Link>
         {/* Search */}
@@ -37,19 +47,23 @@ export default function Header() {
          <div className="flex items-center gap-2 sm:gap-4">
          <span className="text-[#5B3DF5] bg-clip-text  text-xl font-bold font-display hidden sm:block tracking-tight">
           Online 
-          <span className="bg-clip-text text-[##5B3DF5]">
+          <span className="bg-clip-text text-[#5B3DF5]">
           Sale!
          </span>
          </span>
         </div>
 
         {/* Actions */}
-        <div className="sm:flex items-center gap-2 sm:gap-4 hidden">
-         <MapPin className="h-5 w-5 text-[#94A3B8]" /> 
-         <span className="text-[#64748B] text-xl font-bold font-display hidden sm:block tracking-tight">
-          Our Store
-         </span>
-        </div>
+           <div className="flex items-center gap-2">
+             <span className="relative flex h-5 w-5">
+             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#5B3DF5] opacity-75"></span>
+             <MapPin className="relative h-5 w-5 text-[#5B3DF5]" />
+             </span>
+
+             <span className="font-space text-[#5B3DF5] uppercase text-xl font-bold tracking-tighter">
+              Our Store
+              </span>
+            </div>
       </div>
     </nav>
   );

@@ -24,7 +24,7 @@ export default function ProductDetails() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
-  const [quantity, setQuantity] = useState(1);
+  
 
   useEffect(() => {
  const fetchProduct = async () => {
@@ -151,7 +151,6 @@ export default function ProductDetails() {
                 ⭐ {product.rating?.average || 0} (
                 {product.rating?.total_reviews || 0} Reviews)
               </span>
-              <span>👁 {product.views || 0} Views</span>
             </div>
 
             {/* Stock */}
@@ -398,7 +397,7 @@ export default function ProductDetails() {
 
          
 
-        {/* Related Products */}
+        {/* Related Products 
            {relatedProducts.length > 0 && (
            <div className="mt-12 max-w-7xl mx-auto">
            <h3 className="text-xl font-semibold mb-4">Related Products</h3>
@@ -437,7 +436,8 @@ export default function ProductDetails() {
                     <button 
                    onClick={() => handleAddToCart(product)}
                    className="mt-3 w-full py-1 rounded-xl
-                  bg-gradient-to-r from-purple-500 to-indigo-500
+                    bg-[#5B3DF5] 
+                      hover:bg-[#4338CA]
                   text-white font-medium
                   text-sm sm:text-base 
                   shadow-md hover:shadow-lg
@@ -451,7 +451,60 @@ export default function ProductDetails() {
                 ))}
                 </div>
               </div>
-             )}
+             )}  */}
+
+
+          <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+               {relatedProducts.map((rp) => (
+               <div
+               key={rp.id}
+               className="bg-white rounded-3xl md:p-6 p-4 flex flex-col transition duration-300 hover:shadow-lg"
+               style={{
+               boxShadow:
+               "0 2px 8px rgba(0,0,0,0.04), 0 8px 20px rgba(0,0,0,0.05)",
+               }}
+            >
+
+           <Link to={`/product-details/${rp.slug}`}>
+
+              <div className="h-[130px] flex items-center justify-center mb-4">
+              <img
+              src={rp.thumbnail || "/images/motorola.png"}
+              alt={rp.name}
+              className="h-full object-contain"
+              onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/images/motorola.png";
+              }}
+              />
+             </div>
+
+             <h3 className="text-[11px] md:text-[12px] text-center text-gray-700 leading-snug line-clamp-2 min-h-[52px]">
+             {rp.name}
+             </h3>
+
+             <div className="flex items-center justify-center gap-2 mt-2">
+             <span className="text-blue-600 font-semibold text-[16px]">
+              Tk.{Number(rp.price?.final).toLocaleString()}
+            </span>
+
+           {rp.price?.regular && (
+               <span className="text-gray-400 text-xs line-through">
+               Tk.{Number(rp.price?.regular).toLocaleString()}
+              </span>
+            )}
+           </div>
+
+           </Link>
+
+           <button className="mt-3 rounded-full border border-blue-500 bg-blue-50 text-blue-600 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition">
+                 Buy Now
+            </button>
+
+           </div>
+
+              ))}
+              </div>
           </div>
          );
        }

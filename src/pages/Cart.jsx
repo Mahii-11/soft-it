@@ -13,7 +13,7 @@ export default function Cart() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-4 mt-16">
+      <div className="min-h-[60vh] flex flex-col items-center justify-center  mt-5 lg:mt-16">
         <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-6">
           <Trash2 className="h-10 w-10 text-muted-foreground" />
         </div>
@@ -31,7 +31,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/10 py-12">
+    <div className="min-h-screen bg-muted/10 py-2 sm:py-6 md:py-8 lg:py-12">
       <div className="container-custom py-12">
         <h1 className="text-3xl font-bold font-display mb-8">
           Shopping Cart
