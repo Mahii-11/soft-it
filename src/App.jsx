@@ -8,6 +8,7 @@ import ProductDetails from "./pages/ProductDetails";
 import ThankYouPage from "./pages/ThankYouPage";
 import AuthPage from "./pages/AuthPage";
 import SearchPage from "./pages/SearchPage";
+import OnlineSale from "./pages/OnlineSale";
 
 const router = createBrowserRouter([
   {
@@ -53,9 +54,13 @@ const router = createBrowserRouter([
       {
         path: "/search",
         element: <SearchPage/>
+      },
+
+      {
+
+        path: "/online-sale",
+        element: <OnlineSale/>
       }
-
-
 
     ],
   },

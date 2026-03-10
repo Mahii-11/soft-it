@@ -454,7 +454,7 @@ export default function ProductDetails() {
              )}  */}
 
 
-          <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                {relatedProducts.map((rp) => (
                <div
                key={rp.id}

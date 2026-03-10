@@ -22,6 +22,8 @@ const fetchData = async (endpoint, option = {}) => {
     }
 }
 
+
+
 // Get Sliders 
 export const getSliders = async () => {
     const res = await fetchData("slider-data");
@@ -30,6 +32,18 @@ export const getSliders = async () => {
     }
     return res?.data?.data || [];
 }
+
+
+export const getsearchProducts = async (searchTerm) => {
+  const res = await fetchData(`search-products?search=${searchTerm}`)
+
+  if (!res) {
+    throw new Error("Search product fetch unsuccessful");
+  }
+
+  return res?.data?.data || [];
+
+};
 
 export const getWhyShopWithUs = async () => {
     const res = await fetchData("why-shop-data");
@@ -80,6 +94,19 @@ export const getDealofDayProducts = async () => {
     }
     return res?.data?.data || [];
 }
+
+
+export const getOnlineSaleProducts = async () => {
+  const res = await fetchData("offer-products");
+  if (!res.success) {
+    throw new Error("Online Sale Products fetch unsuccessful")
+  }
+  return res?.data?.data || [];
+}
+
+
+
+
 
 export const getProductDetailsBySlugg = async (slug) => {
   const res = await fetchData(`product-details/${slug}`);

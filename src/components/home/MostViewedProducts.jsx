@@ -92,7 +92,7 @@ export default function MostViewedProducts() {
             grabCursor
             loop={enableLoop}
             speed={550}
-            spaceBetween={24}
+            spaceBetween={16}
             touchRatio={1.3}
             resistanceRatio={0.85}
             autoplay={{
@@ -103,18 +103,22 @@ export default function MostViewedProducts() {
             breakpoints={{
               0: {
                 slidesPerView: 2,
+                spaceBetween: 12,
                 autoplay: false,
               },
               640: {
                 slidesPerView: 2,
+                spaceBetween: 12,
                 autoplay: false,
               },
               768: {
                 slidesPerView: 3,
+                spaceBetween: 12,
                 autoplay: false,
               },
               1024: {
                 slidesPerView: 5,
+                spaceBetween: 12,
                 autoplay: {
                   delay: 2600,
                   disableOnInteraction: false,
@@ -128,49 +132,39 @@ export default function MostViewedProducts() {
               <SwiperSlide key={`${item.id}-${index}`}>
 
                 {/* IOS STYLE CARD */}
-                <div
-                  className="group bg-white rounded-2xl p-5 md:p-6 flex flex-col transition-all duration-500 -translate-y-2"
-                  style={{
-                    boxShadow:
-                      "0 6px 16px rgba(0,0,0,0.06), 0 20px 40px rgba(0,0,0,0.06)",
-                  }}
-                >
-
-                  {/* Image */}
-                  <div className="h-[120px] flex items-center justify-center mb-4 overflow-hidden">
-
+                    <div
+                     className="group bg-white rounded-2xl p-4 md:p-6 flex flex-col transition-all duration-500 -translate-y-2"
+                     style={{
+                     boxShadow:
+                     "0 4px 12px rgba(0,0,0,0.05), 0 12px 28px rgba(0,0,0,0.08)",
+                     }}
+                    >
+                  <div className="h-[130px] flex items-center justify-center mb-4 overflow-hidden">
                     <img
-                      loading="lazy"
-                      src={item.image}
-                      alt={item.name}
-                      className="object-contain h-full transition-transform duration-700 group-hover:scale-110"
-                    />
+                    loading="lazy"
+                    src={item.image}
+                    alt={item.name}
+                    className="object-contain h-full transition-transform duration-700 group-hover:scale-105"
+                   />
+                 </div>
 
-                  </div>
+                 <h3 className="text-[12px] md:text-[14px] text-center text-gray-700 leading-snug line-clamp-2 min-h-[52px] font-medium">
+                 {item.name}
+                 </h3>
 
-                  {/* Title */}
-                  <h3 className="text-[12px] md:text-[14px] text-center text-gray-700 leading-snug line-clamp-2 min-h-[52px] font-medium">
-                    {item.name}
-                  </h3>
+               <div className="flex items-center justify-center gap-2 mt-2">
+                <span className="text-blue-600 font-semibold text-[16px] md:text-[17px]">
+                 Tk.{item.price?.toLocaleString()}
+               </span>
+              </div>
 
-                  {/* Price */}
-                  <div className="flex items-center justify-center gap-2 mt-2">
-
-                    <span className="text-blue-600 font-semibold text-[16px] md:text-[17px]">
-                      Tk.{item.price?.toLocaleString()}
-                    </span>
-
-                  </div>
-
-                  {/* Button */}
-                  <button
-                    onClick={(e) => handleAddToCart(e, item)}
-                    className="mt-5 rounded-full border border-blue-500 bg-blue-50 text-blue-600 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition-all duration-300"
-                  >
+                <button
+                 onClick={(e) => handleAddToCart(e, item)}
+                 className="mt-5 rounded-full border border-blue-500 bg-blue-50 text-blue-600 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition-all duration-300"
+                >
                     Add to Cart
-                  </button>
-
-                </div>
+                   </button>
+                 </div>
 
               </SwiperSlide>
             ))}

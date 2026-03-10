@@ -2,12 +2,51 @@ import {  Search  } from "lucide-react";
 import { MapPin } from "lucide-react";
 import { Input } from "./ui/input";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { getsearchProducts } from "../services/api";
+import useDebounce from "../hooks/useDebounce";
+
 
 export default function Header() {
+  const [search, setSearch] = useState("");
+  const [products, setProducts] = useState([]);
+  const debounceSearch = useDebounce(search, 500);
+
+    useEffect(() => {
+      const fetchProducts = async () => {
+  
+        if (!debounceSearch) {
+          setProducts([]);
+          return;
+        }
+  
+        const result = await getsearchProducts(debounceSearch);
+  
+        console.log("Products:", result);
+  
+        setProducts(result);
+  
+      };
+  
+      fetchProducts();
+  
+    }, [debounceSearch]);
+
+    const handleSearch = async (e) => {
+      const value = e.target.value;
+      setSearch(value);
+  
+      if (!value) return;
+  
+      const products = await getsearchProducts(value);
+      console.log("Products:", products);
+    }
   
 
   return (
+
+    <>
+  
     <nav className="sticky top-0 z-50 w-full border border-[#E2E8F0] bg-[#F8FAFC] backdrop-blur-md">
       <div className="container-custom flex h-16 items-center justify-between gap-4">
         
@@ -38,6 +77,9 @@ export default function Header() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
+              type="text"
+              value={search}
+              onChange={handleSearch}
               placeholder="Search gadgets..."
               className="pl-9 h-10 rounded-full"
             />
@@ -45,12 +87,14 @@ export default function Header() {
         </div>
        
          <div className="flex items-center gap-2 sm:gap-4">
-         <span className="text-[#5B3DF5] bg-clip-text  text-xl font-bold font-display hidden sm:block tracking-tight">
+          <Link to="/online-sale">
+          <span className="text-[#5B3DF5] bg-clip-text  text-xl font-bold font-display hidden sm:block tracking-tight">
           Online 
           <span className="bg-clip-text text-[#5B3DF5]">
           Sale!
          </span>
          </span>
+          </Link>
         </div>
 
         {/* Actions */}
@@ -65,6 +109,80 @@ export default function Header() {
               </span>
             </div>
       </div>
+
+        
     </nav>
-  );
+
+
+
+
+  {products.length > 0 && (
+  <div className="fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm">
+
+    <div className="flex justify-center pt-24 px-4 h-full">
+
+      <div
+        className="
+        bg-white
+        w-full
+        max-w-4xl
+        rounded-2xl
+        shadow-2xl
+        p-6
+        max-h-[70vh]
+        overflow-y-auto
+        overscroll-contain
+        "
+      >
+
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+
+          <h2 className="text-lg font-semibold">
+            Product Search By: <span className="text-primary">{search}</span>
+          </h2>
+
+          <button
+            onClick={() => setProducts([])}
+            className="text-sm text-gray-500 hover:text-black"
+          >
+            Close
+          </button>
+
+        </div>
+
+        {/* Product Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+          {products.slice(0,8).map((product)=>(
+            <div
+              key={product.id}
+              className="border rounded-xl p-4 hover:shadow-md transition"
+            >
+
+              <img
+                src={product.image}
+                className="w-full h-40 object-contain mb-3"
+              />
+
+              <p className="text-sm font-medium line-clamp-2">
+                {product.name}
+              </p>
+
+              <p className="text-orange-500 font-semibold">
+                Tk. {product.price}
+              </p>
+
+            </div>
+          ))}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
+</>
+);
 }

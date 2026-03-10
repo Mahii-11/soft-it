@@ -1,26 +1,93 @@
+
 import { useEffect, useState } from "react";
-import { getDealofDayProducts } from "../../services/api";
-import { Link, useNavigate } from "react-router-dom";
-import Loader from "../../loader/Loader"
+import {  getOnlineSaleProducts } from "../services/api";
+import {  useNavigate } from "react-router-dom";
+import Loader from "../loader/Loader"
 import { useDispatch } from "react-redux";
-import { addItem } from "../../cart/cartSlice";
-import { normalizeProductForCart } from "../../utils/cartAdapter";
-import CartPopup from "../CartPopup";
+import { addItem } from "../cart/cartSlice";
+import { normalizeProductForCart } from "../utils/cartAdapter";
+import CartPopup from "../components/CartPopup";
 
 
 
-export default function DealofDayProducts() {
+
+
+export default function OnlineSale() {
+  return (
+    <div>
+        <SaleHero />
+        <OnlineSaleProducts/>
+    </div>
+  )
+}
+
+
+
+export function SaleHero() {
+  return (
+    <section className="w-full bg-[#F3F4F6] lg:bg-white  py-4 md:py-16">
+
+      <div className="container-custom">
+
+        <div className="lg:hidden overflow-hidden rounded-xl lg:rounded-none">
+
+          <img
+            src="/images/online-sale.png"
+            alt="Sale Banner"
+            className="
+            w-full
+            h-[120px]
+            sm:h-[150px]
+            md:h-[260px]
+            lg:h-[320px]
+            object-cover
+            "
+            loading="lazy"
+          />
+
+        </div>
+          <div className="hidden lg:block  overflow-hidden rounded-xl lg:rounded-none">
+          <img
+            src="/images/sale-banner.jpg"
+            alt="Sale Banner"
+            className="
+            w-full
+            h-[120px]
+            sm:h-[150px]
+            md:h-[260px]
+            lg:h-[320px]
+            object-cover
+            "
+            loading="lazy"
+          />
+
+        </div>
+
+      </div>
+
+    </section>
+  );
+}
+
+
+
+
+
+
+export  function OnlineSaleProducts() {
     const dispatch = useDispatch();
-    const [deal, setDeal] = useState(null);
-    const [loading, setLoading] = useState(true)
     const navigate  = useNavigate();
     const [cartPopup, setCartPopup] = useState(null);
-
+    const [deal, setDeal] = useState([]);
+    const [loading, setLoading] = useState(true)
+   
   useEffect(() => {
     const fetchDealProducts = async () => {
       try {
-        const data = await getDealofDayProducts(); // returns array
-        setDeal(data[0] || null); // pick first deal
+        setLoading(true);
+        const data = await getOnlineSaleProducts(); 
+        console.log(data);
+        setDeal(data);
       } catch (error) {
         console.error("Error fetching deal products:", error);
       } finally {
@@ -57,8 +124,8 @@ export default function DealofDayProducts() {
 
 
     setCartPopup({
-    image: product.thumb_image,
-    price: product.discount_price
+    image: product.image,
+    price: product.price
   });
 
   setTimeout(() => {
@@ -74,12 +141,12 @@ export default function DealofDayProducts() {
   <div className="max-w-7xl mx-auto px-4">
     {/* Section Header */}
     <div className="mb-6">
-      <h2 className="text-2xl font-bold text-[#0F172A]">{deal.deal_title}</h2>
+      <h2 className="text-2xl font-bold text-[#0F172A]"> Online Sale Products</h2>
     </div>
 
     {/* Product Grid */}
     <div className="max-w-7xl mx-auto grid grid-cols-2  md:grid-cols-3 lg:grid-cols-5 gap-3">
-      {deal.products?.map((product, i) => (
+      {deal.map((product, i) => (
           <div
           key={i}
           className="bg-white rounded-3xl p-4 md:p-6 shadow-lg transition duration-300 cursor-pointer group flex flex-col"
@@ -88,17 +155,12 @@ export default function DealofDayProducts() {
                 "0 2px 8px rgba(0,0,0,0.04), 0 8px 20px rgba(0,0,0,0.05)",
             }}
         >
-           <Link to={`/product-details/${product.product_slug}`} >
-          {/* Discount Badge */}
-          <span className="absolute top-2 left-2 z-10 bg-[#EF4444] text-white text-[10px] px-2 py-0.5 rounded-md font-medium">
-            {deal.deal_offer}% OFF
-          </span>
-
+           
           {/* Image */}
           <div className="h-[130px] flex items-center justify-center mb-4">
             <img
-              src={product.thumb_image || "/images/motorola.png"}
-              alt={product.product_name}
+              src={product.image || "/images/motorola.png"}
+              alt={product.name}
               className="max-h-full object-contain group-hover:scale-105 transition duration-300"
               onError={(e) => { e.target.onerror = null; e.target.src = "/images/motorola.png"; }}
             />
@@ -106,22 +168,16 @@ export default function DealofDayProducts() {
 
           {/* Product Name */}
           <h3 className="text-[11px] md:text-[12px]  text-center text-gray-700 leading-snug line-clamp-2 min-h-10">
-            {product.product_name}
+            {product.name}
           </h3>
 
           {/* Price Section */}
           <div className="flex items-center justify-center gap-2 mt-3">
             <span className="text-blue-600 font-semibold text-[16px]">
-               ৳{Number(product?.discount_price ?? 0).toLocaleString()}
+               ৳{Number(product.price).toLocaleString()}
             </span>
-
-            {product?.original_price && (
-                <span className="text-gray-400 text-xs line-through">
-               ৳{Number(product?.original_price ?? 0).toLocaleString()}
-               </span>
-            )}
           </div>
-           </Link>  
+           
 
           {/* Add to Cart Button */}
           

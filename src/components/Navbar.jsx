@@ -85,8 +85,69 @@ export default function Navbar() {
   }`}>
       <div className="container-custom h-12 sm:h-14 flex items-center gap-4">
 
-        {/* Mobile Menu */}
-        <Sheet>
+      
+        {/* Desktop Links */}
+       <div className="hidden lg:flex items-center text-sm w-full font-medium text-[#0F172A]">
+
+         <div className="flex items-center gap-6">
+           {navItems.map((item) => (
+            <div
+              key={item.label}
+              className="relative hover:text-[#5B3DF5] cursor-pointer transition"
+              onMouseEnter={() =>
+                item.children && setOpenDropdown(item.label)
+              }
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
+              <button className="flex items-center gap-1 text-[13px] font-medium hover:text-[#5B3DF5]">
+                {item.label}
+                {item.children && <ChevronDown className="w-4 h-4" />}
+              </button>
+
+              <AnimatePresence>
+                {item.children && openDropdown === item.label && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full left-0 mt-2 bg-white border border-[#E2E8F0] shadow-sm rounded-md py-2 min-w-40 z-50"
+                  >
+                    {item.children.map((child) => (
+                      <NavLink
+                        key={child.label}
+                        to={child.href}
+                        className="block whitespace-nowrap px-4 py-2 text-sm hover:text-[#5B3DF5]"
+                      >
+                        {child.label}
+                      </NavLink>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+         </div>
+
+
+         <div className="flex items-center gap-4 ml-auto">
+            <Link to="/cart" className="relative">
+             <ShoppingBag className="h-5 w-5 text-[#5B3DF5]" />
+             <span className="absolute -top-1 -right-2 h-4 w-4 text-[9px] bg-[#5B3DF5] text-white rounded-full flex items-center justify-center">
+             {totalCartQuantity}
+            </span>
+            </Link>
+             <Link to="/login">
+                <User className="h-5 w-5 text-[#5B3DF5] sm:block" />
+            </Link>
+
+         </div>
+        </div>
+
+
+        <div className="lg:hidden fixed bottom-3 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-50">
+        <div className="grid grid-cols-6 place-items-center py-3 px-2 rounded-2xl backdrop-blur-xl bg-white/80 border border-white/40 shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+
+               <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="lg:hidden">
               <Menu className="h-5 w-5 text-[#5B3DF5]" />
@@ -173,100 +234,47 @@ export default function Navbar() {
           </SheetContent>
         </Sheet>
 
-        {/* Desktop Links */}
-       <div className="hidden lg:flex items-center text-sm w-full font-medium text-[#0F172A]">
 
-         <div className="flex items-center gap-6">
-           {navItems.map((item) => (
-            <div
-              key={item.label}
-              className="relative hover:text-[#5B3DF5] cursor-pointer transition"
-              onMouseEnter={() =>
-                item.children && setOpenDropdown(item.label)
-              }
-              onMouseLeave={() => setOpenDropdown(null)}
-            >
-              <button className="flex items-center gap-1 text-[13px] font-medium hover:text-[#5B3DF5]">
-                {item.label}
-                {item.children && <ChevronDown className="w-4 h-4" />}
-              </button>
+    <Link
+      to="/"
+      className="flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
+    >
+      <Home className="h-5 w-5" />
+    </Link>
 
-              <AnimatePresence>
-                {item.children && openDropdown === item.label && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 mt-2 bg-white border border-[#E2E8F0] shadow-sm rounded-md py-2 min-w-40 z-50"
-                  >
-                    {item.children.map((child) => (
-                      <NavLink
-                        key={child.label}
-                        to={child.href}
-                        className="block whitespace-nowrap px-4 py-2 text-sm hover:text-[#5B3DF5]"
-                      >
-                        {child.label}
-                      </NavLink>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
-         </div>
+    <Link
+      to="/search"
+      className="flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
+    >
+      <HiOutlineMagnifyingGlass size={22} />
+    </Link>
 
+    <Link
+      to="/online-sale"
+      className="flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
+    >
+      <Flame className="h-5 w-5" />
+    </Link>
 
-         <div className="flex items-center gap-4 ml-auto">
-            <Link to="/cart" className="relative">
-             <ShoppingBag className="h-5 w-5 text-[#5B3DF5]" />
-             <span className="absolute -top-1 -right-2 h-4 w-4 text-[9px] bg-[#5B3DF5] text-white rounded-full flex items-center justify-center">
-             {totalCartQuantity}
-            </span>
-            </Link>
-             <Link to="/login">
-                <User className="h-5 w-5 text-[#5B3DF5] sm:block" />
-            </Link>
+    <Link
+      to="/cart"
+      className="relative flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
+    >
+      <ShoppingBag className="h-5 w-5" />
+      <span className="absolute -top-1 -right-2 h-4 w-4 text-[9px] bg-[#5B3DF5] text-white rounded-full flex items-center justify-center">
+        {totalCartQuantity}
+      </span>
+    </Link>
 
-         </div>
-        </div>
+    <Link
+      to="/login"
+      className="flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
+    >
+      <User className="h-5 w-5" />
+    </Link>
 
-
-
-
-
-
-
-
-
-
-        <div className="grid grid-cols-5 w-full lg:hidden place-items-center">
-
-         <Link to="/">
-            <Home className="h-5 w-5 text-[#5B3DF5]" />
-         </Link>
-
-        <Link to="/search">
-          <HiOutlineMagnifyingGlass size={22} className="text-[#5B3DF5]" />
-        </Link>
-
-         <Link to="/deals">
-          <Flame  className="h-5 w-5 text-[#5B3DF5]" />
-         </Link>
-
-         <Link to="/cart" className="relative">
-         <ShoppingBag className="h-5 w-5 text-[#5B3DF5]" />
-          <span className="absolute -top-1 -right-2 h-4 w-4 text-[9px] bg-[#5B3DF5] text-white rounded-full flex items-center justify-center">
-             {totalCartQuantity}
-         </span>
-             </Link>
-
-
-             <Link to="/login">
-                <User className="h-5 w-5 text-[#5B3DF5] sm:block" />
-            </Link>
-
-        </div>
-
+  </div>
+</div>
       </div>
     </nav>
   );
