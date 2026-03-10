@@ -37,15 +37,21 @@ export default function SearchPage() {
   
 
 
-  const handleSearch = async (e) => {
-    const value = e.target.value;
-    setSearch(value);
+   const handleSearch = (e) => {
+  setSearch(e.target.value);
+};
 
-    if (!value) return;
 
-    const products = await getsearchProducts(value);
-    console.log("Products:", products);
+   const handleKeyDown = (e) => {
+  if (e.key === "Enter" && search.trim()) {
+
+    setProducts([]);
+    navigate(`/search-results?q=${encodeURIComponent(search)}`);
+    setSearch("");
+
   }
+};
+
 
 
   return (
@@ -76,6 +82,7 @@ export default function SearchPage() {
             placeholder="Search products..."
             value={search}
             onChange={handleSearch}
+            onKeyDown={handleKeyDown}
             className="
             pl-11
             h-12
@@ -96,47 +103,63 @@ export default function SearchPage() {
 
 
             <div className="px-4">
+
               {products.length > 0 && (
-                  <div className="fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm">
-                    <div className="flex justify-center pt-24 px-4 h-full">
-                     <div
-                     className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl p-6 max-h-[70vh] overflow-y-auto overscroll-contain">
+  <div className="fixed inset-0 z-[999] bg-black/30 backdrop-blur-sm">
 
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-6">
-                     <h2 className="text-lg font-semibold">
-                     Product Search By: <span className="text-primary">{search}</span>
-                    </h2>
-                    <button
-                       onClick={() => setProducts([])}
-                       className="text-sm text-gray-500 hover:text-black"
-                       >
-                      Close
-                     </button>
-                     </div>
+    <div className="flex justify-center pt-20 px-3 sm:px-6">
 
-                         {/* Product Grid */}
-                       <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                        {products.slice(0,8).map((product)=>(
-                       <div
-                       key={product.id}
-                       className="border rounded-xl p-4 hover:shadow-md transition"
-                      >
+      <div className="bg-white w-full max-w-4xl rounded-xl shadow-2xl max-h-[75vh] overflow-y-auto">
 
-                       <img
-                        src={product.image}
-                        className="w-full h-40 object-contain mb-3"
-                       />
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b">
 
-                     <p className="text-sm font-medium line-clamp-2">
-                       {product.name}
-                    </p>
+          <h2 className="text-sm sm:text-base font-semibold">
+            Product Search By:
+            <span className="text-orange-500 ml-1">{search}</span>
+          </h2>
 
-              <p className="text-orange-500 font-semibold">
-                Tk. {product.price}
-              </p>
+          <button
+            onClick={() => setProducts([])}
+            className="text-gray-500 hover:text-black text-sm"
+          >
+            Close
+          </button>
+
+        </div>
+
+        {/* Product List */}
+        <div className="p-3 sm:p-5 space-y-3">
+
+          {products.slice(0, 8).map((product) => (
+
+            <div
+              key={product.id}
+              className="flex items-center gap-3 sm:gap-4 bg-gray-100 rounded-lg p-3 sm:p-4 hover:shadow-md transition"
+            >
+
+              {/* Image */}
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-16 h-16 sm:w-20 sm:h-20 object-contain flex-shrink-0"
+              />
+
+              {/* Product Info */}
+              <div className="flex-1">
+
+                <p className="text-xs sm:text-sm font-medium text-gray-800 line-clamp-2">
+                  {product.name}
+                </p>
+
+                <p className="text-orange-500 font-semibold mt-1 text-sm sm:text-base">
+                  Tk. {product.price}
+                </p>
+
+              </div>
 
             </div>
+
           ))}
 
         </div>
@@ -146,7 +169,8 @@ export default function SearchPage() {
     </div>
 
   </div>
- )}
+)}
+             
 </div>
 </div>
   );

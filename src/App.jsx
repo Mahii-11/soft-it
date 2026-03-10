@@ -9,6 +9,7 @@ import ThankYouPage from "./pages/ThankYouPage";
 import AuthPage from "./pages/AuthPage";
 import SearchPage from "./pages/SearchPage";
 import OnlineSale from "./pages/OnlineSale";
+import SearchResultsPage from "./pages/SearchResultsPage";
 
 const router = createBrowserRouter([
   {
@@ -60,6 +61,11 @@ const router = createBrowserRouter([
 
         path: "/online-sale",
         element: <OnlineSale/>
+      },
+
+      {
+        path: "/search-results",
+        element: <SearchResultsPage/>
       }
 
     ],
