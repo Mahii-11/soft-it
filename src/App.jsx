@@ -11,6 +11,9 @@ import SearchPage from "./pages/SearchPage";
 import OnlineSale from "./pages/OnlineSale";
 import SearchResultsPage from "./pages/SearchResultsPage";
 import OurLocation from "./pages/OurLocation";
+import Dashboard from "./pages/dasboardpage/Dashboard";
+import Orders from "./pages/dasboardpage/Orders";
+import Account from "./pages/dasboardpage/Account";
 
 const router = createBrowserRouter([
   {
@@ -72,7 +75,21 @@ const router = createBrowserRouter([
       {
         path: "/our-location",
         element: <OurLocation/>
-      }
+      },
+      
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
+  },
+  {
+    path: "/dashboard/orders",
+    element: <Orders />,
+  },
+ 
+  {
+    path: "/dashboard/profile",
+    element: <Account />,
+  },
 
     ],
   },

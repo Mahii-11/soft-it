@@ -136,7 +136,7 @@ useEffect(() => {
              {totalCartQuantity}
             </span>
             </Link>
-             <Link to="/login">
+             <Link to="/dashboard">
                 <User className="h-5 w-5 text-[#5B3DF5] sm:block" />
             </Link>
 
