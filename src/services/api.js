@@ -34,6 +34,14 @@ export const getSliders = async () => {
 }
 
 
+export const getTopMenuData = async ()  => {
+  const res = await fetchData("top-menu-data");
+  if (!res.success) {
+    throw new Error("Top Menu Data fetch unsufessful");
+  }
+  return res.menu_data || [];
+}
+
 export const getsearchProducts = async (searchTerm) => {
   const res = await fetchData(`search-products?search=${searchTerm}`)
 

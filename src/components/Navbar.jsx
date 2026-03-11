@@ -15,9 +15,11 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {  getTotalCartQuantity } from "../cart/cartSlice";
+import { getTopMenuData } from "../services/api";
 
 
 export default function Navbar() {
+  const [navItems, setNavItems] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -45,39 +47,37 @@ export default function Navbar() {
 }, [lastScrollY]);
 
 
+useEffect(() => {
+  async function loadMenu() {
+    try {
+      const data = await getTopMenuData();
+
+      const formattedMenu = data
+        .filter((item) => item.menu_active === 1)
+        .sort((a, b) => a.serial - b.serial)
+        .map((item) => ({
+          label: item.name,
+          href: `/category/${item.slug}`,
+          children: item.active_sub_categories.map((sub) => ({
+            label: sub.name,
+            href: `/category/${item.slug}/${sub.slug}`,
+          })),
+        }));
+
+      setNavItems(formattedMenu);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  loadMenu();
+}, []);
 
 
-  const navItems = [
-    {label: "phones", href: "/phones",
-      children: [
-        {label: "smartphones", href: "/phones/smartphones"},
-      ]
-    },
-      {label: "watches", href: "/watches",
-      children: [
-        {label: "smartwatches", href: "/watches/smartwatches"},
-      ]
-    },
-      {label: "Headphone & Speaker", href: "/headphone-speaker",
-      children: [
-        {label: "headphones", href: "/headphone-speaker/headphones"},
-        {label: "speakers", href: "/headphone-speaker/speakers"},
-      ]
-    },
-      {label: "Accessories", href: "/accessories",
-      children: [
-        {label: "smartphones", href: "/accessories/smartphones"},
-      ]
-    },
 
-      {label: "Gadget", href: "/gadget",
-      children: [
-        {label: "headphones", href: "/gadget/headphones"},
-        {label: "speakers", href: "/gadget/speakers"},
-      ]
-    },
 
-  ];
+
+
 
   return (
     <nav className={`fixed z-40 bottom-0 left-0 w-full lg:top-[64px] lg:bottom-auto border-b bg-white border-[#E2E8F0] text-[#0F172A] transition-transform duration-300 ${
