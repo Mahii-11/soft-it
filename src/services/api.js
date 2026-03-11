@@ -113,6 +113,16 @@ export const getOnlineSaleProducts = async () => {
 }
 
 
+export const getOurLocations = async () => {
+  const res = await fetchData("our-store-data");
+  if (!res.success) {
+    throw new Error("Our location fetch unsuccessful");
+  }
+  return res?.data?.data || [];
+}
+
+
+
 
 
 
@@ -123,6 +133,7 @@ export const getProductDetailsBySlugg = async (slug) => {
   }
   return res?.data?.product || null;
 };
+
 
 
 // Fetch product details by slug

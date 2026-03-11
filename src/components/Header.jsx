@@ -110,9 +110,11 @@ export default function Header() {
              <MapPin className="relative h-5 w-5 text-[#5B3DF5]" />
              </span>
 
-             <span className="font-space text-[#5B3DF5] uppercase text-xl font-bold tracking-tighter">
+             <Link to="/our-location">
+              <span className="font-space text-[#5B3DF5] uppercase text-xl font-bold tracking-tighter">
               Our Store
               </span>
+             </Link>
             </div>
       </div>
 

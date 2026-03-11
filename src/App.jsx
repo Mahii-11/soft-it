@@ -10,6 +10,7 @@ import AuthPage from "./pages/AuthPage";
 import SearchPage from "./pages/SearchPage";
 import OnlineSale from "./pages/OnlineSale";
 import SearchResultsPage from "./pages/SearchResultsPage";
+import OurLocation from "./pages/OurLocation";
 
 const router = createBrowserRouter([
   {
@@ -66,6 +67,11 @@ const router = createBrowserRouter([
       {
         path: "/search-results",
         element: <SearchResultsPage/>
+      },
+
+      {
+        path: "/our-location",
+        element: <OurLocation/>
       }
 
     ],

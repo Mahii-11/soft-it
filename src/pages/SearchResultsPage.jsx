@@ -1,25 +1,42 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getsearchProducts } from "../services/api";
+import Loader from "../loader/Loader";
 
 export default function SearchResultsPage() {
-
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
 
     const fetchProducts = async () => {
       if (!query) return;
 
-      const result = await getsearchProducts(query);
-      setProducts(result);
+
+      try {
+        setLoading(true);
+        const result = await getsearchProducts(query);
+        setProducts(result);
+      } catch (error) {
+        console.error("Search error", error);
+
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProducts();
 
   }, [query]);
+
+
+   if (loading) {
+    return (
+      <Loader type="dealofday" count={5} />
+    )
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-6">
@@ -28,7 +45,7 @@ export default function SearchResultsPage() {
         Search results for: {query}
       </h1>
 
-         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
 
         {products.map((product) => (
           <div
@@ -52,7 +69,7 @@ export default function SearchResultsPage() {
           
 
             {/* Product Name */}
-            <h3 className="text-[14px] text-center text-gray-700 leading-snug line-clamp-2 min-h-14">
+            <h3 className="text-[14px] text-center text-gray-700 leading-snug line-clamp-2 min-h-[52px]">
               {product.name}
             </h3>
 
