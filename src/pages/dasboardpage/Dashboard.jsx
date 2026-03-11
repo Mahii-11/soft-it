@@ -34,7 +34,7 @@ export default function Dashboard() {
  
 
   return (
-      <div className="min-h-screen bg-slate-50 flex font-sans text-slate-900 mt-16">
+      <div className="min-h-screen bg-slate-50 flex font-sans text-slate-900 mt-2 md:mt-16">
        <DashboardMenu sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
     
 

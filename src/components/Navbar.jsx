@@ -267,7 +267,7 @@ useEffect(() => {
     </Link>
 
     <Link
-      to="/login"
+      to="/dashboard"
       className="flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
     >
       <User className="h-5 w-5" />
