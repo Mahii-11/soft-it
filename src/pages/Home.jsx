@@ -1,4 +1,3 @@
-import BannerSection from "../components/home/BannerSection";
 import DealofDayProducts from "../components/home/DealofDayProducts";
 import FeatureIconsSection from "../components/home/FeatureIconsSection";
 import HeroSection from "../components/home/HeroSection";
@@ -12,7 +11,6 @@ export default function Home() {
     <div>
       <HeroSection/>
       <PremiumCategories/>
-      <BannerSection />
       <PremiumProductsSection/>
       <MostViewedProducts/>
       <DealofDayProducts />
