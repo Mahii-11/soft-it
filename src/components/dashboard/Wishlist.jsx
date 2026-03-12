@@ -1,13 +1,13 @@
 import { ShoppingCart, Trash2 } from "lucide-react";
 
 export default function Wishlist() {
-  const wishlistItems = [
+   const wishlistItems = [
     { id: 1, name: "Sony WH-1000XM4 Headphones", price: "$349.99", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=200&fit=crop", status: "In Stock" },
-    { id: 2, name: "Apple Magic Keyboard", price: "$299.00", image: "https://images.unsplash.com/photo-1587829191301-a19e0a57e4f0?w=200&h=200&fit=crop", status: "In Stock" },
+    { id: 2, name: "Apple Magic Keyboard", price: "$299.00", image: "/images/samsung.png", status: "In Stock" },
     { id: 3, name: "Logitech MX Master 3S", price: "$99.99", image: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=200&h=200&fit=crop", status: "In Stock" },
-    { id: 4, name: "Dell Ultrasharp Monitor", price: "$799.99", image: "https://images.unsplash.com/photo-1527720643618-2dab4ef5fb3d?w=200&h=200&fit=crop", status: "Out of Stock" },
+    { id: 4, name: "Dell Ultrasharp Monitor", price: "$799.99", image: "/images/laptop.png", status: "Out of Stock" },
     { id: 5, name: "Herman Miller Aeron Chair", price: "$1,395.00", image: "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=200&h=200&fit=crop", status: "In Stock" },
-    { id: 6, name: "Mechanical Keyboard RGB", price: "$179.99", image: "https://images.unsplash.com/photo-1587829191301-a19e0a57e4f0?w=200&h=200&fit=crop", status: "In Stock" },
+    { id: 6, name: "Mechanical Keyboard RGB", price: "$179.99", image: "/images/ipad.png", status: "In Stock" },
   ];
 
   return (
