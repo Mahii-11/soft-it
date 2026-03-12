@@ -11,12 +11,12 @@ const [sidebarOpen, setSidebarOpen] = useState(false);
 const [activeTab, setActiveTab] = useState("dashboard");
 
 const user = {
-name: "Alex Morgan",
-email: "[alex.morgan@example.com](mailto:alex.morgan@example.com)",
-phone: "+1 (555) 123-4567",
-address: "123 Commerce St, Suite 4B\nNew York, NY 10001",
-avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-joined: "January 15, 2022",
+name: "MA AHI",
+email: "adibmahi14@gmail.com",
+phone: "01840197327",
+address: "Dhanbari Tangail",
+avatar: "/images/mahi07.jpg",
+joined: "January 15, 2026",
 status: "Active Member",
 };
 
