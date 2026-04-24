@@ -158,7 +158,7 @@ export default function MostViewedProducts() {
                 <div className="mt-4 md:hidden">
                   <button
                     onClick={(e) => handleAddToCart(e, item)}
-                    className="w-full h-10 rounded-xl bg-black hover:bg-blue-500 text-white text-sm font-medium transition"
+                    className="w-full h-8 rounded-xl bg-black hover:bg-blue-500 text-white text-sm font-medium transition"
                   >
                     {item.product_type === "variable"
                       ? "View Details"

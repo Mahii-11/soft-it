@@ -93,13 +93,13 @@ useEffect(() => {
            {navItems.map((item) => (
             <div
               key={item.label}
-              className="relative hover:text-[#5B3DF5] cursor-pointer transition"
+              className="relative hover:text-red-600 cursor-pointer transition"
               onMouseEnter={() =>
                 item.children && setOpenDropdown(item.label)
               }
               onMouseLeave={() => setOpenDropdown(null)}
             >
-              <button className="flex items-center gap-1 text-[13px] font-medium hover:text-[#5B3DF5]">
+              <button className="flex items-center gap-1 text-[13px] font-medium hover:text-red-600">
                 {item.label}
                 {item.children && <ChevronDown className="w-4 h-4" />}
               </button>
@@ -116,7 +116,7 @@ useEffect(() => {
                       <NavLink
                         key={child.label}
                         to={child.href}
-                        className="block whitespace-nowrap px-4 py-2 text-sm hover:text-[#5B3DF5]"
+                        className="block whitespace-nowrap px-4 py-2 text-sm hover:text-red-600"
                       >
                         {child.label}
                       </NavLink>
@@ -131,13 +131,13 @@ useEffect(() => {
 
          <div className="flex items-center gap-4 ml-auto">
             <Link to="/cart" className="relative">
-             <ShoppingBag className="h-5 w-5 text-[#5B3DF5]" />
-             <span className="absolute -top-1 -right-2 h-4 w-4 text-[9px] bg-[#5B3DF5] text-white rounded-full flex items-center justify-center">
+             <ShoppingBag className="h-5 w-5 text-black" />
+             <span className="absolute -top-1 -right-2 h-4 w-4 text-[9px] bg-black text-white rounded-full flex items-center justify-center">
              {totalCartQuantity}
             </span>
             </Link>
              <Link to="/login">
-                <User className="h-5 w-5 text-[#5B3DF5] sm:block" />
+                <User className="h-5 w-5 text-black sm:block" />
             </Link>
 
          </div>
@@ -150,13 +150,13 @@ useEffect(() => {
                <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="lg:hidden">
-              <Menu className="h-5 w-5 text-[#5B3DF5]" />
+              <Menu className="h-5 w-5 text-black" />
             </Button>
           </SheetTrigger>
 
           <SheetContent side="left" className="w-72">
             <SheetHeader>
-              <SheetTitle className="text-left text-xl font-bold text-[#5B3DF5] font-space">
+              <SheetTitle className="text-left text-xl font-bold text-black font-space">
                 Menu
               </SheetTitle>
             </SheetHeader>
@@ -168,7 +168,7 @@ useEffect(() => {
               {navItems.map((item) => (
                 <p
                   key={item.label}
-                  className="cursor-pointer text-[#0F172A] hover:text-[#5B3DF5] transition font-medium"
+                  className="cursor-pointer text-[#0F172A] hover:text-red-600 transition font-medium"
                 >
                      {item.children ? (
                       <div>
@@ -200,8 +200,8 @@ useEffect(() => {
                                   key={child.label}
                                   to={child.href}
                                   className={({ isActive }) =>
-                                    `block py-2 text-[#64748B] hover:text-[#5B3DF5] ${
-                                      isActive ? "text-[#5B3DF5]" : ""
+                                    `block py-2 text-[#64748B] hover:text-red-600 ${
+                                      isActive ? "text-red-600" : ""
                                     }`
                                   }
                                   onClick={() => setIsOpen(false)}
@@ -237,38 +237,38 @@ useEffect(() => {
 
     <Link
       to="/"
-      className="flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
+      className="flex flex-col items-center justify-center text-black transition-transform active:scale-95"
     >
       <Home className="h-5 w-5" />
     </Link>
 
     <Link
       to="/search"
-      className="flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
+      className="flex flex-col items-center justify-center text-black transition-transform active:scale-95"
     >
       <HiOutlineMagnifyingGlass size={22} />
     </Link>
 
     <Link
       to="/online-sale"
-      className="flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
+      className="flex flex-col items-center justify-center text-black transition-transform active:scale-95"
     >
       <Flame className="h-5 w-5" />
     </Link>
 
     <Link
       to="/cart"
-      className="relative flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
+      className="relative flex flex-col items-center justify-center text-black transition-transform active:scale-95"
     >
       <ShoppingBag className="h-5 w-5" />
-      <span className="absolute -top-1 -right-2 h-4 w-4 text-[9px] bg-[#5B3DF5] text-white rounded-full flex items-center justify-center">
+      <span className="absolute -top-1 -right-2 h-4 w-4 text-[9px] bg-black text-white rounded-full flex items-center justify-center">
         {totalCartQuantity}
       </span>
     </Link>
 
     <Link
       to="/login"
-      className="flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
+      className="flex flex-col items-center justify-center text-black transition-transform active:scale-95"
     >
       <User className="h-5 w-5" />
     </Link>

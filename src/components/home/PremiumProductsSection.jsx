@@ -59,7 +59,7 @@ export default function PremiumProductsSection() {
           {dataSections.map((section, i) => (
             <div key={i}>
               {/* Title */}
-              <h2 className="text-[28px] leading-none font-normal text-black mb-8">
+              <h2 className="text-[20px] sm:text-[24px] md:text-[28px] leading-none font-normal text-black mb-8">
                 {section.title}
               </h2>
 
@@ -84,7 +84,7 @@ export default function PremiumProductsSection() {
                     {/* Content */}
                     <div className="flex-1 pt-1">
                       {/* Name */}
-                      <h3 className="text-[17px] leading-[1.35] text-black line-clamp-2 mb-3">
+                      <h3 className="text-[15px] sm:text-[16px] md:text-[17px] leading-[1.35] text-black line-clamp-2 mb-3">
                         {product.name}
                       </h3>
 
@@ -112,7 +112,7 @@ export default function PremiumProductsSection() {
                       )}
 
                       {/* Price */}
-                      <p className="text-black font-semibold text-[22px] leading-none">
+                      <p className="text-black font-semibold text-[15px] sm:text-[20px] md:text-[22px] leading-none">
                         {i === 2 ? "$59.99" : `${product.price} Tk`}
                       </p>
                     </div>

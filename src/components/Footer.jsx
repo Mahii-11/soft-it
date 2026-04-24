@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center text-white font-bold text-xl">
+              <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center text-black font-bold text-xl">
                 G
               </div>
               <span className="text-xl font-bold font-display text-white tracking-tight">GadgetGlobe</span>
@@ -55,15 +55,15 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-primary shrink-0" />
+                <MapPin className="h-5 w-5 text-white shrink-0" />
                 <span>123 Tech Avenue, Silicon Valley<br />CA 94000, USA</span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-primary shrink-0" />
+                <Phone className="h-5 w-5 text-white shrink-0" />
                 <span>+1 (555) 123-4567</span>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-primary shrink-0" />
+                <Mail className="h-5 w-5 text-white shrink-0" />
                 <span>support@gadgetglobe.com</span>
               </li>
             </ul>

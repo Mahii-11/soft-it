@@ -67,7 +67,7 @@ export default function Header() {
            </div>
         </div> */}
             <div className="flex items-center gap-2">
-               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center text-white font-bold text-xl">
+               <div className="h-8 w-8 rounded-lg bg-black flex items-center justify-center text-white font-bold text-xl">
               
                 G
             </div>
@@ -111,7 +111,7 @@ export default function Header() {
              </span>
 
              <Link to="/our-location">
-              <span className="font-space text-red-600 uppercase text-xl font-bold tracking-tighter">
+              <span className="font-space text-black uppercase text-xl font-bold tracking-tighter">
               Our Store
               </span>
              </Link>

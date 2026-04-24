@@ -1,28 +1,51 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { getSliders } from "../../services/api";
+import { getOfferBanner, getSliders } from "../../services/api";
 import { Link } from "wouter";
 import Loader from "../../loader/Loader";
 
 
-export const offerBanners = [
-  {
-    id: 1,
-    link: "#",
-    image: "/images/heroImage-4.jpg",
-  },
-  {
-    id: 2,
-    link: "#",
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200&auto=format&fit=crop",
-  },
-];
+
 
 export default function HeroSection() {
   const [current, setCurrent] = useState(0);
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [offerBanners, setOfferBanners] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const fetchOfferBanners = async () => {
+      try {
+        const res = await getOfferBanner();
+        setOfferBanners(res);
+      } catch (err) {
+        console.error("Error fetching offer banners:", err);
+      }
+    }
+    fetchOfferBanners();
+  }, [])
+
+
+
+useEffect(() => {
+  const checkScreen = () => {
+    setIsMobile(window.innerWidth < 768); // md breakpoint
+  };
+
+  checkScreen();
+  window.addEventListener("resize", checkScreen);
+
+  return () => window.removeEventListener("resize", checkScreen);
+}, []);
+
+
+const getImageClass = () => {
+  return isMobile
+    ? "w-full h-[220px] object-contain bg-white"
+    : "w-full h-[420px] object-cover object-center";
+};
 
   useEffect(() => {
     const controller = new AbortController();
@@ -88,56 +111,28 @@ export default function HeroSection() {
     <section className="w-full bg-#FFFFFF py-4 md:py-16">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* LEFT BIG SLIDER */}
-        <div className="lg:col-span-2 relative overflow-hidden rounded-xl bg-white">
-          <motion.div
-            className="flex"
-            animate={{ x: `-${Number(current) * 100}%` }}
-            transition={{
-              type: "spring",
-              stiffness: 60,
-              damping: 20,
-              mass: 1,
-            }}
-          >
-            {slides.length > 0 &&
-              slides.map((slide) => (
-             <img
-             key={slide.id}
-             src={slide.image}
-             className="w-full shrink-0 h-[260px] md:h-[380px] lg:h-[420px] object-cover object-center md:object-center"
-             />
-            ))}
-          </motion.div>
+             <div className="lg:col-span-2 relative overflow-hidden rounded-xl bg-white">
 
-          {/* DOTS */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`h-2.5 rounded-full transition-all duration-300 ${
-                  current === i ? "w-6 bg-black" : "w-2.5 bg-gray-400"
-                }`}
-              />
-            ))}
-          </div>
+  <motion.div
+    className="flex"
+    animate={{ x: `-${Number(current) * 100}%` }}
+    transition={{
+      type: "spring",
+      stiffness: 60,
+      damping: 20,
+    }}
+  >
+    {slides.map((slide) => (
+      <div key={slide.id} className="w-full shrink-0">
+        <img
+          src={slide.image}
+          className={getImageClass()}
+        />
+      </div>
+    ))}
+  </motion.div>
 
-          {/* ARROWS */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow p-2 rounded-full"
-          >
-            ❮
-          </button>
-
-          <button
-            onClick={nextSlide}
-            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow p-2 rounded-full"
-          >
-            ❯
-          </button>
-        </div>
-
+</div>
         {/* RIGHT SIDE BANNERS */}
 
         <div className="flex flex-col gap-6">

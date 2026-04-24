@@ -111,16 +111,16 @@ export default function DealofDayProducts() {
                     />
                   </div>
 
-                  {/* Hot Sale Strip */}
-                  <div className="mt-3 bg-[#171717] rounded-xl overflow-hidden h-11 flex items-center px-2 ">
-                    <div className="marquee-track flex items-center whitespace-nowrap">
+                    {/* Hot Sale Strip */}
+                  <div className="mt-3 bg-[#171717] rounded-xl overflow-hidden h-8 sm:h-11 flex items-center px-2 ">
+                    <div className="marquee-track flex items-center whitespace-nowrap ">
                       <span className="sale-item">
                         {deal.deal_offer}% OFF
                       </span>
 
                       <Zap
                         size={15}
-                        className="text-red-500 fill-red-500 mx-3 shrink-0"
+                        className="text-red-500 fill-red-500 mx-2 sm:mx-3 shrink-0"
                       />
 
                       <span className="sale-item">
@@ -129,7 +129,7 @@ export default function DealofDayProducts() {
 
                       <Zap
                         size={15}
-                        className="text-red-500 fill-red-500 mx-3 shrink-0"
+                        className="text-red-500 fill-red-500 mx-2 sm:mx-3 shrink-0"
                       />
 
                       <span className="sale-item">
@@ -138,7 +138,7 @@ export default function DealofDayProducts() {
 
                       <Zap
                         size={15}
-                        className="text-red-500 fill-red-500 mx-3 shrink-0"
+                        className="text-red-500 fill-red-500 mx-2 sm:mx-3 shrink-0"
                       />
 
                       <span className="sale-item">
@@ -196,7 +196,7 @@ export default function DealofDayProducts() {
                 <div className="mt-4 md:hidden">
                   <button
                     onClick={(e) => handleAddToCart(e, product)}
-                    className="w-full bg-black hover:bg-white text-white hover:text-black h-10 rounded-xl text-sm font-medium transition"
+                    className="w-full bg-black hover:bg-white text-white hover:text-black h-9 rounded-xl text-sm font-medium transition"
                   >
                     {product.product_type === "single"
                       ? "Add to Cart"
