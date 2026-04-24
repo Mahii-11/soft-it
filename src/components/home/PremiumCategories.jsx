@@ -84,7 +84,7 @@ export default function AutoSlidingCategories() {
         <div className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0F172A]">
             Popular{" "}
-            <span className="text-[#5B3DF5]">
+            <span className="text-red-600">
               Categories
             </span>
           </h2>

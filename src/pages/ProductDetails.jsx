@@ -13,11 +13,13 @@ import {
 import { useDispatch } from "react-redux";
 import { normalizeProductForCart } from "../utils/cartAdapter";
 import { addItem } from "../cart/cartSlice";
+import CartPopup from "../components/CartPopup";
 
 
 export default function ProductDetails() {
   const { slug } = useParams();
   const dispatch = useDispatch();
+  const [cartPopup, setCartPopup] = useState(null);
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -85,6 +87,27 @@ export default function ProductDetails() {
          );
          console.log("Selected Variation at Add:", selectedVariation);
         dispatch(addItem(normalizedProduct));
+              setCartPopup({
+  image:
+    selectedImage ||
+    product.thumbnail ||
+    product.image ||
+    "/images/motorola.png",
+
+  price: Number(
+    selectedVariation?.price ||
+    product.discount_price ||
+    product.price?.final ||
+    product.price?.offer ||
+    product.price?.regular ||
+    0
+  ),
+});
+
+              setTimeout(() => {
+              setCartPopup(null);
+             }, 3000);
+
         
       }
 
@@ -505,6 +528,10 @@ export default function ProductDetails() {
 
               ))}
               </div>
+              <CartPopup
+                popup={cartPopup}
+                onClose={() => setCartPopup(null)}
+              />
           </div>
          );
        }

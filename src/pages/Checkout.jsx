@@ -96,7 +96,7 @@ const handleOrderSubmit = async () => {
     data.append("payment_method", 1);
 
     cartItems.forEach((product, index) => {
-      data.append(`product_data[${index}][product_id]`, product.product_id);
+      data.append(`product_data[${index}][product_id]`, product.product_id || product.id);
       data.append(`product_data[${index}][unit_price]`, product.unit_price);
       data.append(`product_data[${index}][qty]`, product.quantity);
       data.append(`product_data[${index}][variation_color_id]`, product.color_name);

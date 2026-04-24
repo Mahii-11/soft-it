@@ -13,7 +13,8 @@ export function normalizeProductForCart(product, selectedVariation, selectedColo
   const numericPrice = Number(price) || 0;
 
   return {
-    product_id: product.id,
+    id: product.id || product.product_id,
+    product_id: product.id || product.product_id,
     product_slug: product.product_slug || product.slug || "",
     product_name: product.product_name || product.name || "Unknown Product",
     image: product.thumb_image || product.image || product.thumbnail || "/images/motorola.png",

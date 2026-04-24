@@ -1,19 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { getMostViewedProducts } from "../../services/api";
 import Loader from "../../loader/Loader";
 import { normalizeProductForCart } from "../../utils/cartAdapter";
 import { useDispatch } from "react-redux";
 import { addItem } from "../../cart/cartSlice";
-
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Autoplay, FreeMode } from "swiper/modules";
-
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/free-mode";
-
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { ShoppingCart, Eye } from "lucide-react";
+import CartPopup from "../CartPopup";
 
 const transformProducts = (apiProducts) =>
   apiProducts.map((item) => ({
@@ -21,14 +14,19 @@ const transformProducts = (apiProducts) =>
     name: item.name,
     image: item.image,
     price: item.price,
+    product_type: item.product_type,
+    product_slug: item.product_slug,
+    thumb_image: item.thumb_image,
+    discount_price: item.discount_price,
+    original_price: item.original_price,
   }));
 
 export default function MostViewedProducts() {
-  const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState([]);
-
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [cartPopup, setCartPopup] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -42,138 +40,141 @@ export default function MostViewedProducts() {
         setLoading(false);
       }
     };
+
     fetchProducts();
   }, []);
 
   const handleAddToCart = (e, product) => {
     e.stopPropagation();
+
+    if (product.product_type === "variable") {
+      navigate(`/product-details/${product.product_slug}`);
+      return;
+    }
+
     const normalizedProduct = normalizeProductForCart(product);
     dispatch(addItem(normalizedProduct));
+
+    setCartPopup({
+      image: product.thumb_image || product.image,
+      price: product.discount_price || product.price,
+    });
+
+    setTimeout(() => {
+      setCartPopup(null);
+    }, 3000);
   };
 
   if (loading) return <Loader type="mostviewed" />;
 
-  const enableLoop = products.length > 5;
-
   return (
-    <section className="w-full py-16 md:py-28 bg-[#F1F5F9]">
-      <div className="max-w-7xl mx-auto px-4">
+    <>
+      <section className="w-full py-10 md:py-14 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          {/* Header */}
+          <div className="flex items-end justify-between gap-4 mb-8 md:mb-10">
+            <div>
+              <p className="text-xs md:text-sm uppercase tracking-[3px] text-red-600 font-semibold mb-2">
+                Trending Now
+              </p>
 
-        {/* Heading */}
-        <div className="text-center mb-14">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-[#0F172A]">
-            Most <span className="text-[#5B3DF5]">Viewed Products</span>
-          </h2>
-        </div>
+              <h2 className="text-3xl md:text-5xl font-light text-black tracking-tight leading-none">
+                Most Viewed Products
+              </h2>
+            </div>
 
-        <div className="relative max-w-7xl mx-auto">
+            <Link
+              to="/shop"
+              className="text-sm md:text-base text-black font-medium underline underline-offset-4 hover:text-red-600 transition"
+            >
+              View All
+            </Link>
+          </div>
 
-          {/* Edge fade */}
-          <div className="hidden md:block pointer-events-none absolute left-0 top-0 h-full w-20 bg-gradient-to-r from-[#F1F5F9] to-transparent z-10"></div>
-          <div className="hidden md:block pointer-events-none absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-[#F1F5F9] to-transparent z-10"></div>
-
-          {/* Arrow Left */}
-          <button className="mostviewed-prev hidden md:flex absolute -left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white shadow-lg border border-gray-200 hover:bg-blue-500 hover:text-white transition-all duration-300 hover:scale-110">
-            <FiChevronLeft size={24} />
-          </button>
-
-          {/* Arrow Right */}
-          <button className="mostviewed-next hidden md:flex absolute -right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white shadow-lg border border-gray-200 hover:bg-blue-500 hover:text-white transition-all duration-300 hover:scale-110">
-            <FiChevronRight size={24} />
-          </button>
-
-          <Swiper
-            modules={[Navigation, Autoplay, FreeMode]}
-            navigation={{
-              nextEl: ".mostviewed-next",
-              prevEl: ".mostviewed-prev",
-            }}
-            freeMode
-            grabCursor
-            loop={enableLoop}
-            speed={550}
-            spaceBetween={16}
-            touchRatio={1.3}
-            resistanceRatio={0.85}
-            autoplay={{
-              delay: 2600,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
-            breakpoints={{
-              0: {
-                slidesPerView: 2,
-                spaceBetween: 12,
-                autoplay: false,
-              },
-              640: {
-                slidesPerView: 2,
-                spaceBetween: 12,
-                autoplay: false,
-              },
-              768: {
-                slidesPerView: 3,
-                spaceBetween: 12,
-                autoplay: false,
-              },
-              1024: {
-                slidesPerView: 5,
-                spaceBetween: 12,
-                autoplay: {
-                  delay: 2600,
-                  disableOnInteraction: false,
-                  pauseOnMouseEnter: true,
-                },
-              },
-            }}
-          >
-
+          {/* Grid Products */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
             {products.map((item, index) => (
-              <SwiperSlide key={`${item.id}-${index}`}>
-
-                {/* IOS STYLE CARD */}
-                    <div
-                     className="group bg-white rounded-2xl p-4 md:p-6 flex flex-col transition-all duration-500 -translate-y-2"
-                     style={{
-                     boxShadow:
-                     "0 4px 12px rgba(0,0,0,0.05), 0 12px 28px rgba(0,0,0,0.08)",
-                     }}
-                    >
-                  <div className="h-[130px] flex items-center justify-center mb-4 overflow-hidden">
+              <div
+                key={`${item.id}-${index}`}
+                className="group relative bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-xl transition-all duration-300 p-3 md:p-4"
+              >
+                <Link to={`/product-details/${item.product_slug}`}>
+                  {/* Product Image */}
+                  <div className="h-[150px] md:h-[180px] flex items-center justify-center overflow-hidden rounded-xl bg-gray-50 p-3">
                     <img
-                    loading="lazy"
-                    src={item.image}
-                    alt={item.name}
-                    className="object-contain h-full transition-transform duration-700 group-hover:scale-105"
-                   />
-                 </div>
+                      loading="lazy"
+                      src={item.image}
+                      alt={item.name}
+                      className="max-h-full object-contain transition duration-500 group-hover:scale-110"
+                    />
+                  </div>
 
-                 <h3 className="text-[12px] md:text-[14px] text-center text-gray-700 leading-snug line-clamp-2 min-h-[52px] font-medium">
-                 {item.name}
-                 </h3>
+                  {/* Name */}
+                  <h3 className="mt-4 text-[15px] md:text-[17px] font-medium leading-snug text-[#222] line-clamp-2 min-h-[62px] md:min-h-[72px] group-hover:text-black transition">
+                    {item.name}
+                  </h3>
 
-               <div className="flex items-center justify-center gap-2 mt-2">
-                <span className="text-blue-600 font-semibold text-[16px] md:text-[17px]">
-                 Tk.{item.price?.toLocaleString()}
-               </span>
+                  {/* Price */}
+                  <div className="mt-3 flex flex-col gap-1">
+                    {item?.original_price && (
+                      <span className="text-[#9f9f9f] line-through text-sm">
+                        ৳
+                        {Number(
+                          item.original_price ?? 0
+                        ).toLocaleString()}
+                      </span>
+                    )}
+
+                    <span className="text-black font-semibold text-lg md:text-xl">
+                      ৳
+                      {Number(
+                        item.discount_price || item.price || 0
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                </Link>
+
+                {/* Hover Button Desktop */}
+                <div className="absolute left-3 right-3 bottom-3 opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hidden md:block">
+                  <button
+                    onClick={(e) => handleAddToCart(e, item)}
+                    className="w-full h-11 rounded-xl bg-white hover:bg-black text-black hover:text-white flex items-center justify-center gap-2 text-sm font-medium transition"
+                  >
+                    {item.product_type === "variable" ? (
+                      <>
+                        <Eye size={16} />
+                        View Details
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart size={16} />
+                        Add to Cart
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Mobile Button */}
+                <div className="mt-4 md:hidden">
+                  <button
+                    onClick={(e) => handleAddToCart(e, item)}
+                    className="w-full h-10 rounded-xl bg-black hover:bg-blue-500 text-white text-sm font-medium transition"
+                  >
+                    {item.product_type === "variable"
+                      ? "View Details"
+                      : "Add to Cart"}
+                  </button>
+                </div>
               </div>
-
-                <button
-                 onClick={(e) => handleAddToCart(e, item)}
-                 className="mt-5 rounded-full border border-blue-500 bg-blue-50 text-blue-600 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition-all duration-300"
-                >
-                    Add to Cart
-                   </button>
-                 </div>
-
-              </SwiperSlide>
             ))}
-
-          </Swiper>
-
+          </div>
         </div>
+      </section>
 
-      </div>
-    </section>
+      <CartPopup
+        popup={cartPopup}
+        onClose={() => setCartPopup(null)}
+      />
+    </>
   );
 }

@@ -136,7 +136,7 @@ useEffect(() => {
              {totalCartQuantity}
             </span>
             </Link>
-             <Link to="/dashboard">
+             <Link to="/login">
                 <User className="h-5 w-5 text-[#5B3DF5] sm:block" />
             </Link>
 
@@ -267,7 +267,7 @@ useEffect(() => {
     </Link>
 
     <Link
-      to="/dashboard"
+      to="/login"
       className="flex flex-col items-center justify-center text-[#5B3DF5] transition-transform active:scale-95"
     >
       <User className="h-5 w-5" />

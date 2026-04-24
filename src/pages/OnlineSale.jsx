@@ -112,26 +112,33 @@ export  function OnlineSaleProducts() {
   }
 
   function handleAddToCart(e, product) {
-    e.stopPropagation();
+  e.stopPropagation();
 
-    if (product.product_type === "variable") {
-      navigate(`/product-details/${product.product_slug}`);
-      return;
-    }
+  if (product.product_type === "variable") {
+    navigate(`/product-details/${product.product_slug}`);
+    return;
+  }
 
-    const normalizedProduct = normalizeProductForCart(product);
-    dispatch(addItem(normalizedProduct));
+  const normalizedProduct = normalizeProductForCart({
+    ...product,
+    id: product.product_id || product.id,
+    product_id: product.product_id || product.id,
+    product_name: product.name,
+    discount_price: product.price,
+    thumb_image: product.image,
+  });
 
+  dispatch(addItem(normalizedProduct));
 
-    setCartPopup({
+  setCartPopup({
     image: product.image,
-    price: product.price
+    price: product.price,
   });
 
   setTimeout(() => {
     setCartPopup(null);
   }, 3000);
-  }
+}
 
 
   return (
@@ -186,9 +193,9 @@ export  function OnlineSaleProducts() {
 
               className="mt-5 rounded-full border border-blue-500 bg-blue-50 text-blue-600 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition duration-300"
                >
-                 {product.product_type === "single"
-                 ? "Add to Cart"
-                 : "View Details"}
+                {product.product_type === "variable"
+                ? "View Details"
+                : "Add to Cart"}
             </button>
         
     

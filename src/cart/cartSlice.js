@@ -1,10 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 
- 
- 
- 
-
-
 const initialState = {
   cart: [],
   showCartPopup: false,
@@ -35,6 +30,7 @@ const cartSlice = createSlice({
 
                  state.cart.push({
                  ...newItem,
+                 product_id: newItem.product_id || newItem.id,
                  quantity: newItem.quantity ?? 1,
                  totalPrice: (newItem.quantity ?? 1) * newItem.discount_price,
                  size_id: newItem.size_id || 0,

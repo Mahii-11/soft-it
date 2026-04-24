@@ -104,7 +104,7 @@ export default function HeroSection() {
              <img
              key={slide.id}
              src={slide.image}
-             className="w-full shrink-0 h-[260px] md:h-[380px] lg:h-[420px] object-cover"
+             className="w-full shrink-0 h-[260px] md:h-[380px] lg:h-[420px] object-cover object-center md:object-center"
              />
             ))}
           </motion.div>

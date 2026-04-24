@@ -1,5 +1,8 @@
 import { Menu, Search, Bell } from "lucide-react";
 
+
+const baseURL = "https://backend.gadgetglobe.com.bd/";
+
 export default function Header({ setSidebarOpen, setActiveTab, user }) {
   return (
     <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 sticky top-0">
@@ -39,11 +42,11 @@ export default function Header({ setSidebarOpen, setActiveTab, user }) {
         {/* Profile */}
         <div onClick={() => setActiveTab('profile')} className="flex items-center gap-3 cursor-pointer group" data-testid="button-profile-menu">
           <div className="hidden sm:block text-right">
-            <p className="text-sm font-semibold text-slate-700 group-hover:text-[#5B3DF5] transition-colors" data-testid="text-username">{user.name}</p>
+            <p className="text-sm font-semibold text-slate-700 group-hover:text-[#5B3DF5] transition-colors" data-testid="text-username"> {user?.name || "Guest"}</p>
             <p className="text-xs text-slate-500">Customer</p>
           </div>
           <img 
-            src={user.avatar} 
+            src={user?.image ? baseURL + user.image : "/default-avatar.png"}
             alt="User avatar" 
             className="w-9 h-9 rounded-full ring-2 ring-slate-100 group-hover:ring-[#5B3DF5]/30 transition-all object-cover" 
             data-testid="img-avatar-header" 

@@ -12,6 +12,7 @@ import OnlineSale from "./pages/OnlineSale";
 import SearchResultsPage from "./pages/SearchResultsPage";
 import OurLocation from "./pages/OurLocation";
 import Dashboard from "./pages/Dashboard";
+import OrderDetails from "./components/dashboard/OrderDetails";
 
 
 const router = createBrowserRouter([
@@ -79,6 +80,11 @@ const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard/>
+      },
+
+      { 
+        path: "/order-details/:id",
+        element: <OrderDetails />
       }
  
   

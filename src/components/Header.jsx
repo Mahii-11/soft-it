@@ -94,9 +94,9 @@ export default function Header() {
        
          <div className="flex items-center gap-2 sm:gap-4">
           <Link to="/online-sale">
-          <span className="text-[#5B3DF5] bg-clip-text  text-xl font-bold font-display hidden sm:block tracking-tight">
+          <span className="text-black bg-clip-text  text-xl font-bold font-display hidden sm:block tracking-tight">
           Online 
-          <span className="bg-clip-text text-[#5B3DF5]">
+          <span className="bg-clip-text text-red-600">
           Sale!
          </span>
          </span>
@@ -106,12 +106,12 @@ export default function Header() {
         {/* Actions */}
            <div className="flex items-center gap-2">
              <span className="relative flex h-5 w-5">
-             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#5B3DF5] opacity-75"></span>
-             <MapPin className="relative h-5 w-5 text-[#5B3DF5]" />
+             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75"></span>
+             <MapPin className="relative h-5 w-5 text-red-600" />
              </span>
 
              <Link to="/our-location">
-              <span className="font-space text-[#5B3DF5] uppercase text-xl font-bold tracking-tighter">
+              <span className="font-space text-red-600 uppercase text-xl font-bold tracking-tighter">
               Our Store
               </span>
              </Link>

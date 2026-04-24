@@ -1,9 +1,39 @@
 import { useState } from "react";
 import { Eye, EyeOff, User, Lock, Mail, Phone } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { loginApi } from "../services/api";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPass, setShowPass] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await loginApi(email, password);
+      if (res?.status) {
+        localStorage.setItem("token", res.token);
+        localStorage.setItem("user", JSON.stringify(res.user));
+        navigate("/dashboard");
+      } else {
+        setError(res?.message || "Login failed");
+      }
+    } catch (err) {
+      setError("An error occurred during login");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen flex  justify-center pt-20 bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4">
@@ -47,7 +77,7 @@ export default function AuthPage() {
         </div>
 
         {/* FORM */}
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleLogin}>
 
           {!isLogin && (
             <InputField icon={<User size={18} />} placeholder="Full Name" />
@@ -57,7 +87,7 @@ export default function AuthPage() {
             <InputField icon={<Phone size={18} />} placeholder="Phone Number" />
           )}
 
-          <InputField icon={<Mail size={18} />} placeholder="Email Address" />
+          <InputField icon={<Mail size={18} />} placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} />
 
           {/* Password */}
           <div className="relative">
@@ -69,6 +99,8 @@ export default function AuthPage() {
             <input
               type={showPass ? "text" : "password"}
               placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full border border-gray-200 rounded-xl py-2.5 pl-10 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
 
@@ -98,8 +130,20 @@ export default function AuthPage() {
           )}
 
           {/* Button */}
-          <button className="w-full bg-[#5B3DF5] hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition shadow-md">
-            {isLogin ? "Log In" : "Create Account"}
+           <button
+             type="submit"
+             disabled={loading}
+             className={`w-full py-3 rounded-xl font-semibold transition shadow-md text-white ${
+             loading
+             ? "bg-gray-400 cursor-not-allowed"
+             : "bg-[#5B3DF5] hover:bg-blue-700"
+         }`}
+         >
+            {loading
+            ? "Loading..."
+            : isLogin
+            ? "Log In"
+            : "Create Account"}
           </button>
         </form>
 
@@ -132,7 +176,7 @@ export default function AuthPage() {
   );
 }
 
-function InputField({ icon, placeholder, type = "text" }) {
+function InputField({ icon, placeholder, type = "text",  value, onChange  }) {
   return (
     <div className="relative">
       <div className="absolute left-3 top-3 text-gray-400">{icon}</div>
@@ -140,6 +184,8 @@ function InputField({ icon, placeholder, type = "text" }) {
       <input
         type={type}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         className="w-full border border-gray-200 rounded-xl py-2.5 pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
       />
     </div>
