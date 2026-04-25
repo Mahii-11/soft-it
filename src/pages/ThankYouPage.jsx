@@ -1,8 +1,12 @@
 import { CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function ThankYouPage() {
-  const orderNumber = "ORD-" + Math.floor(Math.random() * 1000000);
+  const location = useLocation();
+  const order = location?.state?.order;
+  const orderId = order?.id;
+  const orderNum = order?.order_id;
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -29,7 +33,7 @@ export default function ThankYouPage() {
         {/* Order Number */}
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-6">
           <p className="text-sm text-gray-500">Order Number</p>
-          <p className="text-lg font-semibold text-gray-800">{orderNumber}</p>
+          <p className="text-lg font-semibold text-gray-800">#{orderNum}</p>
         </div>
 
         {/* Info */}
@@ -48,7 +52,7 @@ export default function ThankYouPage() {
           </Link>
 
           <Link
-            to="/orders"
+             to={`/order-details/${orderId}`}
             className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
           >
             View Orders

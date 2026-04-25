@@ -44,7 +44,7 @@ export default function CartPopup({ popup, onClose }) {
 
             <div className="flex flex-col leading-tight">
 
-              <p className="text-green-600 text-xs font-medium">
+              <p className="text-red-600 text-xs font-medium">
                 Added to Cart
               </p>
 
@@ -86,11 +86,10 @@ export default function CartPopup({ popup, onClose }) {
               flex-1
               text-center
               text-xs sm:text-sm
-              bg-[#5B3DF5]
+              bg-black
               text-white
               rounded-lg
               py-1.5 sm:py-2
-              hover:bg-[#4338CA]
               transition
               "
             >

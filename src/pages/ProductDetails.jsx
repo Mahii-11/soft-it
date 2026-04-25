@@ -9,6 +9,7 @@ import {
   RotateCcw,
   ShieldAlert,
   MessageSquare,
+  Eye,
 } from 'lucide-react';
 import { useDispatch } from "react-redux";
 import { normalizeProductForCart } from "../utils/cartAdapter";
@@ -112,7 +113,7 @@ export default function ProductDetails() {
       }
 
   return (
-    <div className="bg-gray-100 min-h-screen py-20 px-4">
+    <div className="bg-gray-100 min-h-screen sm:py-14 px-4">
           <div className="max-w-7xl mx-auto bg-white px-4 shadow-sm">
              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -293,13 +294,13 @@ export default function ProductDetails() {
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+              <button className="w-full sm:w-auto bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">
                 Buy Now
               </button>
 
               
                 <button
-                 className="w-full sm:w-auto bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition"
+                 className="w-full sm:w-auto bg-black text-white px-6 py-2 rounded hover:bg-gray-800 transition"
                  onClick={() => handleAddToCart(product, selectedVariation, selectedColor, )}
                  
                  >
@@ -477,53 +478,66 @@ export default function ProductDetails() {
              )}  */}
 
 
-          <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
                {relatedProducts.map((rp) => (
                <div
                key={rp.id}
-               className="bg-white rounded-3xl md:p-6 p-4 flex flex-col transition duration-300 hover:shadow-lg"
-               style={{
-               boxShadow:
-               "0 2px 8px rgba(0,0,0,0.04), 0 8px 20px rgba(0,0,0,0.05)",
-               }}
+               className="bg-white border border-gray-200 rounded-sm hover:shadow-md hover:scale-[1.02] transition-all duration-150 cursor-pointer overflow-hidden group"
+              
             >
 
            <Link to={`/product-details/${rp.slug}`}>
 
-              <div className="h-[130px] flex items-center justify-center mb-4">
+              <div className="relative">
               <img
               src={rp.thumbnail || "/images/motorola.png"}
               alt={rp.name}
-              className="h-full object-contain"
-              onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = "/images/motorola.png";
-              }}
+              className="w-full aspect-square object-cover"
               />
+
+              
+      
+        <button
+         // onClick={(e) => e.stopPropagation()}
+          className="md:hidden absolute bottom-1 right-1 bg-[#e62e04] text-white rounded-full w-7 h-7 flex items-center justify-center shadow-md active:scale-90 transition-transform"
+          aria-label="Add to cart"
+        >
+          <Eye size={16} />
+        </button>
+      
+
+        {/* Desktop Hover Cart Bar */}
+      
+         <button
+          // onClick={() => handleAddToCart(product, selectedVariation, selectedColor, )}
+          className="hidden md:flex absolute bottom-0 left-0 right-0 bg-[#e62e04] text-white text-[10px] font-semibold py-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 items-center justify-center gap-1"
+        >
+         
+          <>
+          <Eye size={16} />
+           View Details
+          </>
+        </button>
              </div>
 
-             <h3 className="text-[11px] md:text-[12px] text-center text-gray-700 leading-snug line-clamp-2 min-h-[52px]">
-             {rp.name}
-             </h3>
+        <div className="p-1.5">
+        <p className="text-[11px] text-gray-700 leading-tight line-clamp-2 mb-1 min-h-[2.5em]">
+          {rp.name}
+        </p>
 
-             <div className="flex items-center justify-center gap-2 mt-2">
-             <span className="text-blue-600 font-semibold text-[16px]">
-              Tk.{Number(rp.price?.final).toLocaleString()}
+        <div className="flex items-baseline gap-1 flex-wrap">
+          <span className="text-[#e62e04] font-bold text-sm leading-none">
+             Tk.{Number(rp.price?.final).toLocaleString()}
+          </span>
+
+          {rp.price?.regular && (
+            <span className="text-gray-400 text-[10px] line-through leading-none">
+              Tk.{Number(rp.price?.regular).toLocaleString()}
             </span>
-
-           {rp.price?.regular && (
-               <span className="text-gray-400 text-xs line-through">
-               Tk.{Number(rp.price?.regular).toLocaleString()}
-              </span>
-            )}
-           </div>
-
+          )}
+        </div>
+      </div>
            </Link>
-
-           <button className="mt-3 rounded-full border border-blue-500 bg-blue-50 text-blue-600 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition">
-                 Buy Now
-            </button>
-
            </div>
 
               ))}

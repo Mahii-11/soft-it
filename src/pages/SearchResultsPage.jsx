@@ -2,8 +2,17 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getsearchProducts } from "../services/api";
 import Loader from "../loader/Loader";
+import { Eye, ShoppingCart } from "lucide-react";
+import { addItem } from "../cart/cartSlice";
+import { normalizeProductForCart } from "../utils/cartAdapter";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import CartPopup from "../components/CartPopup";
 
 export default function SearchResultsPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [cartPopup, setCartPopup] = useState(null);
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
   const [products, setProducts] = useState([]);
@@ -32,6 +41,42 @@ export default function SearchResultsPage() {
   }, [query]);
 
 
+
+   function handleAddToCart(e, product) {
+    e.stopPropagation();
+  
+    if (product.product_type === "variable") {
+      navigate(`/product-details/${product.product_slug}`);
+      return;
+    }
+  
+    const normalizedProduct = normalizeProductForCart({
+      ...product,
+      id: product.product_id || product.id,
+      product_id: product.product_id || product.id,
+      product_name: product.name,
+      discount_price: product.price,
+      thumb_image: product.image,
+    });
+  
+    dispatch(addItem(normalizedProduct));
+  
+    setCartPopup({
+      image: product.image,
+      price: product.price,
+    });
+  
+    setTimeout(() => {
+      setCartPopup(null);
+    }, 3000);
+  }
+  
+
+
+
+
+
+
    if (loading) {
     return (
       <Loader type="dealofday" count={5} />
@@ -45,49 +90,67 @@ export default function SearchResultsPage() {
         Search results for: {query}
       </h1>
 
-         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
 
         {products.map((product) => (
           <div
             key={product.id}
-            className="bg-white rounded-3xl p-5 flex flex-col transition duration-300 hover:shadow-lg"
-            style={{
-              boxShadow:
-                "0 2px 8px rgba(0,0,0,0.04), 0 8px 20px rgba(0,0,0,0.05)",
-            }}
+            className="bg-white border border-gray-200 rounded-sm hover:shadow-md hover:scale-[1.02] transition-all duration-150 cursor-pointer overflow-hidden group"
+            
           >
 
             {/* Image */}
-            <div className="h-37.5 flex items-center justify-center mb-4">
+            <div className="relative">
               <img
                 src={product.image}
                 alt={product.name}
-                className="h-full object-contain"
+                className="w-full aspect-square object-cover"
               />
+                  <button 
+                             onClick={(e) => handleAddToCart(e, product)}
+               
+                             className="md:hidden absolute bottom-1 right-1 bg-[#e62e04] text-white rounded-full w-7 h-7 flex items-center justify-center shadow-md active:scale-90 transform "
+                              >
+                               {product.product_type === "variable"
+                               ? <Eye size={16} color="white" />
+                               : <ShoppingCart size={16} color="white" />
+                              }
+                           </button>
+               
+               
+                            <button
+                               onClick={(e) => handleAddToCart(e, product)}   
+                               className="hidden md:flex absolute bottom-0 left-0 right-0 bg-[#e62e04] text-white text-[10px] font-semibold py-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 items-center justify-center gap-1"
+                            >
+               
+                               {product.product_type === "variable"
+                               ? "View Details"
+                               : "Add to Cart"
+                              }
+                        
+                           </button>
             </div>
+                 <div className="p-1.5">
+        <p className="text-[11px] text-gray-700 leading-tight line-clamp-2 mb-1 min-h-[2.5em]">
+          {product.name}
+        </p>
 
-          
-
-            {/* Product Name */}
-            <h3 className="text-[14px] text-center text-gray-700 leading-snug line-clamp-2 min-h-[52px]">
-              {product.name}
-            </h3>
-
-            {/* Price */}
-            <div className="flex items-center justify-center gap-2 mt-3">
-              <span className="text-blue-600 font-semibold text-[16px]">
-                Tk. {product.price}
-              </span>
-            </div>
-
-            {/* Button */}
-             <button className=" mt-5 rounded-full border border-blue-500 bg-blue-50 text-blue-600 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition">
-              Buy Now
-            </button>
+        <div className="flex items-baseline gap-1 flex-wrap">
+          <span className="text-[#e62e04] font-bold text-sm leading-none">
+             Tk.{Number(product.price).toLocaleString()}
+          </span>
+        </div>
+      </div>
           </div>
           
         ))}
       </div>
+      
+      <CartPopup
+        popup={cartPopup}
+        onClose={() => setCartPopup(null)}
+      />
+      
 
     </div>
   );

@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { addItem } from "../cart/cartSlice";
 import { normalizeProductForCart } from "../utils/cartAdapter";
 import CartPopup from "../components/CartPopup";
+import { Eye, ShoppingBag, ShoppingBasket, ShoppingCart } from "lucide-react";
 
 
 
@@ -152,53 +153,56 @@ export  function OnlineSaleProducts() {
     </div>
 
     {/* Product Grid */}
-    <div className="max-w-7xl mx-auto grid grid-cols-2  md:grid-cols-3 lg:grid-cols-5 gap-3">
+    <div className="max-w-7xl mx-auto grid grid-cols-2  md:grid-cols-3 lg:grid-cols-5">
       {deal.map((product, i) => (
           <div
           key={i}
-          className="bg-white rounded-3xl p-4 md:p-6 shadow-lg transition duration-300 cursor-pointer group flex flex-col"
-           style={{
-              boxShadow:
-                "0 2px 8px rgba(0,0,0,0.04), 0 8px 20px rgba(0,0,0,0.05)",
-            }}
-        >
-           
+          className="bg-white border border-gray-200 rounded-sm hover:shadow-md hover:scale-[1.02] transition-all duration-150 cursor-pointer overflow-hidden group"
+          >     
           {/* Image */}
-          <div className="h-[130px] flex items-center justify-center mb-4">
+          <div className="relative">
             <img
               src={product.image || "/images/motorola.png"}
               alt={product.name}
-              className="max-h-full object-contain group-hover:scale-105 transition duration-300"
-              onError={(e) => { e.target.onerror = null; e.target.src = "/images/motorola.png"; }}
+              className="w-full aspect-square object-cover"
             />
-          </div>
-
-          {/* Product Name */}
-          <h3 className="text-[11px] md:text-[12px]  text-center text-gray-700 leading-snug line-clamp-2 min-h-10">
-            {product.name}
-          </h3>
-
-          {/* Price Section */}
-          <div className="flex items-center justify-center gap-2 mt-3">
-            <span className="text-blue-600 font-semibold text-[16px]">
-               ৳{Number(product.price).toLocaleString()}
-            </span>
-          </div>
-           
-
-          {/* Add to Cart Button */}
-          
-            <button 
+               <button 
               onClick={(e) => handleAddToCart(e, product)}
 
-              className="mt-5 rounded-full border border-blue-500 bg-blue-50 text-blue-600 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition duration-300"
+              className="md:hidden absolute bottom-1 right-1 bg-[#e62e04] text-white rounded-full w-7 h-7 flex items-center justify-center shadow-md active:scale-90 transform "
                >
                 {product.product_type === "variable"
-                ? "View Details"
-                : "Add to Cart"}
+                ? <Eye size={16} color="white" />
+                : <ShoppingCart size={16} color="white" />
+               }
             </button>
-        
-    
+
+
+             <button
+                onClick={(e) => handleAddToCart(e, product)}   
+                className="hidden md:flex absolute bottom-0 left-0 right-0 bg-[#e62e04] text-white text-[10px] font-semibold py-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 items-center justify-center gap-1"
+             >
+
+                {product.product_type === "variable"
+                ? "View Details"
+                : "Add to Cart"
+               }
+         
+            </button>
+          </div>
+
+          
+        <div className="p-1.5">
+        <p className="text-[11px] text-gray-700 leading-tight line-clamp-2 mb-1 min-h-[2.5em]">
+          {product.name}
+        </p>
+
+        <div className="flex items-baseline gap-1 flex-wrap">
+          <span className="text-[#e62e04] font-bold text-sm leading-none">
+             ৳{Number(product.price).toLocaleString()}
+          </span>
+        </div>
+      </div>
          </div>
         
       ))}
@@ -215,6 +219,9 @@ export  function OnlineSaleProducts() {
 
 </>
   );
-
-  
 }
+
+
+
+
+

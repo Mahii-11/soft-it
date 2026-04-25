@@ -6,7 +6,7 @@ import { Label } from "../components/ui/lebel";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import { Button } from "../components/ui/button";
 import { useState } from "react";
-import { createOrder } from "../services/api";
+import { createOrder, getUserOrders } from "../services/api";
 import { useDispatch } from "react-redux";
 import { clearCart } from "../cart/cartSlice";
 import { useNavigate } from "react-router-dom";
@@ -125,10 +125,34 @@ if (result.success) {
     title: "Order Placed Successfully 🎉",
     text: "Your order has been confirmed!",
     confirmButtonColor: "#16a34a",
-  }).then(() => {
+  }).then(async () => {
     dispatch(clearCart());
-    navigate("/thank-you");
+    try {
+      // 🔥 fetch all orders again
+      const res = await getUserOrders();
+
+      const ordersArray = res?.data?.data || res?.data || [];
+
+      // 🔥 latest order (newly created)
+      const latestOrder = ordersArray[0]; 
+      // (if API returns newest first)
+
+      navigate("/thank-you", {
+        state: {
+          order: latestOrder
+        }
+      });
+
+    } catch (err) {
+      console.log(err);
+
+      // fallback
+      navigate("/thank-you", {
+        state: { order: null }
+      });
+    }
   });
+
 
 
 } else {
@@ -297,7 +321,7 @@ if (result.success) {
               <Button
                  onClick={handleOrderSubmit}
                  disabled={loading}
-                 className="w-full h-11 text-sm sm:text-base"
+                 className="w-full h-11 text-sm sm:text-base bg-black text-white hover:bg-gray-800"
                >
                  {loading ? "Processing..." : "Proceed to Pay"}
                </Button>

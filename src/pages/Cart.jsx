@@ -22,7 +22,7 @@ export default function Cart() {
           Looks like you haven't added anything to your cart yet.
         </p>
         <Link to="/">
-          <Button size="lg" className="rounded-full px-8">
+          <Button  size="lg" className="rounded-full bg-black hover:bg-black/90 px-8">
             Start Shopping
           </Button>
         </Link>
@@ -61,7 +61,7 @@ export default function Cart() {
       {/* Product Details */}
       <div className="flex-1 min-w-0 flex flex-col gap-1">
         <Link to={`/product-details/${item.product_slug}`}>
-          <h3 className="font-semibold hover:text-primary transition-colors line-clamp-2 text-sm sm:text-base md:text-lg">
+          <h3 className="font-semibold hover:text-red-600 transition-colors line-clamp-2 text-sm sm:text-base md:text-lg">
             {item.product_name}
           </h3>
         </Link>
@@ -132,7 +132,7 @@ export default function Cart() {
               </div>
 
               <Link to="/checkout">
-                <Button className="w-full rounded-full" size="lg">
+                <Button className="w-full rounded-full bg-black text-white hover:bg-gray-800" size="lg">
                   Proceed to Checkout
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
