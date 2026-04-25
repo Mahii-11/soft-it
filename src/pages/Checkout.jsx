@@ -10,6 +10,8 @@ import { createOrder, getUserOrders } from "../services/api";
 import { useDispatch } from "react-redux";
 import { clearCart } from "../cart/cartSlice";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 
 
@@ -18,10 +20,15 @@ import { useNavigate } from "react-router-dom";
 
 
 export default function CheckoutPage() {
+  const location = useLocation();
+  const buyNowItem = location.state?.item;
   const navigate = useNavigate();
-  const cartItems = useSelector(getCart);
+  const reduxCartItems = useSelector(getCart);
+  const cartItems = buyNowItem ? [buyNowItem] : reduxCartItems;
+  const subtotal = buyNowItem
+  ? buyNowItem.unit_price * buyNowItem.quantity
+  : useSelector(getTotalCartPrice);
   const dispatch = useDispatch();
-  const subtotal = useSelector(getTotalCartPrice);
   const [deliveryType, setDeliveryType] = useState("inside");
   const deliveryFee = deliveryType === "inside" ? 60 : 120;
   const total = subtotal + deliveryFee;
@@ -121,11 +128,19 @@ const handleOrderSubmit = async () => {
 
 if (result.success) {
   Swal.fire({
-    icon: "success",
-    title: "Order Placed Successfully 🎉",
-    text: "Your order has been confirmed!",
-    confirmButtonColor: "#16a34a",
-  }).then(async () => {
+  icon: "success",
+  title: "Order Placed 🎉",
+  html: "Your order has been confirmed successfully.",
+  confirmButtonColor: "#16a34a",
+  width: "300px",
+  padding: "1.2rem",
+  customClass: {
+    popup: "rounded-xl",
+    title: "text-base font-semibold",
+    htmlContainer: "text-sm text-gray-600",
+    confirmButton: "text-sm px-5 py-2"
+  }
+}).then(async () => {
     dispatch(clearCart());
     try {
       // 🔥 fetch all orders again
@@ -175,6 +190,22 @@ if (result.success) {
     setLoading(false);
   }
 };
+
+
+  const hasCartItems = reduxCartItems.length > 0;
+   const hasBuyNowItem = !!buyNowItem;
+
+
+// 🔥 BLOCK ACCESS IF NOTHING EXISTS
+if (!hasCartItems && !hasBuyNowItem) {
+  return (
+    <div className="text-center py-32">
+      <h2 className="text-xl font-semibold">No checkout session found</h2>
+      <p>Please add product to cart or use Buy Now</p>
+    </div>
+  );
+}
+
 
 
 

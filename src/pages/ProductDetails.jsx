@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { getProductDetailsBySlug } from "../services/api";
 import Loader from "../loader/Loader";
 
@@ -18,6 +18,7 @@ import CartPopup from "../components/CartPopup";
 
 
 export default function ProductDetails() {
+  const navigate = useNavigate();
   const { slug } = useParams();
   const dispatch = useDispatch();
   const [cartPopup, setCartPopup] = useState(null);
@@ -111,6 +112,35 @@ export default function ProductDetails() {
 
         
       }
+
+function handleBuyNow(product, selectedVariation, selectedColor, quantity = 1) {
+  if (!selectedVariation && product.variations?.length > 0) {
+    alert("Please select a size!");
+    return;
+  }
+
+  if (!selectedColor && product.colors?.length > 0) {
+    alert("Please select a color!");
+    return;
+  }
+
+  const item = normalizeProductForCart(
+    product,
+    selectedVariation,
+    selectedColor,
+    quantity
+  );
+
+  navigate("/checkout", {
+    state: { item }
+  });
+}
+
+
+
+
+
+
 
   return (
     <div className="bg-gray-100 min-h-screen sm:py-14 px-4">
@@ -294,7 +324,11 @@ export default function ProductDetails() {
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="w-full sm:w-auto bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">
+              <button 
+                onClick={() =>
+                  handleBuyNow(product, selectedVariation, selectedColor, 1)
+                 }
+              className="w-full sm:w-auto bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">
                 Buy Now
               </button>
 

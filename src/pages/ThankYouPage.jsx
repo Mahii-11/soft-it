@@ -10,7 +10,7 @@ export default function ThankYouPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="max-w-xl w-full bg-white shadow-lg rounded-2xl p-8 text-center border border-gray-100">
+      <div className="max-w-xl w-full bg-white shadow-lg rounded-2xl p-8 text-center border border-gray-100 mb-44 sm:mb-14">
 
         {/* Success Icon */}
         <div className="flex justify-center mb-6">

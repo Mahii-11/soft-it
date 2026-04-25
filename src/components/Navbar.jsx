@@ -253,7 +253,11 @@ useEffect(() => {
       to="/online-sale"
       className="flex flex-col items-center justify-center text-black transition-transform active:scale-95"
     >
-      <Flame className="h-5 w-5" />
+      <span className="relative flex h-5 w-5">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75"></span>
+          <Flame className="h-5 w-5" />
+      </span>
+    
     </Link>
 
     <Link

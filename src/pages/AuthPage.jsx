@@ -37,7 +37,7 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex  justify-center pt-20 bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4">
-      <div className="w-full max-w-md min-h-[520px] bg-white/90 backdrop-blur rounded-3xl shadow-xl border border-gray-200 p-8">
+      <div className="w-full max-w-md min-h-[520px] ">
 
         {/* Header */}
         <div className="text-center mb-8">
@@ -57,7 +57,7 @@ export default function AuthPage() {
             onClick={() => setIsLogin(true)}
             className={`flex-1 py-2 text-sm rounded-full font-medium transition ${
               isLogin
-                ? "bg-[#5B3DF5] text-white shadow"
+                ? "bg-gray-700 text-white shadow"
                 : "text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -68,7 +68,7 @@ export default function AuthPage() {
             onClick={() => setIsLogin(false)}
             className={`flex-1 py-2 text-sm rounded-full font-medium transition ${
               !isLogin
-                ? "bg-[#5B3DF5] text-white shadow"
+                ? "bg-gray-700 text-white shadow"
                 : "text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -136,7 +136,7 @@ export default function AuthPage() {
              className={`w-full py-3 rounded-xl font-semibold transition shadow-md text-white ${
              loading
              ? "bg-gray-400 cursor-not-allowed"
-             : "bg-[#5B3DF5] hover:bg-blue-700"
+             : "bg-gray-700 hover:bg-gray-800"
          }`}
          >
             {loading
