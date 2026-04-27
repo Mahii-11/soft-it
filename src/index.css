@@ -6,6 +6,9 @@
 
 
 
+
+
+
 #nprogress .bar {
   background: linear-gradient(to right, #a855f7, #6366f1);
   height: 3px;
@@ -31,6 +34,9 @@
  font-size:16px;
  font-weight:bold;
 }
+
+
+
 
 
 
@@ -135,7 +141,34 @@
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
-/* Smooth scrolling */
-html {
+html,
+body {
   scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* globals.css */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Custom hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

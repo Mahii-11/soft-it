@@ -13,7 +13,7 @@ import SearchResultsPage from "./pages/SearchResultsPage";
 import OurLocation from "./pages/OurLocation";
 import Dashboard from "./pages/Dashboard";
 import OrderDetails from "./components/dashboard/OrderDetails";
-
+import ShopPage from "./pages/shoppages/ShopPage";
 
 const router = createBrowserRouter([
   {
@@ -85,6 +85,11 @@ const router = createBrowserRouter([
       { 
         path: "/order-details/:id",
         element: <OrderDetails />
+      },
+
+      {
+        path: "/shop-page",
+        element: <ShopPage />
       }
  
   
