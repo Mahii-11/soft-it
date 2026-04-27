@@ -11,7 +11,7 @@ import {
   MessageSquare,
   Eye,
 } from 'lucide-react';
-import { useDispatch } from "react-redux";
+import { useDispatch,  } from "react-redux";
 import { normalizeProductForCart } from "../utils/cartAdapter";
 import { addItem } from "../cart/cartSlice";
 import CartPopup from "../components/CartPopup";
@@ -29,6 +29,7 @@ export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
   
+
 
   useEffect(() => {
  const fetchProduct = async () => {
@@ -55,6 +56,9 @@ export default function ProductDetails() {
 }, [slug]);
 
 
+
+
+
   if (loading) return <Loader type="productdetails" />;
 
   if (!product) {
@@ -76,10 +80,10 @@ export default function ProductDetails() {
            alert("Please select a size!");
           return;
           }
-  if (!selectedColor && product.colors?.length > 0) {
-    alert("Please select a color!");
-    return;
-  }
+         if (!selectedColor && product.colors?.length > 0) {
+         alert("Please select a color!");
+        return;
+        }
 
          const normalizedProduct = normalizeProductForCart(
          product,
@@ -87,6 +91,7 @@ export default function ProductDetails() {
          selectedColor,
          quantity
          );
+         console.log("NORMALIZED PRODUCT:", normalizedProduct);
          console.log("Selected Variation at Add:", selectedVariation);
         dispatch(addItem(normalizedProduct));
               setCartPopup({
@@ -269,58 +274,72 @@ function handleBuyNow(product, selectedVariation, selectedColor, quantity = 1) {
             )}
 
             {/* Colors */}
-            {product.colors?.length > 0 && (
-              <div className="mb-6">
-                <p className="font-medium mb-2">Color:</p>
-                <div className="flex flex-wrap gap-3">
-                  {product.colors.map((color, index) => (
-                    <button
-                      key={index}
-                      onClick={() =>
-                        setSelectedColor(color)
-                      }
-                      className={`px-4 py-1 border rounded text-sm
-                      ${
-                        selectedColor?.id === color.id
-                          ? "border-orange-500 text-orange-500"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      {color.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+           
 
-            {/* Quantity 
+{product.colors?.length > 0 && (
+  <div className="mb-6">
+    <p className="font-medium mb-2">Color:</p>
+
+    <div className="flex flex-wrap gap-3">
+      {product.colors.map((color, index) => (
+        <button
+          key={index}
+          onClick={() => {
+            setSelectedColor(color);
+
+            // color image থাকলে main image change হবে
+            if (color.image) {
+              setSelectedImage(color.image);
+            }
+          }}
+          className={`px-4 py-2 border rounded text-sm flex items-center gap-2 transition
+          ${
+            selectedColor?.id === color.id
+              ? "border-orange-500 text-orange-500"
+              : "border-gray-300"
+          }`}
+        >
+          {/* Color Circle */}
+          <span
+            className="w-4 h-4 rounded-full border"
+            style={{ backgroundColor: color.code }}
+          ></span>
+
+          {color.name}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+
+            
+           {/* 
             <div className="mb-6">
               <p className="font-medium mb-2">Quantity:</p>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() =>
-                    quantity > 1 &&
-                    setQuantity(quantity - 1)
-                  }
+                    
+                 onClick={() => handleQtyChange("dec")}
+
                   className="px-3 py-1 border rounded hover:bg-gray-100"
                 >
                   -
                 </button>
 
                 <span className="text-lg font-medium">
-                  {quantity}
+                   {quantity}
                 </span>
 
                 <button
-                  onClick={() =>
-                    setQuantity(quantity + 1)
-                  }
+                   onClick={() => handleQtyChange("inc")}
+                     
                   className="px-3 py-1 border rounded hover:bg-gray-100"
                 >
                   +
                 </button>
               </div>
-            </div> */}
+            </div> 
+           */}
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">

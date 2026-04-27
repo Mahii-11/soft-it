@@ -8,8 +8,7 @@ export default function Cart() {
   const cartItems = useSelector(getCart);
   const dispatch = useDispatch();
   const subtotal = useSelector(getTotalCartPrice);
-  const shipping = subtotal > 1000 ? 0 : 70;
-  const total = subtotal + shipping;
+  
 
   if (cartItems.length === 0) {
     return (
@@ -114,21 +113,10 @@ export default function Cart() {
 
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-muted-foreground">
-                  <span>Subtotal</span>
+                  <span>Total</span>
                   <span>৳{subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-muted-foreground">
-                  <span>Shipping</span>
-                  <span>
-                    {shipping === 0
-                      ? "Free"
-                      : `$${total.toFixed(2)}`}
-                  </span>
-                </div>
-                <div className="border-t pt-4 flex justify-between font-bold text-lg">
-                  <span>Total</span>
-                  <span>৳{total.toFixed(2)}</span>
-                </div>
+                
               </div>
 
               <Link to="/checkout">

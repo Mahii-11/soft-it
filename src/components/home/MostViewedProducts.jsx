@@ -33,6 +33,7 @@ export default function MostViewedProducts() {
       try {
         setLoading(true);
         const apiProducts = await getMostViewedProducts();
+    //    console.log("🔥 MOST VIEWED RAW API:", apiProducts);
         setProducts(transformProducts(apiProducts));
       } catch (error) {
         console.error(error);
@@ -98,7 +99,7 @@ export default function MostViewedProducts() {
                 key={`${item.id}-${index}`}
                 className="group relative bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-xl transition-all duration-300 p-3 md:p-4"
               >
-                <Link to={`/product-details/${item.product_slug}`}>
+            {/*  <Link to={`/product-details/${item.product_slug}`}> */}
                   {/* Product Image */}
                   <div className="h-[150px] md:h-[180px] flex items-center justify-center overflow-hidden rounded-xl bg-gray-50 p-3">
                     <img
@@ -132,7 +133,7 @@ export default function MostViewedProducts() {
                       ).toLocaleString()}
                     </span>
                   </div>
-                </Link>
+             {/* </Link> */}
 
                 {/* Hover Button Desktop */}
                 <div className="absolute left-3 right-3 bottom-3 opacity-0 translate-y-5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hidden md:block">

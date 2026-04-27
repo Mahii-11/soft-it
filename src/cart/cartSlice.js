@@ -91,4 +91,3 @@ export const getTotalCartPrice = (state) => (
   )  
 
 export const getCart = (state) => state.cart.cart;  
-
