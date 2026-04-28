@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import {
-  Download,
   Eye,
   CheckCircle2,
   Package,
   Clock,
+  ChevronDown,
+  XCircle,
+  PauseCircle,
+  RotateCcw,
 } from "lucide-react";
 import { getUserOrders } from "../../services/api"; 
 import OrdersSkeletonTable from "./OrdersSkeletonTable";
@@ -12,14 +15,16 @@ import { Link } from "react-router-dom";
 
 export default function Orders() {
   const [allOrders, setAllOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState("0");
 
  useEffect(() => {
   const fetchOrders = async () => {
     try {
       const res = await getUserOrders();
 
-      console.log("ORDER API RESPONSE:", res);
+    //  console.log("ORDER API RESPONSE:", res);
 
       const ordersArray = res?.data?.data || res?.data || [];
 
@@ -31,17 +36,20 @@ export default function Orders() {
             item.order_products?.[0]?.product_name ||
             "No Product Found",
           status: getOrderStatus(item.order_status),
+          rawStatus: String(item.order_status),
           date: formatDate(item.created_at),
           amount: `৳${Number(item.total_amount).toLocaleString()}`,
         }));
 
         setAllOrders(formattedOrders);
+        setFilteredOrders(formattedOrders);
       } else {
         setAllOrders([]);
       }
     } catch (error) {
       console.error("Order fetch failed:", error);
       setAllOrders([]);
+      setFilteredOrders([]);
     } finally {
       setLoading(false);
     }
@@ -50,7 +58,20 @@ export default function Orders() {
   fetchOrders();
 }, []);
 
-  // ✅ STATUS CONVERT FROM BACKEND NUMBER
+ useEffect(() => {
+    if (status === "all") {
+      setFilteredOrders(allOrders);
+    } else {
+      const filtered = allOrders.filter(
+        (item) => item.rawStatus === status
+      );
+      setFilteredOrders(filtered);
+    }
+  }, [status, allOrders]);
+
+
+
+
   function getOrderStatus(status) {
     switch (Number(status)) {
       case 0:
@@ -58,9 +79,15 @@ export default function Orders() {
       case 1:
         return "Processing";
       case 2:
-        return "Shipped";
+        return "Courier";
       case 3:
-        return "Delivered";
+        return "Completed";
+      case 4:
+        return "Cancelled";
+      case 5:
+        return "On Hold";
+      case 6:
+        return "Return";
       default:
         return "Pending";
     }
@@ -78,8 +105,9 @@ export default function Orders() {
   }
 
   // ✅ STATUS BADGES
+ 
   const statusConfig = {
-    Delivered: {
+    Completed: {
       color: "bg-green-100 text-green-700",
       icon: CheckCircle2,
     },
@@ -87,7 +115,7 @@ export default function Orders() {
       color: "bg-blue-100 text-blue-700",
       icon: Package,
     },
-    Shipped: {
+    Courier: {
       color: "bg-purple-100 text-purple-700",
       icon: Package,
     },
@@ -95,30 +123,52 @@ export default function Orders() {
       color: "bg-orange-100 text-orange-700",
       icon: Clock,
     },
+    Cancelled: {
+      color: "bg-red-100 text-red-700",
+      icon: XCircle,
+    },
+    "On Hold": {
+      color: "bg-yellow-100 text-yellow-700",
+      icon: PauseCircle,
+    },
+    Return: {
+      color: "bg-pink-100 text-pink-700",
+      icon: RotateCcw,
+    },
   };
 
   const getStatusBadge = (status) => {
     const config = statusConfig[status];
-
-    if (!config) {
-      return (
-        <span className="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
-          {status}
-        </span>
-      );
-    }
-
-    const Icon = config.icon;
+    const Icon = config?.icon || Clock;
 
     return (
       <span
-        className={`px-3 py-1 text-xs font-medium rounded-full flex items-center gap-1 w-max ${config.color}`}
+        className={`px-3 py-1 text-xs font-medium rounded-full flex items-center gap-1 w-max ${
+          config?.color || "bg-gray-100 text-gray-700"
+        }`}
       >
         <Icon className="w-3 h-3" />
         {status}
       </span>
     );
   };
+
+
+   const statusOptions = [
+    { value: "all", label: "All Orders" },
+    { value: "0", label: "Pending" },
+    { value: "1", label: "Processing" },
+    { value: "2", label: "Courier" },
+    { value: "3", label: "Completed" },
+    { value: "4", label: "Cancelled" },
+    { value: "5", label: "On Hold" },
+    { value: "6", label: "Return" },
+  ];
+
+   
+
+
+  
 
   return (
     <>
@@ -133,10 +183,34 @@ export default function Orders() {
           </p>
         </div>
 
-        <button className="bg-[#5B3DF5] hover:bg-[#4A2EE0] text-white px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm shadow-[#5B3DF5]/20 transition-all active:scale-95 flex items-center gap-2 self-start sm:self-auto">
-          <Download className="w-4 h-4" />
-          Download Invoice
-        </button>
+      <div className="relative self-start sm:self-auto">
+      <select
+        value={status}
+        onChange={(e) => setStatus(e.target.value)}
+        className="appearance-none bg-[#5B3DF5] hover:bg-[#4A2EE0] text-white px-4 py-2.5 pr-10 rounded-lg text-sm font-medium shadow-sm shadow-[#5B3DF5]/20 transition-all active:scale-95 cursor-pointer outline-none"
+      >
+        {statusOptions.map((item) => (
+          <option
+            key={item.value}
+            value={item.value}
+            className="text-black bg-white"
+          >
+            {item.label}
+          </option>
+        ))}
+      </select>
+
+      <ChevronDown className="w-4 h-4 text-white absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+    </div>
+
+
+
+
+
+
+
+
+
       </div>
 
       {/* Table */}
@@ -179,7 +253,7 @@ export default function Orders() {
                   </td>
                 </tr>
               ) : (
-                allOrders.map((order, i) => (
+                filteredOrders.map((order, i) => (
                   <tr
                     key={i}
                     className="hover:bg-slate-50/80 transition-colors group"

@@ -19,6 +19,12 @@ export default function AuthPage() {
     setLoading(true);
     setError("");
 
+    if (!email || !password) {
+      setError("Email and password are required.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await loginApi(email, password);
       if (res?.status) {
@@ -26,10 +32,10 @@ export default function AuthPage() {
         localStorage.setItem("user", JSON.stringify(res.user));
         navigate("/dashboard");
       } else {
-        setError(res?.message || "Login failed");
+        setError(res?.message || "Invalid email or password.");
       }
     } catch (err) {
-      setError("An error occurred during login");
+      setError("Unable to login. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -128,6 +134,12 @@ export default function AuthPage() {
               </button>
             </div>
           )}
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">
+            {error}
+            </div>
+              )}
 
           {/* Button */}
            <button

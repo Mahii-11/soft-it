@@ -24,6 +24,7 @@ export default function Navbar() {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const totalCartQuantity = useSelector(getTotalCartQuantity);
+  const token = localStorage.getItem("token");
 
 
   useEffect(() => {
@@ -136,7 +137,7 @@ useEffect(() => {
              {totalCartQuantity}
             </span>
             </Link>
-             <Link to="/login">
+             <Link to={token  ? "/dashboard" : "/login"}>
                 <User className="h-5 w-5 text-black sm:block" />
             </Link>
 
@@ -271,7 +272,7 @@ useEffect(() => {
     </Link>
 
     <Link
-      to="/login"
+      to={token  ? "/dashboard" : "/login"}
       className="flex flex-col items-center justify-center text-black transition-transform active:scale-95"
     >
       <User className="h-5 w-5" />

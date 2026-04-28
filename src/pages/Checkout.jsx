@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import { clearCart } from "../cart/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { Navigate } from "react-router-dom";
+//import { Navigate } from "react-router-dom";
 
 
 
@@ -102,7 +102,7 @@ const handleOrderSubmit = async () => {
     data.append("shipping_method", deliveryType === "inside" ? 21 : 22);
     data.append("payment_method", 1);
 
-    cartItems.forEach((product, index) => {
+     cartItems.forEach((product, index) => {
       data.append(`product_data[${index}][product_id]`, product.product_id || product.id);
       data.append(`product_data[${index}][unit_price]`, product.unit_price);
       data.append(`product_data[${index}][qty]`, product.quantity);
@@ -141,7 +141,9 @@ if (result.success) {
     confirmButton: "text-sm px-5 py-2"
   }
 }).then(async () => {
-    dispatch(clearCart());
+      if (!buyNowItem) {
+      dispatch(clearCart());
+    }
     try {
       // 🔥 fetch all orders again
       const res = await getUserOrders();

@@ -249,6 +249,29 @@ export const loginApi = async (email, password) => {
   }
 };
 
+export const logoutApi = async () => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${BASE_URL}logout-api`,
+
+  {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+  }
+  );
+
+return await res.json();
+
+};
+
+
+
+
+
 // post api for upddating user profile
 
 
