@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { Eye, EyeOff, User, Lock, Mail, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { loginApi } from "../services/api";
+import { loginApi, registerApi } from "../services/api";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPass, setShowPass] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,6 +43,62 @@ export default function AuthPage() {
       setLoading(false);
     }
   }
+
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    if (!email || !password) {
+      setError("All fields required");
+      setLoading(false);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Password do not match");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await registerApi({
+        name,
+        email,
+        Phone,
+        password,
+        password_confirmation: confirmPassword,
+      });
+
+       if (res?.status) {
+      localStorage.setItem("token", res.token);
+      localStorage.setItem("user", JSON.stringify(res.user));
+      navigate("/dashboard");
+    } else {
+      setError(res?.message || "Registration failed");
+    }
+  } catch (err) {
+    setError("Something went wrong");
+  } finally {
+    setLoading(false);
+
+
+  }
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div className="min-h-screen flex  justify-center pt-20 bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4">
@@ -83,14 +142,15 @@ export default function AuthPage() {
         </div>
 
         {/* FORM */}
-        <form className="space-y-4" onSubmit={handleLogin}>
+        <form className="space-y-4" onSubmit={isLogin ? handleLogin : handleRegister}>
 
           {!isLogin && (
-            <InputField icon={<User size={18} />} placeholder="Full Name" />
+            <InputField icon={<User size={18} />} placeholder="Full Name" value={name}   onChange={(e) => setName(e.target.value)} />
           )}
 
           {!isLogin && (
-            <InputField icon={<Phone size={18} />} placeholder="Phone Number" />
+            <InputField icon={<Phone size={18} />} placeholder="Phone Number" value={phone}
+              onChange={(e) => setPhone(e.target.value)} />
           )}
 
           <InputField icon={<Mail size={18} />} placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -124,6 +184,8 @@ export default function AuthPage() {
               icon={<Lock size={18} />}
               placeholder="Confirm Password"
               type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
           )}
 

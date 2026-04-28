@@ -218,7 +218,27 @@ export async function createOrder(orderData) {
 
 
 
-// post api for login
+// post api for login  / register
+
+
+
+export const registerApi = async (data) => {
+  try {
+    const formData = new FormData();
+
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone);
+    formData.append("password", data.password);
+    formData.append("password_confirmation", data.password_confirmation);
+
+    const res = await axios.post(`${BASE_URL}register-api`, formData);
+
+    return res.data;
+  } catch (error) {
+    return error.response?.data || { status: false, message: "Server Error" };
+  }
+};
 
 export const loginApi = async (email, password) => {
   try {
