@@ -66,7 +66,7 @@ export default function AuthPage() {
       const res = await registerApi({
         name,
         email,
-        Phone,
+        phone,
         password,
         password_confirmation: confirmPassword,
       });

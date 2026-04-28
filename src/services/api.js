@@ -226,17 +226,29 @@ export const registerApi = async (data) => {
   try {
     const formData = new FormData();
 
-    formData.append("name", data.name);
-    formData.append("email", data.email);
-    formData.append("phone", data.phone);
+    formData.append("name", data.name.trim());
+    formData.append("email", data.email.trim());
+    formData.append("phone", data.phone.trim());
     formData.append("password", data.password);
-    formData.append("password_confirmation", data.password_confirmation);
+    formData.append(
+      "password_confirmation",
+      data.password_confirmation
+    );
+
+    console.log("REGISTER PAYLOAD:");
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
 
     const res = await axios.post(`${BASE_URL}register-api`, formData);
 
     return res.data;
   } catch (error) {
-    return error.response?.data || { status: false, message: "Server Error" };
+    console.log("REGISTER ERROR:", error.response?.data);
+    return error.response?.data || {
+      status: false,
+      message: "Server Error",
+    };
   }
 };
 
