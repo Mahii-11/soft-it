@@ -3,7 +3,6 @@ import AppLayout from "./components/AppLayout";
 import Home from "./pages/Home"; 
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
-import Profile from "./pages/Profile";
 import ProductDetails from "./pages/ProductDetails";
 import ThankYouPage from "./pages/ThankYouPage";
 import AuthPage from "./pages/AuthPage";
@@ -35,10 +34,7 @@ const router = createBrowserRouter([
         element: <Checkout />
       },
 
-      {
-        path: "/profile",
-        element: <Profile />
-      },
+      
 
       {
         path: "/product-details/:slug",
