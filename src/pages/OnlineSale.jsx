@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { addItem } from "../cart/cartSlice";
 import { normalizeProductForCart } from "../utils/cartAdapter";
 import CartPopup from "../components/CartPopup";
-import { Eye, ShoppingBag, ShoppingBasket, ShoppingCart } from "lucide-react";
+import { Eye, ShoppingCart } from "lucide-react";
 
 
 
@@ -33,7 +33,7 @@ export function SaleHero() {
         <div className="lg:hidden overflow-hidden rounded-xl lg:rounded-none">
 
           <img
-            src="/images/online-sale.png"
+            src="/images/banner-1.png"
             alt="Sale Banner"
             className="
             w-full

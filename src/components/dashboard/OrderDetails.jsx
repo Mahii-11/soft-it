@@ -112,7 +112,7 @@ export default function OrderDetails() {
   }
 
   return (
-    <section className="min-h-screen bg-slate-50 py-20 px-4">
+    <section className="min-h-screen bg-slate-50 py-5 md:py-20 px-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -124,7 +124,7 @@ export default function OrderDetails() {
             </button>
 
             <div>
-              <h1 className="text-2xl font-bold text-slate-800">
+              <h1 className="text-xl md:text-2xl font-bold text-slate-800">
                 Order Details
               </h1>
               <p className="text-sm text-slate-500">
@@ -135,7 +135,7 @@ export default function OrderDetails() {
 
           <button
             onClick={printPage}
-            className="inline-flex items-center gap-2 bg-slate-900 text-white px-5 py-3 rounded-xl hover:opacity-90"
+            className="text-xs md:text-sm  inline-flex items-center gap-2 bg-slate-900 text-white px-5 py-3 rounded-xl hover:opacity-90 "
           >
             <Printer size={18} />
             Print Invoice
