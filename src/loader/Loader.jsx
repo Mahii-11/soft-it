@@ -1,6 +1,6 @@
 
 /* ------------------ HERO SECTION LOADER ------------------ */export const HeroLoader = () => (
-  <div className="w-full h-[420px] lg:h-[420px] flex flex-col lg:flex-row gap-6 animate-pulse py-20">
+  <div className="w-full h-[420px] lg:h-[420px] flex flex-col lg:flex-row gap-6 animate-pulse md:py-10">
     <div className="lg:flex-1 bg-gray-200 rounded-xl"></div>
     <div className="lg:w-[300px] flex flex-col gap-6">
       <div className="bg-gray-200 h-[200px] rounded-xl"></div>

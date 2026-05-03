@@ -91,9 +91,9 @@ export default function SearchPage() {
             border-gray-200
             bg-gray-50
             focus:bg-white
-            focus:border-[#5B3DF5]
+            focus:border-[#02010a]
             focus:ring-2
-            focus:ring-[#5B3DF5]/20
+            focus:ring-[#010002]/20
             transition
             "
             

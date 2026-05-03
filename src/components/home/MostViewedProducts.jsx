@@ -70,7 +70,7 @@ export default function MostViewedProducts() {
 
   return (
     <>
-      <section className="w-full py-10 md:py-14 bg-white overflow-hidden">
+      <section className="w-full py-6 md:py-10 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           {/* Header */}
           <div className="flex items-end justify-between gap-4 mb-8 md:mb-10">
@@ -79,7 +79,7 @@ export default function MostViewedProducts() {
                 Trending Now
               </p>
 
-              <h2 className="text-3xl md:text-5xl font-light text-black tracking-tight leading-none">
+              <h2 className="text-2xl md:text-4xl font-light text-black tracking-tight leading-none">
                 Most Viewed Products
               </h2>
             </div>

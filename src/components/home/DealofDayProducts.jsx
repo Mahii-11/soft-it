@@ -72,7 +72,7 @@ export default function DealofDayProducts() {
                 Limited Time Offer
               </p>
 
-              <h2 className="text-3xl md:text-5xl font-light text-black tracking-tight leading-none">
+              <h2 className="text-2xl md:text-4xl font-light text-black tracking-tight leading-none">
                 {deal.deal_title}
               </h2>
             </div>

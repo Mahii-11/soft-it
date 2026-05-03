@@ -79,9 +79,9 @@ export default function AutoSlidingCategories() {
   }
 
   return (
-    <section className="w-full py-16 bg-[#F8FAFC]">
+    <section className="w-full py-8 md:py-12 bg-[#F8FAFC]">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-14">
+        <div className="text-center mb-8 md:mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0F172A]">
             Popular{" "}
             <span className="text-red-600">
@@ -123,7 +123,7 @@ export default function AutoSlidingCategories() {
                 </div>
               </div>
 
-              <h3 className="mt-5 text-sm sm:text-base font-medium text-[#0F172A] text-center leading-snug line-clamp-2 h-[40px] group-hover:text-[#5B3DF5] transition-colors">
+              <h3 className="mt-5 text-sm sm:text-base font-medium text-[#0F172A] text-center leading-snug line-clamp-2 h-[40px] group-hover:text-[#d60000] transition-colors">
                 {item.name}
               </h3>
             </div>

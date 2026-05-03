@@ -108,8 +108,8 @@ const getImageClass = () => {
 
 
   return (
-    <section className="w-full bg-#FFFFFF py-4 md:py-16">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <section className="w-full bg-#FFFFFF md:py-16">
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-2 md:gap-4">
         {/* LEFT BIG SLIDER */}
              <div className="lg:col-span-2 relative overflow-hidden rounded-xl bg-white">
 
@@ -131,11 +131,11 @@ const getImageClass = () => {
       </div>
     ))}
   </motion.div>
+   </div>
 
-</div>
+
         {/* RIGHT SIDE BANNERS */}
-
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2 sm:gap-4">
              {offerBanners.length > 0 && 
              offerBanners.map((banner) => (
              <Link key={banner.id} to={banner.link} className="rounded-xl overflow-hidden bg-white">
