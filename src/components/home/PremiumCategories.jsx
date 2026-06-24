@@ -94,7 +94,7 @@ export default function AutoSlidingCategories() {
           ref={sliderRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`flex gap-8 sm:gap-12 md:gap-16 pt-6 ${
+          className={`flex gap-8 sm:gap-12 md:gap-16 pt-4 ${
             isMobile
               ? "overflow-x-auto scroll-smooth"
               : "overflow-hidden"
@@ -107,7 +107,7 @@ export default function AutoSlidingCategories() {
             >
               {/* Gradient Border Circle */}
               <div
-                className={`relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full 
+                className={`relative w-20 h-20 sm:w-28 sm:h-28 rounded-full 
                 border border-[#E2E8F0] bg-white
                 transition-all duration-500
                 will-change-transform

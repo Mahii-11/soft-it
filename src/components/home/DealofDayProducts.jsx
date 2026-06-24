@@ -223,7 +223,7 @@ export default function DealofDayProducts() {
         }
       `}</style>
 
-      <section className="bg-white py-8 md:py-12 overflow-hidden select-none">
+      <section className="bg-white py-4 md:py-8 overflow-hidden select-none">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           
           {/* Header */}
