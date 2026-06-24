@@ -57,16 +57,16 @@ export default function Header() {
         
         {/* Logo */}
         <Link to="/">
-     { /*  <div className="flex items-center gap-2 cursor-pointer">
+       <div className="flex items-center gap-2 cursor-pointer">
          <div className="flex items-center cursor-pointer">
            <img
-            src="/images/logo-softit.png"
+            src="/images/logo.png"
             alt="company logo"
-            className="h-8 md:h-9 w-auto object-contain"
+            className="h-8 md:h-12 w-auto object-contain"
              />
            </div>
-        </div> */}
-            <div className="flex items-center gap-2">
+        </div> 
+          { /*  <div className="flex items-center gap-2">
                <div className="h-8 w-8 rounded-lg bg-black flex items-center justify-center text-white font-bold text-xl">
               
                 G
@@ -74,7 +74,7 @@ export default function Header() {
              
               <span className="text-xl font-bold font-display text-gray-950 tracking-tight">GadgetGlobe</span>
               
-            </div>
+            </div>*/}
         
         </Link>
         {/* Search */}

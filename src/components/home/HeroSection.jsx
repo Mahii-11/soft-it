@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { getOfferBanner, getSliders } from "../../services/api";
 import { Link } from "wouter";
-import Loader from "../../loader/Loader";
+import HeroSkeleton from "../../loader/HeroSkeleton";
 
 
 
@@ -31,7 +31,7 @@ export default function HeroSection() {
 
 useEffect(() => {
   const checkScreen = () => {
-    setIsMobile(window.innerWidth < 768); // md breakpoint
+    setIsMobile(window.innerWidth < 768); 
   };
 
   checkScreen();
@@ -70,7 +70,6 @@ const getImageClass = () => {
   }, []);
 
 
-  // ✅ PRO LEVEL AUTO SLIDE
    
   useEffect(() => {
      if (slides.length === 0) return;
@@ -94,7 +93,7 @@ const getImageClass = () => {
 
     if (loading) {
     return (
-      <Loader type="hero" />
+      <HeroSkeleton />
     )
   }
 
@@ -108,46 +107,33 @@ const getImageClass = () => {
 
 
   return (
-    <section className="w-full bg-#FFFFFF md:py-16">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-2 md:gap-4">
-        {/* LEFT BIG SLIDER */}
-             <div className="lg:col-span-2 relative overflow-hidden rounded-xl bg-white">
+          <section className="w-full bg-[#ffffff] py-6 md:py-20">
+  <div className="max-w-7xl mx-auto px-4">
 
+   <div className="relative w-full aspect-[21/9] overflow-hidden rounded-2xl">
+  
   <motion.div
-    className="flex"
-    animate={{ x: `-${Number(current) * 100}%` }}
-    transition={{
-      type: "spring",
-      stiffness: 60,
-      damping: 20,
-    }}
+    className="flex w-full h-full"
+    animate={{ x: `-${current * 100}%` }}
+    transition={{ duration: 0.8, ease: "easeInOut" }}
   >
     {slides.map((slide) => (
-      <div key={slide.id} className="w-full shrink-0">
+      <div key={slide.id} className="w-full h-full shrink-0">
         <img
           src={slide.image}
-          className={getImageClass()}
-        />
+           className="
+           w-full h-full
+           object-cover
+           object-[center_top]
+          "
+         />
       </div>
     ))}
   </motion.div>
-   </div>
 
+</div>
 
-        {/* RIGHT SIDE BANNERS */}
-        <div className="flex flex-col gap-2 sm:gap-4">
-             {offerBanners.length > 0 && 
-             offerBanners.map((banner) => (
-             <Link key={banner.id} to={banner.link} className="rounded-xl overflow-hidden bg-white">
-            <img
-            src={banner.image}
-            className="w-full h-[200px] object-cover"
-            />
-           </Link>
-            ))
-           }
-        </div> 
-      </div>
-    </section>
+  </div>
+</section>
   );
 }
