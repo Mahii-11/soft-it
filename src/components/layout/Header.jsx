@@ -1,7 +1,7 @@
 import { Menu, Search, Bell } from "lucide-react";
 
 
-const baseURL = "https://backend.gadgetglobe.com.bd/";
+const baseURL = "https://gadget-backend.gadgetglobe.com.bd/";
 
 export default function Header({ setSidebarOpen, setActiveTab, user }) {
   return (

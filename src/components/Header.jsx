@@ -1,13 +1,17 @@
-import {  Search  } from "lucide-react";
+import {  Search, ShoppingBag, User  } from "lucide-react";
 import { MapPin } from "lucide-react";
 import { Input } from "./ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getsearchProducts } from "../services/api";
 import useDebounce from "../hooks/useDebounce";
+import { getTotalCartQuantity } from "../cart/cartSlice";
+import { useSelector } from "react-redux";
+ const token = localStorage.getItem("token");
 
 
 export default function Header() {
+  const totalCartQuantity = useSelector(getTotalCartQuantity);
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
@@ -52,79 +56,90 @@ export default function Header() {
 
     <>
   
-    <nav className="sticky top-0 z-50 w-full border border-[#E2E8F0] bg-[#F8FAFC] backdrop-blur-md">
-      <div className="container-custom flex h-16 items-center justify-between gap-4">
-        
-        {/* Logo */}
-        <Link to="/">
-       <div className="flex items-center gap-2 cursor-pointer">
-         <div className="flex items-center cursor-pointer">
-           <img
-            src="/images/logo.png"
-            alt="company logo"
-            className="h-8 md:h-12 w-auto object-contain"
-             />
-           </div>
-        </div> 
-          { /*  <div className="flex items-center gap-2">
-               <div className="h-8 w-8 rounded-lg bg-black flex items-center justify-center text-white font-bold text-xl">
-              
-                G
-            </div>
-             
-              <span className="text-xl font-bold font-display text-gray-950 tracking-tight">GadgetGlobe</span>
-              
-            </div>*/}
-        
-        </Link>
-        {/* Search */}
-        <div className="flex-1 max-w-md hidden md:block">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              value={search}
-              onChange={handleSearch}
-              onKeyDown={handleKeyDown}
-              placeholder="Search gadgets..."
-              className="pl-9 h-10 rounded-full"
-            />
-          </div>
-        </div>
-       
-         <div className="flex items-center gap-2 sm:gap-4">
-          <Link to="/online-sale">
-          <span className="text-black bg-clip-text  text-xl font-bold font-display hidden sm:block tracking-tight">
-          Online 
-          <span className="bg-clip-text text-red-600">
-          Sale!
-         </span>
-         </span>
-          </Link>
-        </div>
+   
+  <nav className="sticky top-0 z-50 w-full border border-[#E2E8F0] bg-[#F8FAFC] backdrop-blur-md">
+  <div className="container-custom flex h-20 items-center">
 
-        {/* Actions */}
-           <div className="flex items-center gap-2">
-             <span className="relative flex h-5 w-5">
-             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75"></span>
-             <MapPin className="relative h-5 w-5 text-red-600" />
-             </span>
 
-             <Link to="/our-location">
-              <span className="font-space text-black uppercase text-xl font-bold tracking-tighter">
-              Our Store
-              </span>
-             </Link>
-            </div>
+    <Link to="/" className="flex items-center gap-2 shrink-0">
+      <img
+        src="/images/logo1.png"
+        alt="company logo"
+        className="h-8 md:h-12 w-auto object-contain"
+      />
+      <span className="text-2xl font-bold font-display tracking-tight">
+        Gadget Globe
+      </span>
+    </Link>
+
+
+    <div className="flex flex-1 items-center justify-center gap-8">
+
+
+      <div className="w-full max-w-xl hidden md:block">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input
+            type="text"
+            value={search}
+            onChange={handleSearch}
+            onKeyDown={handleKeyDown}
+            placeholder="Search gadgets..."
+            className="pl-12 h-12 text-base rounded-full border-input"
+          />
+        </div>
       </div>
 
-        
-    </nav>
+
+      <Link
+        to="/online-sale"
+        className="hidden lg:block whitespace-nowrap"
+      >
+        <span className="text-xl font-bold">
+          Online <span className="text-red-600">Sale!</span>
+        </span>
+      </Link>
+
+      
+      <Link
+        to="/our-location"
+        className="flex items-center gap-2 whitespace-nowrap "
+      >
+        <span className="relative flex h-5 w-5">
+          <span className="absolute h-full w-full animate-ping rounded-full bg-red-600 opacity-75"></span>
+          <MapPin className="relative h-5 w-5 text-red-600" />
+        </span>
+
+        <span className="text-xl font-bold uppercase tracking-tight">
+          Our Store
+        </span>
+      </Link>
+
+    </div>
+
+  
+    <div className="lg:flex items-center gap-5 shrink-0 hidden ">
+
+      <Link to="/cart" className="relative">
+        <ShoppingBag className="h-6 w-6" />
+        <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[9px] text-white font-semibold">
+          {totalCartQuantity}
+        </span>
+      </Link>
+
+      <Link to={token ? "/dashboard" : "/login"}>
+        <User className="h-6 w-6 hidden lg:block"  />
+      </Link>
+
+    </div>
+
+  </div>
+</nav>
+  
 
 
-
-          {products.length > 0 && (
-  <div className="fixed inset-0 z-[999] bg-black/30 backdrop-blur-sm">
+     {products.length > 0 && (
+       <div className="fixed inset-0 z-[999] bg-black/30 backdrop-blur-sm">
 
     <div className="flex justify-center pt-20 px-3 sm:px-6">
 
@@ -192,3 +207,105 @@ export default function Header() {
 </>
 );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{/*  
+
+
+  <nav className="sticky top-0 z-50 w-full border border-[#E2E8F0] bg-[#F8FAFC] backdrop-blur-md">
+  <div className="container-custom flex h-16 items-center">
+
+    
+    <Link to="/" className="flex items-center gap-2 shrink-0">
+      <img
+        src="/images/logo.png"
+        alt="company logo"
+        className="h-8 md:h-12 w-auto object-contain"
+      />
+      <span className="text-xl font-bold font-display tracking-tight">
+        GadgetGlobe
+      </span>
+    </Link>
+
+
+    <div className="flex flex-1 items-center justify-center gap-8">
+
+
+      <div className="w-full max-w-md hidden md:block">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            value={search}
+            onChange={handleSearch}
+            onKeyDown={handleKeyDown}
+            placeholder="Search gadgets..."
+            className="pl-9 h-10 rounded-full"
+          />
+        </div>
+      </div>
+
+      
+      <Link
+        to="/online-sale"
+        className="hidden lg:block whitespace-nowrap"
+      >
+        <span className="text-xl font-bold">
+          Online <span className="text-red-600">Sale!</span>
+        </span>
+      </Link>
+
+      
+      <Link
+        to="/our-location"
+        className="hidden lg:flex items-center gap-2 whitespace-nowrap"
+      >
+        <span className="relative flex h-5 w-5">
+          <span className="absolute h-full w-full animate-ping rounded-full bg-red-600 opacity-75"></span>
+          <MapPin className="relative h-5 w-5 text-red-600" />
+        </span>
+
+        <span className="text-xl font-bold uppercase tracking-tight">
+          Our Store
+        </span>
+      </Link>
+
+    </div>
+
+  
+    <div className="flex items-center gap-5 shrink-0">
+
+      <Link to="/cart" className="relative">
+        <ShoppingBag className="h-5 w-5" />
+        <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[9px] text-white">
+          {totalCartQuantity}
+        </span>
+      </Link>
+
+      <Link to={token ? "/dashboard" : "/login"}>
+        <User className="h-5 w-5" />
+      </Link>
+
+    </div>
+
+  </div>
+</nav>
+  
+  
+  
+  
+*/}

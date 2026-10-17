@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Mail, Phone, MapPin, Edit2, Save } from "lucide-react";
 import { updateUserProfile } from "../../services/api";
 
-const baseURL = "https://backend.gadgetglobe.com.bd/";
+const baseURL = "https://gadget-backend.gadgetglobe.com.bd/";
 
 export default function AccountSettings({ user, setUser }) {
   const [isEditingProfile, setIsEditingProfile] = useState(false);

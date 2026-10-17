@@ -1,5 +1,6 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { getNewArrivalProducts } from "../../services/api";
 import Loader from "../../loader/Loader";
 import { normalizeProductForCart } from "../../utils/cartAdapter";
 import { useDispatch } from "react-redux";
@@ -7,187 +8,60 @@ import { addItem } from "../../cart/cartSlice";
 import { ShoppingCart, Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import CartPopup from "../CartPopup";
 
+// Import Swiper React components and required modules
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay, A11y } from "swiper/modules";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/autoplay";
+
 const transformProducts = (apiProducts) =>
-  apiProducts.map((item) => ({
-    id: item.id,
-    name: item.name,
-    image: item.image,
-    price: item.price,
-    product_type: item.product_type,
-    product_slug: item.product_slug,
-    thumb_image: item.thumb_image,
-    discount_price: item.discount_price,
-    original_price: item.original_price,
-  }));
+  Array.isArray(apiProducts)
+    ? apiProducts.map((item) => ({
+        id: item.id,
+        name: item.name,
+        image: item.image,
+        thumb_image: item.image,
+        product_type: item.type,
+        product_slug: item.slug,
+        original_price: item.price,
+        discount_price: item.offer_price ?? item.price,
+        price: item.offer_price ?? item.price ?? 0,
+        min_price: item.min_price ?? null,
+        max_price: item.max_price ?? null,
+      }))
+    : [];
 
 export default function NewArrival() {
   const dispatch = useDispatch();
-  const [products] = useState([
-    {
-      id: 930,
-      name: "test pro",
-      price: 3400,
-      image: "/images/image-1.jpg",
-    },
-    {
-      id: 934,
-      name: "Canon EOS R6 Mark II Kit (EU) (24 - 105 mm, 24.20 Mpx, Full frame)",
-      price: 50000,
-      image: "/images/image-2.jpg",
-    },
-    {
-      id: 812,
-      name: "Todaytec (TDW121) 85mm x 300mtr Premium Wax Ribbon",
-      price: 330,
-      image: "/images/image-3.jpg",
-    },
-    {
-      id: 815,
-      name: "Todaytec (TDW121) 156mm x 450mtr Premium Wax Ribbon",
-      price: 900,
-      image: "/images/image-4.jpg",
-    },
-    {
-      id: 784,
-      name: "TSC TE344 (300dpi) Barcode Label Printer",
-      price: 30000,
-      image: "/images/image-5.jpg",
-    },
-    {
-      id: 667,
-      name: "TSC TE244 Barcode Label Printer",
-      price: 19500,
-      image: "/images/image-6.jpg",
-    },
-  ]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const [cartPopup, setCartPopup] = useState(null);
-
-  const sliderRef = useRef(null);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  
-  // ১. অ্যারো বাটন ক্লিক ট্র্যাক করার জন্য নতুন স্টেট
-  const [isManualMode, setIsManualMode] = useState(false);
-  
-  const dragStart = useRef({ x: 0, scrollLeft: 0 });
-  const currentTranslateX = useRef(0);
-
-  // মোবাইল ভিউ চেকার হেল্পার
-  const isMobileView = () => window.innerWidth < 768;
-
-  // ২. মোবাইলের জন্য ম্যানুয়াল স্লাইড করার ফাংশন
-  const handleManualSlide = (direction) => {
-    const container = sliderRef.current;
-    if (!container) return;
-
-    // বাটন ক্লিক করলেই অটো স্লাইড পার্মানেন্টলি অফ হবে
-    if (!isManualMode) {
-      setIsManualMode(true);
-    }
-
-    // সিএসএস অ্যানিমেশন রানিং থাকা অবস্থায় কারেন্ট পজিশন ম্যাট্রিক্স রিড করা
-    const computedStyle = window.getComputedStyle(container);
-    const matrix = new WebKitCSSMatrix(computedStyle.transform);
-    let currentX = matrix.m41; 
-
-    const slideAmount = 220; // প্রতি ক্লিকে মুভমেন্ট ডিসট্যান্স
-    let targetX = direction === "next" ? currentX - slideAmount : currentX + slideAmount;
-
-    // ইনফিনিট লুপ বাউন্ডারি কন্ডিশন
-    const singleSetWidth = container.scrollWidth / 3;
-    if (targetX > 0) {
-      targetX = -singleSetWidth;
-    } else if (targetX < -singleSetWidth * 2) {
-      targetX = -singleSetWidth;
-    }
-
-    currentTranslateX.current = targetX;
-    
-    // স্মুথ স্লাইডিং ট্রানজিশন অ্যাপ্লাই করা
-    container.style.transition = "transform 0.4s ease-out";
-    container.style.transform = `translateX(${targetX}px)`;
-
-    // ট্রানজিশন শেষে রিসেট যেন ড্র্যাগে সমস্যা না হয়
-    setTimeout(() => {
-      if (sliderRef.current) {
-        sliderRef.current.style.transition = "none";
-      }
-    }, 400);
-  };
-
-  const handlePointerDown = (e) => {
-    if (e.button && e.button !== 0) return;
-    const container = sliderRef.current;
-    if (!container) return;
-
-    setIsDragging(true);
-    setIsPaused(true);
-    
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    
-    const computedStyle = window.getComputedStyle(container);
-    const matrix = new WebKitCSSMatrix(computedStyle.transform);
-    currentTranslateX.current = matrix.m41;
-
-    dragStart.current = {
-      x: clientX,
-      scrollLeft: currentTranslateX.current,
-    };
-
-    container.style.transition = "none";
-    container.style.cursor = "grabbing";
-    document.body.style.cursor = "grabbing";
-  };
-
-  const handlePointerMove = useCallback((e) => {
-    if (!isDragging) return;
-    const container = sliderRef.current;
-    if (!container) return;
-
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const deltaX = clientX - dragStart.current.x;
-    
-    let targetX = dragStart.current.scrollLeft + deltaX;
-
-    const singleSetWidth = container.scrollWidth / 3;
-    if (targetX > 0) {
-      targetX = -singleSetWidth;
-    } else if (targetX < -singleSetWidth * 2) {
-      targetX = -singleSetWidth;
-    }
-
-    currentTranslateX.current = targetX;
-    container.style.transform = `translateX(${targetX}px)`;
-  }, [isDragging]);
-
-  const endDrag = useCallback(() => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    setIsPaused(false);
-
-    const container = sliderRef.current;
-    if (!container) return;
-
-    container.style.cursor = "grab";
-    document.body.style.cursor = "";
-  }, [isDragging]);
 
   useEffect(() => {
-    if (isDragging) {
-      window.addEventListener("mousemove", handlePointerMove);
-      window.addEventListener("mouseup", endDrag);
-      window.addEventListener("touchmove", handlePointerMove, { passive: false });
-      window.addEventListener("touchend", endDrag);
-    }
-    return () => {
-      window.removeEventListener("mousemove", handlePointerMove);
-      window.removeEventListener("mouseup", endDrag);
-      window.removeEventListener("touchmove", handlePointerMove);
-      window.removeEventListener("touchend", endDrag);
+    const fetchProducts = async () => {
+      try {
+        const res = await getNewArrivalProducts();
+        setProducts(transformProducts(res));
+      } catch (error) {
+        console.error("Error fetching new arrival products:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-  }, [isDragging, handlePointerMove, endDrag]);
+
+    fetchProducts();
+  }, []);
+  const [cartPopup, setCartPopup] = useState(null);
+
+  // States to explicitly hide/show navigation arrows at edges
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
+
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
 
   const handleAddToCart = (e, product) => {
     e.stopPropagation();
@@ -210,36 +84,17 @@ export default function NewArrival() {
     }, 3000);
   };
 
+  if (loading) return <Loader type="dealofday" count={5} />;
   if (products.length === 0) return null;
-
-  const duplicatedProducts = [...products, ...products, ...products];
 
   return (
     <>
-      <style>{`
-        @keyframes premiumTicker {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-33.3333%); }
-        }
-        .animate-ticker {
-          animation: premiumTicker 45s linear infinite;
-        }
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
-
-      <section className="w-full py-8 md:py-12 bg-white overflow-hidden select-none">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
-          
+      <section className="w-full py-4 md:py-6 bg-white overflow-hidden select-none">
+        <div className="max-w-[1400px] mx-auto px-3 md:px-5">
           {/* Header */}
-          <div className="flex items-end justify-between gap-4 mb-6 md:mb-8">
+          <div className="flex items-end justify-between gap-4 mb-4 md:mb-6">
             <div>
-              <h2 className="text-xl md:text-3xl font-bold text-neutral-800 tracking-tight">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-neutral-800 tracking-tight">
                 New Arrival
               </h2>
             </div>
@@ -252,101 +107,166 @@ export default function NewArrival() {
             </Link>
           </div>
 
-          {/* Infinite Carousel Outer Container */}
-          <div 
-            className="relative w-full overflow-hidden cursor-grab active:cursor-grabbing"
-            // ৩. অন-হোভার কন্ডিশনে মোবাইল চেক বসানো হয়েছে যেন ফোনে অটো-স্লাইড পজ না হয়
-            onMouseEnter={() => !isMobileView() && setIsPaused(true)}
-            onMouseLeave={() => !isMobileView() && !isDragging && setIsPaused(false)}
-          >
-            {/* মোবাইল নেভিগেশন অ্যারো বাটন (md:hidden ব্রেকপয়েন্ট দ্বারা ডেস্কটপে হাইড থাকবে) */}
-            <button 
-              onClick={() => handleManualSlide("prev")}
-              className="md:hidden absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 border border-neutral-200 p-1.5 rounded-full z-20 shadow-md active:scale-95 text-neutral-700"
+          {/* Swiper Carousel Container */}
+          <div className="relative w-full group/carousel">
+            {/* Custom Left Arrow Navigation Button */}
+            <button
+              ref={prevRef}
+               className={`absolute left-1 md:left-2 top-1/2 -translate-y-1/2 bg-white border border-neutral-200 p-1.5 md:p-2 rounded-full z-20 shadow-md active:scale-95 text-neutral-700 transition-opacity duration-200 hover:bg-neutral-50 ${
+                 isBeginning ? "opacity-0 pointer-events-none" : "opacity-100"
+               }`}
             >
-              <ChevronLeft size={18} />
-            </button>
-            <button 
-              onClick={() => handleManualSlide("next")}
-              className="md:hidden absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 border border-neutral-200 p-1.5 rounded-full z-20 shadow-md active:scale-95 text-neutral-700"
-            >
-              <ChevronRight size={18} />
+              <ChevronLeft size={16} />
             </button>
 
-            <div
-              ref={sliderRef}
-              onMouseDown={handlePointerDown}
-              onTouchStart={handlePointerDown}
-              className={`flex gap-4 md:gap-5 w-max will-change-transform py-3 ${
-                isManualMode || isPaused || isDragging ? "" : "animate-ticker"
+            {/* Custom Right Arrow Navigation Button */}
+            <button
+              ref={nextRef}
+               className={`absolute right-1 md:right-2 top-1/2 -translate-y-1/2 bg-white border border-neutral-200 p-1.5 md:p-2 rounded-full z-20 shadow-md active:scale-95 text-neutral-700 transition-opacity duration-200 hover:bg-neutral-50 ${
+               isEnd ? "opacity-0 pointer-events-none" : "opacity-100"
               }`}
             >
-              {duplicatedProducts.map((item, index) => (
-                <div
-                  key={`${item.id}-${index}`}
-                  data-slider-card
-                  className="group relative shrink-0 w-[185px] sm:w-[210px] md:w-[245px] bg-white rounded-3xl border border-neutral-200/80 hover:border-[#f3a47b]/60 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_rgba(243,164,123,0.12)] transition-all duration-300 p-3 md:p-4 flex flex-col justify-between overflow-hidden"
-                >
-                  {/* Ribbon Badge */}
-                  <div className="absolute top-0 left-0 bg-rose-600 text-white text-[9px] md:text-[10px] font-bold uppercase tracking-wider py-1 px-4 rounded-br-2xl shadow-sm z-10">
-                    Most View
-                  </div>
+              <ChevronRight size={16} />
+            </button>
 
-                  <div>
-                    {/* Image Box */}
-                    <div className="h-[150px] md:h-[180px] flex items-center justify-center overflow-hidden rounded-2xl bg-white p-2 mt-2">
-                      <img
-                        loading="lazy"
-                        src={item.image}
-                        alt={item.name}
-                        draggable={false}
-                        className="max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                      />
+            <Swiper
+              modules={[Navigation, Autoplay, A11y]}
+              speed={600}
+              slidesPerGroup={1}
+              watchOverflow={true}
+              grabCursor={true}
+              autoplay={{
+                delay: 3500,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              navigation={{
+                prevEl: prevRef.current,
+                nextEl: nextRef.current,
+              }}
+              onInit={(swiper) => {
+                // Link custom elements inside Swiper's internal navigation parameters
+                swiper.params.navigation.prevEl = prevRef.current;
+                swiper.params.navigation.nextEl = nextRef.current;
+                swiper.navigation.init();
+                swiper.navigation.update();
+                
+                setIsBeginning(swiper.isBeginning);
+                setIsEnd(swiper.isEnd);
+              }}
+              onSlideChange={(swiper) => {
+                setIsBeginning(swiper.isBeginning);
+                setIsEnd(swiper.isEnd);
+              }}
+             breakpoints={{
+  320: {
+    slidesPerView: 2.15,
+    spaceBetween: 10,
+  },
+  480: {
+    slidesPerView: 2.25,
+    spaceBetween: 12,
+  },
+  640: {
+    slidesPerView: 2.8,
+    spaceBetween: 14,
+  },
+  768: {
+    slidesPerView: 4,
+    spaceBetween: 12,
+  },
+  1024: {
+    slidesPerView: 5,
+    spaceBetween: 14,
+  },
+  1280: {
+    slidesPerView: 6,
+    spaceBetween: 16,
+  },
+}}
+              className="py-2"
+            >
+              {products.map((item) => (
+                <SwiperSlide key={item.id} className="h-auto">
+                  <div  className="group relative w-full bg-white rounded-xl md:rounded-2xl border border-neutral-200/80 hover:border-[#f3a47b]/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_6px_18px_rgba(243,164,123,0.10)] transition-all duration-300 p-2 md:p-3 flex flex-col justify-between overflow-hidden">
+                    {/* Ribbon Badge */}
+                    <div className="absolute top-0 left-0 bg-rose-600 text-white text-[7px] md:text-[9px] py-[3px] px-2 font-bold uppercase tracking-wide rounded-br-2xl shadow-sm z-10">
+                      New
                     </div>
 
-                    {/* Product Name */}
-                    <h3 className="mt-2 text-xs md:text-sm font-semibold text-neutral-800 text-center line-clamp-2 min-h-[34px] md:min-h-[40px] px-1 group-hover:text-black transition">
-                      {item.name}
-                    </h3>
-                  </div>
+                    <div>
+                      {/* Image Box */}
+                      <Link to={`/product-details/${item.product_slug}`}>
+                        <div className="h-[95px] sm:h-[120px] md:h-[140px] lg:h-[150px] flex items-center justify-center overflow-hidden rounded-xl bg-white p-1.5 mt-1.5">
+                          <img
+                            loading="lazy"
+                            src={item.image}
+                            alt={item.name}
+                            draggable={false}
+                            className="max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      </Link>
 
-                  {/* Pricing and Button Footer Container */}
-                  <div className="mt-4 flex flex-col gap-3">
-                    {/* Price Matrix */}
-                    <div className="flex flex-col items-center justify-center gap-0.5">
-                      {item?.original_price && (
-                        <span className="text-neutral-400 line-through text-[11px] md:text-xs">
-                          Tk. {Number(item.original_price ?? 0).toLocaleString()}
-                        </span>
-                      )}
-                      <span className="text-[#e26724] font-bold text-sm md:text-base">
-                        Tk. {Number(item.discount_price || item.price || 0).toLocaleString()}
-                      </span>
+                      {/* Product Name */}
+                      <Link to={`/product-details/${item.product_slug}`}>
+                        <h3 className="mt-1 text-[10px] sm:text-xs md:text-[13px] font-semibold text-neutral-800 text-center line-clamp-2 min-h-[28px] md:min-h-[34px] px-1 group-hover:text-black transition">
+                          {item.name}
+                        </h3>
+                      </Link>
                     </div>
 
-                    {/* Premium Action Button */}
-                    <button
-                      onClick={(e) => handleAddToCart(e, item)}
-                      className="w-full h-9 md:h-10 rounded-full bg-white border border-[#f5ccb7] hover:bg-slate-900 text-[#e26724] hover:text-white flex items-center justify-center gap-1.5 text-xs md:text-sm font-semibold transition-all duration-300 shadow-[0_2px_6px_rgba(243,164,123,0.06)] active:scale-[0.98]"
-                    >
-                      {item.product_type === "variable" ? (
-                        <>
-                          <Eye size={14} className="shrink-0" />
-                          <span>View Details</span>
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingCart size={14} className="shrink-0" />
-                          <span>Add to cart</span>
-                        </>
-                      )}
-                    </button>
+                    {/* Pricing and Button Footer Container */}
+                    <div className="mt-1.5 flex flex-col gap-2">
+                      {/* Price Matrix */}
+                      <div className="flex flex-col items-center justify-center gap-0.5">
+                        {item.product_type === "variable" && item.min_price ? (
+                          <span className="text-[#e26724] font-bold text-[11px] sm:text-[12px] md:text-sm text-center">
+                            Tk. {Number(item.min_price).toLocaleString()}
+                            {Number(item.max_price) !== Number(item.min_price) && (
+                              <> - Tk. {Number(item.max_price).toLocaleString()}</>
+                            )}
+                          </span>
+                        ) : (
+                          <>
+                            {Number(item.original_price) > 0 &&
+                              Number(item.original_price) !== Number(item.discount_price) && (
+                                <span className="text-neutral-400 line-through text-[11px] md:text-xs">
+                                  Tk. {Number(item.original_price).toLocaleString()}
+                                </span>
+                              )}
+                            <span className="text-[#e26724] font-bold text-[12px] md:text-sm">
+                              Tk.{" "}
+                              {Number(
+                                item.discount_price || item.price || 0,
+                              ).toLocaleString()}
+                            </span>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Premium Action Button */}
+                      <button
+                        onClick={(e) => handleAddToCart(e, item)}
+                         className="w-full h-7 md:h-9 rounded-full bg-white border border-[#f5ccb7] hover:bg-slate-900 text-[#e26724] hover:text-white flex items-center justify-center gap-1 text-[10px] md:text-xs font-semibold transition-all duration-300 shadow-[0_2px_6px_rgba(243,164,123,0.06)] active:scale-[0.98]">
+                        {item.product_type === "variable" ? (
+                          <>
+                            <Eye size={12} className="shrink-0" />
+                            <span>View Details</span>
+                          </>
+                        ) : (
+                          <>
+                            <ShoppingCart size={12} className="shrink-0" />
+                            <span>Add to cart</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </SwiperSlide>
               ))}
-            </div>
+            </Swiper>
           </div>
-
         </div>
       </section>
 

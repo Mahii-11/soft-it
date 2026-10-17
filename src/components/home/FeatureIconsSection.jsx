@@ -3,12 +3,10 @@ import { getWhyShopWithUs } from "../../services/api";
 import { useEffect, useState } from "react";
 import Loader from "../../loader/Loader";
 
-
-
 export default function WhyChooseUsSection() {
-   const [features, setFeatures] = useState([]);
-   const [loading, setLoading] = useState(true);
-   const staticFeatures = [
+  const [features, setFeatures] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const staticFeatures = [
     { icon: Package, color: "text-blue-600", bg: "bg-blue-100" },
     { icon: Truck, color: "text-orange-600", bg: "bg-orange-100" },
     { icon: ShieldCheck, color: "text-purple-600", bg: "bg-purple-100" },
@@ -27,34 +25,29 @@ export default function WhyChooseUsSection() {
           desc: data[i]?.description || "No Description",
         }));
         setFeatures(merged);
-        
       } catch (error) {
         console.error("Failed to load features:", error);
+      } finally {
+        setLoading(false);
       }
-        finally {
-          setLoading(false);
-        }
     };
     fetchFeatures();
   }, []);
 
-    if (loading) {
-      return (
-       <Loader type="whychooseus" count={4} />
-      )
-    }
- 
+  if (loading) {
+    return <Loader type="whychooseus" count={4} />;
+  }
 
   return (
-    <section className="w-full py-24 bg-white">
-     
-          <div className="max-w-7xl mx-auto px-4">
+    <section className="w-full py-10 bg-white">
+      <div className="max-w-7xl mx-auto px-4">
         {/* Section Heading */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Why Shop {""}<span className="text-red-600">With Us?</span>
+            Why Shop {""}
+            <span className="text-red-600">With Us?</span>
           </h2>
-          <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
+          <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
             We provide the best shopping experience with high-quality products,
             fast delivery, and trusted customer service.
           </p>
@@ -82,14 +75,12 @@ export default function WhyChooseUsSection() {
                 </div>
 
                 {/* Title */}
-                <h3 className="mt-6 text-lg font-semibold text-gray-900">
+                <h3 className="mt-3 text-lg font-semibold text-gray-900">
                   {item.title}
                 </h3>
 
                 {/* Description */}
-                <p className="mt-3 text-gray-600 text-sm">
-                  {item.desc}
-                </p>
+                <p className="mt-2 text-gray-600 text-sm">{item.desc}</p>
               </div>
             );
           })}
@@ -97,18 +88,18 @@ export default function WhyChooseUsSection() {
 
         {/* CTA Button */}
         <div className="mt-16 text-center">
-          <button   className="mt-3 px-4 py-2 rounded-xl 
+          <button
+            className="mt-2 px-4 py-2 rounded-xl 
              bg-black
              text-white font-medium
               text-sm sm:text-base 
              hover:bg-black
               transition-colors duration-300"
-            >
+          >
             Start Shopping
           </button>
         </div>
-
-       </div>
+      </div>
     </section>
   );
 }

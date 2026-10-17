@@ -18,13 +18,28 @@ import {  getTotalCartQuantity } from "../cart/cartSlice";
 import { getTopMenuData } from "../services/api";
 
 
+// How many top-level categories fit in one row before the rest go under "More"
+function getMaxVisible() {
+  const w = window.innerWidth;
+  if (w >= 1536) return 8;
+  if (w >= 1280) return 6;
+  return 4;
+}
+
 export default function Navbar() {
   const [navItems, setNavItems] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [maxVisible, setMaxVisible] = useState(getMaxVisible);
   const totalCartQuantity = useSelector(getTotalCartQuantity);
   const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const onResize = () => setMaxVisible(getMaxVisible());
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
 
   useEffect(() => {
@@ -54,15 +69,15 @@ useEffect(() => {
       const data = await getTopMenuData();
 
       const formattedMenu = data
-        .filter((item) => item.menu_active === 1)
-        .sort((a, b) => a.serial - b.serial)
         .map((item) => ({
           label: item.name,
           href: `/category/${item.slug}`,
-          children: item.active_sub_categories.map((sub) => ({
-            label: sub.name,
-            href: `/category/${item.slug}/${sub.slug}`,
-          })),
+          children: item.sub_categories?.length
+            ? item.sub_categories.map((sub) => ({
+                label: sub.name,
+                href: `/category/${item.slug}/${sub.slug}`,
+              }))
+            : undefined,
         }));
 
       setNavItems(formattedMenu);
@@ -80,30 +95,36 @@ useEffect(() => {
 
 
 
+  const visibleItems = navItems.slice(0, maxVisible);
+  const moreItems = navItems.slice(maxVisible);
+
   return (
-    <nav className={`fixed z-40 bottom-0 left-0 w-full lg:top-[64px] lg:bottom-auto border-b bg-white border-[#E2E8F0] text-[#0F172A] transition-transform duration-300 ${
+    <nav className={`fixed z-40 bottom-0 left-0 w-full lg:top-[80px] lg:bottom-auto border-b bg-white border-[#E2E8F0] text-[#0F172A] transition-transform duration-300 ${
     showNavbar ? "lg:translate-y-0" : "lg:-translate-y-full"
   }`}>
-      <div className="container-custom h-12 sm:h-14 flex items-center gap-4">
+      <div className="container-custom h-12  flex items-center gap-4">
 
       
         {/* Desktop Links */}
-       <div className="hidden lg:flex items-center text-sm w-full font-medium text-[#0F172A]">
+       <div className="hidden lg:flex items-center  w-full font-medium text-[#0F172A]">
 
-         <div className="flex items-center gap-6">
-           {navItems.map((item) => (
+         <div className="flex items-center gap-7 h-12">
+           {visibleItems.map((item) => (
             <div
               key={item.label}
-              className="relative hover:text-red-600 cursor-pointer transition"
+              className="relative h-full flex items-center hover:text-red-600 transition"
               onMouseEnter={() =>
                 item.children && setOpenDropdown(item.label)
               }
               onMouseLeave={() => setOpenDropdown(null)}
             >
-              <button className="flex items-center gap-1 text-[13px] font-medium hover:text-red-600">
+              <NavLink
+                to={item.href}
+                className="flex items-center gap-1 whitespace-nowrap text-[15px] font-medium hover:text-red-600"
+              >
                 {item.label}
                 {item.children && <ChevronDown className="w-4 h-4" />}
-              </button>
+              </NavLink>
 
               <AnimatePresence>
                 {item.children && openDropdown === item.label && (
@@ -111,13 +132,13 @@ useEffect(() => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 mt-2 bg-white border border-[#E2E8F0] shadow-sm rounded-md py-2 min-w-40 z-50"
+                    className="absolute top-full left-0 bg-white border border-[#E2E8F0] shadow-md rounded-md py-2 min-w-48 z-50"
                   >
                     {item.children.map((child) => (
                       <NavLink
                         key={child.label}
                         to={child.href}
-                        className="block whitespace-nowrap px-4 py-2 text-sm hover:text-red-600"
+                        className="block whitespace-nowrap px-4 py-2 text-[15px] hover:bg-slate-50 hover:text-red-600"
                       >
                         {child.label}
                       </NavLink>
@@ -127,10 +148,45 @@ useEffect(() => {
               </AnimatePresence>
             </div>
           ))}
+
+          {moreItems.length > 0 && (
+            <div
+              className="relative h-full flex items-center hover:text-red-600 transition"
+              onMouseEnter={() => setOpenDropdown("__more")}
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
+              <button className="flex items-center gap-1 whitespace-nowrap text-[15px] font-medium hover:text-red-600">
+                More
+                <ChevronDown className="w-4 h-4" />
+              </button>
+
+              <AnimatePresence>
+                {openDropdown === "__more" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full right-0 bg-white border border-[#E2E8F0] shadow-md rounded-md py-2 min-w-56 z-50"
+                  >
+                    {moreItems.map((item) => (
+                      <NavLink
+                        key={item.label}
+                        to={item.href}
+                        className="block whitespace-nowrap px-4 py-2 text-[15px] hover:bg-slate-50 hover:text-red-600"
+                      >
+                        {item.label}
+                      </NavLink>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
          </div>
 
 
-         <div className="flex items-center gap-4 ml-auto">
+        {/* 
+          <div className="flex items-center gap-4 ml-auto">
             <Link to="/cart" className="relative">
              <ShoppingBag className="h-5 w-5 text-black" />
              <span className="absolute -top-1 -right-2 h-4 w-4 text-[9px] bg-black text-white rounded-full flex items-center justify-center">
@@ -142,6 +198,10 @@ useEffect(() => {
             </Link>
 
          </div>
+        */}
+          
+
+
         </div>
 
 

@@ -12,7 +12,7 @@ import { getUserOrders } from "../../services/api";
 import { useEffect, useState } from "react";
 import OrdersSkeleton from "./OrdersSkeleton";
 
-const baseURL = "https://backend.gadgetglobe.com.bd/";
+const baseURL = "https://gadget-backend.gadgetglobe.com.bd/";
 
 export default function Overview({ user, setActiveTab }) {
   const [allOrders, setAllOrders] = useState([]);

@@ -138,7 +138,7 @@
 }
 
 .container-custom {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  @apply max-w-[1400px] mx-auto px-3 md:px-5;
 }
 
 html,

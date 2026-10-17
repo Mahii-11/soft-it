@@ -2,14 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { getPremimumCategories } from "../../services/api";
 import Loader from "../../loader/Loader";
 
-export default function AutoSlidingCategories() {
+export default function PremiumCategories() {
   const sliderRef = useRef(null);
   const animationRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
-
 
   // Detect Mobile
   useEffect(() => {
@@ -26,20 +25,31 @@ export default function AutoSlidingCategories() {
     const fetchCategories = async () => {
       try {
         setLoading(true);
+
+        // getPremimumCategories returns the featured-category-data array
         const data = await getPremimumCategories();
-        const merged = data.map((item, index) => ({
-          id: item.id,
-          name: item.name,
-          image: item.final_image,
-          slug: item.slug,
-        }));
-        setCategories(merged);
+
+        if (Array.isArray(data)) {
+          const merged = data
+            .slice()
+            .sort((a, b) => a.serial - b.serial)
+            .map((item) => ({
+              id: item.id,
+              name: item.name || "Category",
+              // Fallback placeholder image if image is null
+              image: item.image || "https://via.placeholder.com/150?text=Category",
+              slug: item.slug || "",
+            }));
+
+          setCategories(merged);
+        }
       } catch (error) {
         console.error("Error fetching categories:", error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchCategories();
   }, []);
 
@@ -72,21 +82,23 @@ export default function AutoSlidingCategories() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isHovered, isMobile]);
+  }, [isHovered, isMobile, categories]);
 
   if (loading) {
     return <Loader type="categories" />;
   }
 
+  // Categories list empty hole UI te section hide rakhbe
+  if (categories.length === 0) {
+    return null;
+  }
+
   return (
-    <section className="w-full py-8 md:py-12 bg-[#F8FAFC]">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0F172A]">
-            Popular{" "}
-            <span className="text-red-600">
-              Categories
-            </span>
+    <section className="w-full py-4 md:py-6 bg-[#F8FAFC]">
+      <div className="max-w-[1400px] mx-auto px-3 md:px-5">
+        <div className="text-center mb-3 md:mb-5">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#0F172A]">
+            Popular <span className="text-red-600">Categories</span>
           </h2>
         </div>
 
@@ -94,36 +106,39 @@ export default function AutoSlidingCategories() {
           ref={sliderRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`flex gap-8 sm:gap-12 md:gap-16 pt-4 ${
-            isMobile
-              ? "overflow-x-auto scroll-smooth"
-              : "overflow-hidden"
+          className={`flex gap-5 sm:gap-7 md:gap-10 pt-2 ${
+            isMobile ? "overflow-x-auto scroll-smooth" : "overflow-hidden"
           }`}
         >
           {duplicated.map((item, index) => (
             <div
               key={`${item.id}-${index}`}
-              className="shrink-0 flex flex-col items-center group cursor-pointer"
+              className="shrink-0 flex flex-col items-center group cursor-pointer px-1"
             >
               {/* Gradient Border Circle */}
               <div
-                className={`relative w-20 h-20 sm:w-28 sm:h-28 rounded-full 
+                className={`relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full 
                 border border-[#E2E8F0] bg-white
                 transition-all duration-500
                 will-change-transform
-                group-hover:scale-110 group-hover:-translate-y-2`}
+                group-hover:scale-105 group-hover:-translate-y-1`}
               >
                 {/* Inner White Circle */}
-                <div className="w-full h-full rounded-full bg-white flex items-center justify-center shadow-xl overflow-hidden">
+                <div className="w-full h-full rounded-full bg-white flex items-center justify-center shadow-md overflow-hidden">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-14 h-14 sm:w-16 sm:h-16 md:w-24 md:h-24 object-contain transition-transform duration-300 group-hover:scale-110"
+                    onError={(e) => {
+                      // Safety check if image link fails to load from server
+                      e.currentTarget.src =
+                        "https://via.placeholder.com/150?text=Category";
+                    }}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
               </div>
 
-              <h3 className="mt-5 text-sm sm:text-base font-medium text-[#0F172A] text-center leading-snug line-clamp-2 h-[40px] group-hover:text-[#d60000] transition-colors">
+              <h3 className="mt-3 text-[11px] sm:text-xs md:text-sm font-medium text-[#0F172A] text-center leading-tight line-clamp-2 h-[34px] group-hover:text-[#d60000] transition-colors">
                 {item.name}
               </h3>
             </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { getSliders } from "../../services/api";
 import HeroSkeleton from "../../loader/HeroSkeleton";
@@ -9,16 +9,16 @@ export default function HeroSection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const touchStartX = useRef(null);
+  const touchDeltaX = useRef(0);
+
   useEffect(() => {
     const controller = new AbortController();
 
     const fetchSliders = async () => {
       try {
         setLoading(true);
-        const data = await getSliders({
-          signal: controller.signal,
-        });
-
+        const data = await getSliders({ signal: controller.signal });
         setSlides(data || []);
       } catch (err) {
         if (err.name !== "AbortError") {
@@ -36,7 +36,7 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
-    if (!slides.length) return;
+    if (slides.length < 2) return;
 
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
@@ -45,76 +45,102 @@ export default function HeroSection() {
     return () => clearInterval(interval);
   }, [slides]);
 
+  const goNext = () => setCurrent((p) => (p + 1) % slides.length);
+  const goPrev = () => setCurrent((p) => (p - 1 + slides.length) % slides.length);
+
+  const onTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchDeltaX.current = 0;
+  };
+
+  const onTouchMove = (e) => {
+    if (touchStartX.current === null) return;
+    touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
+  };
+
+  const onTouchEnd = () => {
+    if (touchStartX.current === null) return;
+    if (touchDeltaX.current > 50) goPrev();
+    else if (touchDeltaX.current < -50) goNext();
+    touchStartX.current = null;
+    touchDeltaX.current = 0;
+  };
+
   if (loading) {
     return <HeroSkeleton />;
   }
 
   if (error) {
     return (
-      <div className="h-[400px] flex items-center justify-center text-red-500">
+      <div className="min-h-[140px] md:min-h-[320px] flex items-center justify-center text-red-500">
         {error}
       </div>
     );
   }
 
+  if (!slides.length) return null;
+
   return (
-    <section className="w-full bg-white pt-4 md:pt-14 pb-4">
-      <div className="max-w-[1700px] mx-auto px-3 md:px-6">
-
+    <section className="w-full bg-white pt-1 md:pt-14 pb-1 md:pb-4">
+      <div className="container-custom">
         {/* HERO CONTAINER */}
-        <div className="relative overflow-hidden rounded-[18px]">
-
-          {/* SLIDER */}
+        <div
+          className="relative w-full overflow-hidden rounded-[12px] md:rounded-[18px]"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          {/* SLIDER TRACK */}
           <motion.div
-            className="flex"
+            className="flex w-full"
             animate={{ x: `-${current * 100}%` }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
+            style={{ willChange: "transform" }}
           >
-            {slides.map((slide) => (
+            {slides.map((slide, index) => (
               <div
-                key={slide.id}
-                className="
-                  min-w-full
-                  h-[220px]
-                  sm:h-[280px]
-                  md:h-[380px]
-                  flex
-                  items-center
-                  justify-center
-                "
+                key={slide.id ?? index}
+                className="w-full shrink-0 grow-0 basis-full"
               >
-                <img
-                  src={slide.image}
-                  alt=""
-                  className="
-                    w-full
-                    h-full
-                    object-contain
-                    transition-all
-                    duration-500
-                  "
-                />
+                <picture>
+                  {slide.mobileImage && (
+                    <source
+                      media="(max-width: 767px)"
+                      srcSet={slide.mobileImage}
+                    />
+                  )}
+                  <img
+                    src={slide.image}
+                    alt={slide.title || ""}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
+                    decoding="async"
+                    draggable="false"
+                    className="block w-full h-auto select-none"
+                  />
+                </picture>
               </div>
             ))}
           </motion.div>
 
           {/* DOTS */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrent(index)}
-                className={`
-                  transition-all duration-300 rounded-full
-                  ${
+          {slides.length > 1 && (
+            <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 md:gap-2 z-20">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  aria-label={`Go to slide ${index + 1}`}
+                  onClick={() => setCurrent(index)}
+                  className={`transition-all duration-300 rounded-full ${
                     current === index
-                      ? "w-5 h-2 bg-black"
-                      : "w-2 h-2 bg-gray-400"
-                  }
-                `}
-              />
-            ))}
-          </div>
+                      ? "w-4 h-1.5 md:w-5 md:h-2 bg-black"
+                      : "w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

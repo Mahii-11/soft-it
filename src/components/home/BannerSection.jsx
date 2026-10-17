@@ -7,7 +7,7 @@ const bannerData = [
     image: "/images/samsung.png",
     bgColor: "bg-[#F9FAFB]", // soft neutral gray
     buttonText: "Buy Now",
-    isLink: false
+    isLink: false,
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ const bannerData = [
     image: "/images/applewatch.png",
     bgColor: "bg-[#EFF6FF]", // soft light blue
     buttonText: "Learn More",
-    isLink: true
+    isLink: true,
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ const bannerData = [
     image: "/images/smarthome.png",
     bgColor: "bg-[#F3F4F6]", // soft gray
     buttonText: "Buy Now",
-    isLink: false
+    isLink: false,
   },
   {
     id: 4,
@@ -37,7 +37,7 @@ const bannerData = [
     image: "/images/oneplus.png",
     bgColor: "bg-[#F9FAFB]", // neutral gray
     buttonText: "Learn More",
-    isLink: true
+    isLink: true,
   },
   {
     id: 5,
@@ -47,7 +47,7 @@ const bannerData = [
     image: "/images/headphone.png",
     bgColor: "bg-[#EFF6FF]", // light blue
     buttonText: "Buy Now",
-    isLink: false
+    isLink: false,
   },
   {
     id: 6,
@@ -57,15 +57,13 @@ const bannerData = [
     image: "/images/macbook.png",
     bgColor: "bg-[#F3F4F6]", // soft gray
     buttonText: "Learn More",
-    isLink: true
-  }
+    isLink: true,
+  },
 ];
-
-
 
 export default function BannerSection() {
   return (
-    <div className="min-h-screen bg-white font-sans py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white font-sans py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {bannerData.map((item) => (
@@ -84,7 +82,7 @@ export default function BannerSection() {
                   {item.price}
                 </p>
 
-                <div className="mt-6">
+                <div className="mt-4">
                   {item.isLink ? (
                     <button className="px-3 py-1.5 sm:px-4 sm:py-2 text-sm rounded-full border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-50 transition-colors">
                       {item.buttonText}

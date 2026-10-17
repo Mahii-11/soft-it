@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_URL = "https://backend.gadgetglobe.com.bd/api/";
+const BASE_URL = "https://gadget-backend.gadgetglobe.com.bd/api/";
 
 
 /* For all Get requests */
@@ -28,19 +28,20 @@ const fetchData = async (endpoint, option = {}) => {
 // Get Sliders 
 export const getSliders = async () => {
     const res = await fetchData("slider-data");
-    if (!res.success) {
+    if (!(res.status ?? res.success)) {
         throw new Error("Slider fetch unsuccessful");
     }
-    return res?.data?.data || [];
+    const list = Array.isArray(res?.data) ? res.data : res?.data?.data;
+    return list || [];
 }
 
 
 export const getTopMenuData = async ()  => {
-  const res = await fetchData("top-menu-data");
-  if (!res.success) {
+  const res = await fetchData("menu-data");
+  if (!res.status) {
     throw new Error("Top Menu Data fetch unsufessful");
   }
-  return res.menu_data || [];
+  return res.data || [];
 }
 
 export const getsearchProducts = async (searchTerm) => {
@@ -71,11 +72,11 @@ export const getOfferBanner = async () => {
 }
 
 export const getPremimumCategories = async () => {
-    const res = await fetchData("popular-category-data");
-    if (!res.success) {
+    const res = await fetchData("featured-category-data");
+    if (!res.status) {
         throw new Error("Premium categories fetch unsuccessful");
     }
-    return res?.data?.data || [];
+    return res.data || [];
 }
 
 export const getProductsByEndpoint = async (endpoint) => {
@@ -89,19 +90,27 @@ export const getProductsByEndpoint = async (endpoint) => {
 };
 
 export const getMostViewedProducts = async () => {
-    const res = await fetchData("most-viewed-product-data");
-    if (!res.success) {
+    const res = await fetchData("most-viewed-products");
+    if (!res.status) {
         throw new Error("Most viewed products fetch unsuccessful");
     }
-    return res?.data?.data || [];
+    return res.data || [];
+}
+
+export const getNewArrivalProducts = async () => {
+    const res = await fetchData("new-arrival-products");
+    if (!res.status) {
+        throw new Error("New arrival products fetch unsuccessful");
+    }
+    return res.data || [];
 }
 
 export const getDealofDayProducts = async () => {
-    const res = await fetchData("deal-of-the-day");
-    if (!res.success) {
+    const res = await fetchData("flash-sale-products");
+    if (!res.status) {
         throw new Error("Deal of the day products fetch unsuccessful")
     }
-    return res?.data?.data || [];
+    return { flashSale: res.flash_sale || null, products: res.data || [] };
 }
 
 
@@ -137,24 +146,87 @@ export const getProductDetailsBySlugg = async (slug) => {
 
 
 
+// Convert the product-details response into the shape ProductDetails page expects
+const adaptProductDetails = (p) => {
+  const sizes = p.sizes || [];
+  const colors = p.colors || [];
+
+  const variants = (p.combinations || []).map((c) => {
+    const size = sizes.find((s) => Number(s.id) === Number(c.size_id));
+    const color = colors.find((cl) => Number(cl.id) === Number(c.color_id));
+    return {
+      size_id: c.size_id,
+      color_id: c.color_id,
+      size: size?.name || null,
+      color: color?.name || null,
+      price: c.price,
+      regular_price: c.regular_price,
+      quantity: c.quantity,
+      in_stock: c.quantity > 0,
+    };
+  });
+
+  const basePrice = p.offer_price ?? p.price ?? p.min_price ?? 0;
+
+  return {
+    product: {
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      thumbnail: p.image,
+      gallery: (p.gallery || []).map((g) =>
+        typeof g === "string" ? { url: g } : { url: g.url || g.image }
+      ),
+      short_description: p.short_description,
+      description: p.description,
+      sku: p.sku,
+      brand: p.brand,
+      price: {
+        offer: basePrice,
+        final: basePrice,
+        regular: p.offer_price != null ? p.price : null,
+      },
+      stock: { in_stock: p.in_stock, quantity: p.stock_qty },
+      colors: colors.map((c) => ({ ...c, color_id: Number(c.id) })),
+      size_chart: sizes.map((s) => ({
+        size_id: s.id,
+        size: s.name,
+        price: s.price,
+        regular_price: s.regular_price,
+      })),
+      variants,
+    },
+    related_products: (p.related_products || []).map((rp) => ({
+      id: rp.id,
+      name: rp.name,
+      slug: rp.slug,
+      thumbnail: rp.image,
+      price: {
+        final: rp.offer_price ?? rp.price ?? rp.min_price ?? 0,
+        regular: rp.offer_price != null ? rp.price : null,
+      },
+    })),
+  };
+};
+
 // Fetch product details by slug
 export const getProductDetailsBySlug = async (slug) => {
   try {
     const res = await fetch(`${BASE_URL}product-details/${slug}`);
-    
+
     // Check if response is JSON
     const contentType = res.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
       throw new Error("API did not return JSON. Check the endpoint or server error.");
     }
 
-    const data = await res.json();
+    const json = await res.json();
 
-    if (!data.product) {
+    if (!json.status || !json.data?.id) {
       throw new Error(`Product details fetch unsuccessful for slug: ${slug}`);
     }
 
-    return data;
+    return adaptProductDetails(json.data);
 
   } catch (error) {
     console.error("Error in getProductDetailsBySlug:", error);
@@ -264,7 +336,7 @@ export const loginApi = async (email, password) => {
     }
 
     const response = await fetch(
-      "https://backend.gadgetglobe.com.bd/api/store-login-api",
+      "https://gadget-backend.gadgetglobe.com.bd/api/store-login-api",
       {
         method: "POST",
         body: formData,
@@ -363,7 +435,7 @@ export const getUserOrders = async () => {
       localStorage.getItem("userToken");
 
     const response = await fetch(
-      "https://backend.gadgetglobe.com.bd/api/get-all-orders",
+      "https://gadget-backend.gadgetglobe.com.bd/api/get-all-orders",
       {
         method: "GET",
         headers: {

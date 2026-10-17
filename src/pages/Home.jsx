@@ -6,7 +6,6 @@ import PremiumCategories from "../components/home/PremiumCategories";
 import PremiumDualBanner from "../components/home/PremiumDualBanner";
 import PremiumWatchBannerOne from "../components/home/PremiumWatchBannerOne";
 import WhyShopWithUs from "../components/home/WhyShopWithUs";
-import BestSelling from "../components/home/BestSelling";
 
 
 
@@ -16,7 +15,6 @@ export default function Home() {
       <HeroSection/>
       <DealofDayProducts />
       <PremiumCategories/>
-      <BestSelling />
       <PremiumDualBanner />
       <MostViewedProducts/>
       <PremiumWatchBannerOne/>

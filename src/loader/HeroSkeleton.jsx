@@ -1,7 +1,7 @@
 export default function HeroSkeleton() {
   return (
     <section className="w-full bg-[#ffffff] py-6 md:py-20 animate-pulse">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="container-custom">
         
         {/* Hero Slider Skeleton */}
         <div className="relative w-full aspect-[21/9] overflow-hidden rounded-2xl bg-gray-100">
