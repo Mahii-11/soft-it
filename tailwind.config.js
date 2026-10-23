@@ -98,6 +98,7 @@ export const theme = {
             serif: ["var(--font-serif)"],
             mono: ["var(--font-mono)"],
             space: ["Space Grotesk", "sans-serif"],
+            brand: ["Oswald", "Impact", "sans-serif"],
         },
 
         keyframes: {

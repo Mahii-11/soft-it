@@ -1,311 +1,180 @@
-import {  Search, ShoppingBag, User  } from "lucide-react";
-import { MapPin } from "lucide-react";
-import { Input } from "./ui/input";
+import { Search, ShoppingBag, User, Phone, Mail, Truck, MapPin } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getsearchProducts } from "../services/api";
 import useDebounce from "../hooks/useDebounce";
 import { getTotalCartQuantity } from "../cart/cartSlice";
 import { useSelector } from "react-redux";
- const token = localStorage.getItem("token");
 
+const outlineButton =
+  "hidden items-center rounded border border-white/40 px-4 py-2 text-sm font-semibold uppercase text-white transition hover:border-[#ea5b3a] hover:text-[#ea5b3a] lg:inline-flex";
 
 export default function Header() {
   const totalCartQuantity = useSelector(getTotalCartQuantity);
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
   const debounceSearch = useDebounce(search, 500);
 
-    useEffect(() => {
-      const fetchProducts = async () => {
-  
-        if (!debounceSearch) {
-          setProducts([]);
-          return;
-        }
-  
-        const result = await getsearchProducts(debounceSearch);
-  
-        console.log("Products:", result);
-  
-        setProducts(result);
-  
-      };
-  
-      fetchProducts();
-  
-    }, [debounceSearch]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!debounceSearch) {
+        setProducts([]);
+        return;
+      }
 
-    const handleSearch = (e) => {
-  setSearch(e.target.value);
-};
+      const result = await getsearchProducts(debounceSearch);
+      setProducts(result);
+    };
 
+    fetchProducts();
+  }, [debounceSearch]);
 
-   const handleKeyDown = (e) => {
-  if (e.key === "Enter" && search.trim()) {
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
 
-    setProducts([]);
-    navigate(`/search-results?q=${encodeURIComponent(search)}`);
-    setSearch("");
-
-  }
-};
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && search.trim()) {
+      setProducts([]);
+      navigate(`/search-results?q=${encodeURIComponent(search)}`);
+      setSearch("");
+    }
+  };
 
   return (
-
     <>
-  
-   
-  <nav className="sticky top-0 z-50 w-full border border-[#E2E8F0] bg-[#F8FAFC] backdrop-blur-md">
-  <div className="container-custom flex h-20 items-center">
+      <header className="sticky top-0 z-50 w-full bg-[#26282d] text-white">
+        {/* Top utility bar */}
+        <div className="hidden bg-[#1a1b1e] text-xs lg:block">
+          <div className="container-custom flex h-8 items-center justify-between">
+            <a href="tel:+15551234567" className="flex items-center gap-1.5 font-semibold">
+              <Phone size={13} /> +1 (555) 123-4567
+            </a>
 
-
-    <Link to="/" className="flex items-center gap-2 shrink-0">
-      <img
-        src="/images/logo1.png"
-        alt="company logo"
-        className="h-8 md:h-12 w-auto object-contain"
-      />
-      <span className="text-2xl font-bold font-display tracking-tight">
-        Gadget Globe
-      </span>
-    </Link>
-
-
-    <div className="flex flex-1 items-center justify-center gap-8">
-
-
-      <div className="w-full max-w-xl hidden md:block">
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input
-            type="text"
-            value={search}
-            onChange={handleSearch}
-            onKeyDown={handleKeyDown}
-            placeholder="Search gadgets..."
-            className="pl-12 h-12 text-base rounded-full border-input"
-          />
+            <div className="flex items-center gap-6 font-medium">
+              <a href="mailto:support@gadgetglobe.com" className="flex items-center gap-1.5 hover:text-[#ea5b3a]">
+                <Mail size={13} /> Contact
+              </a>
+              <Link to={token ? "/dashboard" : "/login"} className="flex items-center gap-1.5 hover:text-[#ea5b3a]">
+                <Truck size={13} /> Track Order
+              </Link>
+              <Link to="/our-location" className="flex items-center gap-1.5 hover:text-[#ea5b3a]">
+                <MapPin size={13} /> Store Locations
+              </Link>
+            </div>
+          </div>
         </div>
-      </div>
 
-
-      <Link
-        to="/online-sale"
-        className="hidden lg:block whitespace-nowrap"
-      >
-        <span className="text-xl font-bold">
-          Online <span className="text-red-600">Sale!</span>
-        </span>
-      </Link>
-
-      
-      <Link
-        to="/our-location"
-        className="flex items-center gap-2 whitespace-nowrap "
-      >
-        <span className="relative flex h-5 w-5">
-          <span className="absolute h-full w-full animate-ping rounded-full bg-red-600 opacity-75"></span>
-          <MapPin className="relative h-5 w-5 text-red-600" />
-        </span>
-
-        <span className="text-xl font-bold uppercase tracking-tight">
-          Our Store
-        </span>
-      </Link>
-
-    </div>
-
-  
-    <div className="lg:flex items-center gap-5 shrink-0 hidden ">
-
-      <Link to="/cart" className="relative">
-        <ShoppingBag className="h-6 w-6" />
-        <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[9px] text-white font-semibold">
-          {totalCartQuantity}
-        </span>
-      </Link>
-
-      <Link to={token ? "/dashboard" : "/login"}>
-        <User className="h-6 w-6 hidden lg:block"  />
-      </Link>
-
-    </div>
-
-  </div>
-</nav>
-  
-
-
-     {products.length > 0 && (
-       <div className="fixed inset-0 z-[999] bg-black/30 backdrop-blur-sm">
-
-    <div className="flex justify-center pt-20 px-3 sm:px-6">
-
-      <div className="bg-white w-full max-w-4xl rounded-xl shadow-2xl max-h-[75vh] overflow-y-auto">
-
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b">
-
-          <h2 className="text-sm sm:text-base font-semibold">
-            Product Search By:
-            <span className="text-orange-500 ml-1">{search}</span>
-          </h2>
-
-          <button
-            onClick={() => setProducts([])}
-            className="text-gray-500 hover:text-black text-sm"
+        {/* Main bar */}
+        <div className="container-custom flex h-16 items-center gap-4 lg:gap-8">
+          <Link
+            to="/"
+            className="shrink-0 -skew-x-6 font-brand text-[22px] font-bold uppercase leading-none tracking-[-0.02em] text-white md:text-[26px]"
           >
-            Close
-          </button>
+            Gadget<span className="ml-1 text-[#ea5b3a]">Globe</span>
+          </Link>
 
-        </div>
+          <div className="relative hidden max-w-md flex-1 md:block">
+            <input
+              type="text"
+              value={search}
+              onChange={handleSearch}
+              onKeyDown={handleKeyDown}
+              placeholder="Search for products..."
+              className="h-11 w-full rounded bg-[#1a1b1e] pl-4 pr-11 text-sm text-white outline-none placeholder:text-neutral-400 focus:ring-1 focus:ring-[#ea5b3a]"
+            />
+            <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white" />
+          </div>
 
-        {/* Product List */}
-        <div className="p-3 sm:p-5 space-y-3">
+          <div className="ml-auto flex items-center gap-3">
+            <Link to="/our-location" className={outlineButton}>
+              Our Store
+            </Link>
+            <Link to="/online-sale" className={outlineButton}>
+              Online Sale
+            </Link>
 
-          {products.slice(0, 8).map((product) => (
-
-            <div
-              key={product.id}
-              className="flex items-center gap-3 sm:gap-4 bg-gray-100 rounded-lg p-3 sm:p-4 hover:shadow-md transition"
+            <Link
+              to="/cart"
+              aria-label="Cart"
+              className="relative hidden h-11 w-11 items-center justify-center rounded-full border border-white/40 transition hover:border-[#ea5b3a] lg:flex"
             >
+              <ShoppingBag className="h-5 w-5" />
+              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#ea5b3a] text-[9px] font-semibold text-white">
+                {totalCartQuantity}
+              </span>
+            </Link>
 
-              {/* Image */}
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-16 h-16 sm:w-20 sm:h-20 object-contain flex-shrink-0"
-              />
+            <Link
+              to={token ? "/dashboard" : "/login"}
+              aria-label="Account"
+              className="hidden h-11 w-11 items-center justify-center rounded-full bg-white text-[#26282d] transition hover:bg-neutral-200 lg:flex"
+            >
+              <User className="h-5 w-5" />
+            </Link>
 
-              {/* Product Info */}
-              <div className="flex-1">
+            <Link to="/our-location" aria-label="Our store" className="p-2 lg:hidden">
+              <MapPin className="h-5 w-5" />
+            </Link>
+            <Link to="/search" aria-label="Search" className="p-2 md:hidden">
+              <Search className="h-5 w-5" />
+            </Link>
+          </div>
+        </div>
+      </header>
 
-                <p className="text-xs sm:text-sm font-medium text-gray-800 line-clamp-2">
-                  {product.name}
-                </p>
+      {products.length > 0 && (
+        <div className="fixed inset-0 z-[999] bg-black/30 backdrop-blur-sm">
+          <div className="flex justify-center px-3 pt-20 sm:px-6">
+            <div className="max-h-[75vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-white shadow-2xl">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b px-4 py-4 sm:px-6">
+                <h2 className="text-sm font-semibold sm:text-base">
+                  Product Search By:
+                  <span className="ml-1 text-orange-500">{search}</span>
+                </h2>
 
-                <p className="text-orange-500 font-semibold mt-1 text-sm sm:text-base">
-                  Tk. {product.price}
-                </p>
-
+                <button
+                  onClick={() => setProducts([])}
+                  className="text-sm text-gray-500 hover:text-black"
+                >
+                  Close
+                </button>
               </div>
 
+              {/* Product List */}
+              <div className="space-y-3 p-3 sm:p-5">
+                {products.slice(0, 8).map((product) => (
+                  <div
+                    key={product.id}
+                    className="flex items-center gap-3 rounded-lg bg-gray-100 p-3 transition hover:shadow-md sm:gap-4 sm:p-4"
+                  >
+                    {/* Image */}
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="h-16 w-16 flex-shrink-0 object-contain sm:h-20 sm:w-20"
+                    />
+
+                    {/* Product Info */}
+                    <div className="flex-1">
+                      <p className="line-clamp-2 text-xs font-medium text-gray-800 sm:text-sm">
+                        {product.name}
+                      </p>
+
+                      <p className="mt-1 text-sm font-semibold text-orange-500 sm:text-base">
+                        Tk. {product.price}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-
-          ))}
-
+          </div>
         </div>
-
-      </div>
-
-    </div>
-
-  </div>
-)}
-</>
-);
+      )}
+    </>
+  );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{/*  
-
-
-  <nav className="sticky top-0 z-50 w-full border border-[#E2E8F0] bg-[#F8FAFC] backdrop-blur-md">
-  <div className="container-custom flex h-16 items-center">
-
-    
-    <Link to="/" className="flex items-center gap-2 shrink-0">
-      <img
-        src="/images/logo.png"
-        alt="company logo"
-        className="h-8 md:h-12 w-auto object-contain"
-      />
-      <span className="text-xl font-bold font-display tracking-tight">
-        GadgetGlobe
-      </span>
-    </Link>
-
-
-    <div className="flex flex-1 items-center justify-center gap-8">
-
-
-      <div className="w-full max-w-md hidden md:block">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="text"
-            value={search}
-            onChange={handleSearch}
-            onKeyDown={handleKeyDown}
-            placeholder="Search gadgets..."
-            className="pl-9 h-10 rounded-full"
-          />
-        </div>
-      </div>
-
-      
-      <Link
-        to="/online-sale"
-        className="hidden lg:block whitespace-nowrap"
-      >
-        <span className="text-xl font-bold">
-          Online <span className="text-red-600">Sale!</span>
-        </span>
-      </Link>
-
-      
-      <Link
-        to="/our-location"
-        className="hidden lg:flex items-center gap-2 whitespace-nowrap"
-      >
-        <span className="relative flex h-5 w-5">
-          <span className="absolute h-full w-full animate-ping rounded-full bg-red-600 opacity-75"></span>
-          <MapPin className="relative h-5 w-5 text-red-600" />
-        </span>
-
-        <span className="text-xl font-bold uppercase tracking-tight">
-          Our Store
-        </span>
-      </Link>
-
-    </div>
-
-  
-    <div className="flex items-center gap-5 shrink-0">
-
-      <Link to="/cart" className="relative">
-        <ShoppingBag className="h-5 w-5" />
-        <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[9px] text-white">
-          {totalCartQuantity}
-        </span>
-      </Link>
-
-      <Link to={token ? "/dashboard" : "/login"}>
-        <User className="h-5 w-5" />
-      </Link>
-
-    </div>
-
-  </div>
-</nav>
-  
-  
-  
-  
-*/}
