@@ -3,16 +3,13 @@ import Navbar from "./Navbar";
 import Footer from './Footer'
 import Header from "./Header";
 import ScrollToTop from "./ScrollToTop";
-import RouteLoader from "../loader/RouteLoader";
-import FullScreenRouteLoader from "../loader/FullScreenRouteLoader";
+import CartDrawer from "./CartDrawer";
 
 export default function AppLayout() {
 
 
   return (
     <div>
-      <RouteLoader />
-      <FullScreenRouteLoader /> 
       <ScrollToTop/>
       <Header/>
       <Navbar/>
@@ -20,6 +17,7 @@ export default function AppLayout() {
         <Outlet  /> 
       </main>
       <Footer/>
+      <CartDrawer />
     </div>
   )
 }

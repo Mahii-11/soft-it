@@ -12,9 +12,9 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import {  getTotalCartQuantity } from "../cart/cartSlice";
+import {  getTotalCartQuantity, openCart } from "../cart/cartSlice";
 import { getTopMenuData } from "../services/api";
 
 
@@ -73,6 +73,7 @@ export default function Navbar() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [maxVisible, setMaxVisible] = useState(getMaxVisible);
   const totalCartQuantity = useSelector(getTotalCartQuantity);
+  const dispatch = useDispatch();
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -289,15 +290,17 @@ useEffect(() => {
             </span>
           </Link>
 
-          <Link
-            to="/cart"
+          <button
+            type="button"
+            onClick={() => dispatch(openCart())}
+            aria-label="Cart"
             className="relative flex flex-col items-center justify-center text-black transition-transform active:scale-95"
           >
             <ShoppingBag className="h-5 w-5" />
             <span className="absolute -top-1 -right-2 h-4 w-4 text-[9px] bg-black text-white rounded-full flex items-center justify-center">
               {totalCartQuantity}
             </span>
-          </Link>
+          </button>
 
           <Link
             to={token  ? "/dashboard" : "/login"}

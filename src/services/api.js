@@ -196,16 +196,8 @@ const adaptProductDetails = (p) => {
       })),
       variants,
     },
-    related_products: (p.related_products || []).map((rp) => ({
-      id: rp.id,
-      name: rp.name,
-      slug: rp.slug,
-      thumbnail: rp.image,
-      price: {
-        final: rp.offer_price ?? rp.price ?? rp.min_price ?? 0,
-        regular: rp.offer_price != null ? rp.price : null,
-      },
-    })),
+    // same shape as the home page products, rendered by ProductCard
+    related_products: p.related_products || [],
   };
 };
 

@@ -2,8 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   cart: [],
-  showCartPopup: false,
+  isCartOpen: false,
 };
+
+// a cart line is identified by product + variation + color
+const isSameItem = (a, b) =>
+  a.product_slug === b.product_slug &&
+  (a.variation_id || 0) === (b.variation_id || 0) &&
+  (a.color_id || 0) === (b.color_id || 0);
 
 const cartSlice = createSlice({
     name: "cart",
@@ -39,7 +45,7 @@ const cartSlice = createSlice({
                  });
 
                 }
-                 state.showCartPopup = true;
+                 state.isCartOpen = true;
 
                },
         
@@ -47,38 +53,42 @@ const cartSlice = createSlice({
 
 
         deleteItem(state, action) {
-            state.cart = state.cart.filter((item) => item.product_slug !== action.payload);
+            state.cart = state.cart.filter((item) => !isSameItem(item, action.payload));
         },
         increaseItemQuantity(state, action) {
-          const item = state.cart.find(
-          (item) => item.product_slug === action.payload
-          );
+          const item = state.cart.find((item) => isSameItem(item, action.payload));
 
           if (item) {
-          item.quantity++;
-          item.totalPrice = item.quantity * item.discount_price;
+            item.quantity++;
+            item.totalPrice = item.quantity * item.discount_price;
           }
-          },
+        },
         decreaseItemQuantity(state, action) {
-            const item = state.cart.find((item) => item.product_slug === action.payload);
+          const item = state.cart.find((item) => isSameItem(item, action.payload));
 
-            if (item && item.quantity > 1) {
-                 item.quantity--;
-                 item.totalPrice = item.quantity * item.discount_price;
-            }
-           
+          if (item && item.quantity > 1) {
+            item.quantity--;
+            item.totalPrice = item.quantity * item.discount_price;
+          }
         },
 
         clearCart(state) {
             state.cart = [];
         },
-         hideCartPopup(state) {
-      state.showCartPopup = false;
-    }
+        // used to sync the cart from another browser tab
+        replaceCart(state, action) {
+            state.cart = action.payload;
+        },
+        openCart(state) {
+            state.isCartOpen = true;
+        },
+        closeCart(state) {
+            state.isCartOpen = false;
+        }
     },
 });
 
-export const {addItem, deleteItem, increaseItemQuantity, decreaseItemQuantity, clearCart, hideCartPopup} = cartSlice.actions;
+export const {addItem, deleteItem, increaseItemQuantity, decreaseItemQuantity, clearCart, replaceCart, openCart, closeCart} = cartSlice.actions;
 
 export default cartSlice.reducer;
 
@@ -89,5 +99,7 @@ export const getTotalCartQuantity = (state) => (
 export const getTotalCartPrice = (state) => (
     state.cart.cart.reduce((sum, item) => sum + item.totalPrice, 0)
   )  
+
+export const getIsCartOpen = (state) => state.cart.isCartOpen;
 
 export const getCart = (state) => state.cart.cart;  

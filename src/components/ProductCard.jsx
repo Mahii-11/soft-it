@@ -9,7 +9,7 @@ export const formatPrice = (value) => `৳${Number(value ?? 0).toLocaleString()}
 // variable product: starts from min_price
 export function getProductPrices(product) {
   if (product.type === "variable") {
-    return { current: product.min_price, original: null, save: 0 };
+    return { current: product.min_price ?? product.price, original: null, save: 0 };
   }
   const current = product.offer_price ?? product.price;
   const hasOffer =
@@ -21,7 +21,15 @@ export function getProductPrices(product) {
   };
 }
 
-export default function ProductCard({ product }) {
+// Accepts the home/related shape (slug, type, image) and the search/offer shape
+// (product_slug, product_type, thumbnail).
+export default function ProductCard({ product: raw }) {
+  const product = {
+    ...raw,
+    slug: raw.slug ?? raw.product_slug,
+    type: raw.type ?? raw.product_type,
+    image: raw.image ?? raw.thumbnail,
+  };
   const { current, original, save } = getProductPrices(product);
 
   return (

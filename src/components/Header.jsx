@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getsearchProducts } from "../services/api";
 import useDebounce from "../hooks/useDebounce";
-import { getTotalCartQuantity } from "../cart/cartSlice";
-import { useSelector } from "react-redux";
+import { getTotalCartQuantity, openCart } from "../cart/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const outlineButton =
   "hidden items-center rounded border border-white/40 px-4 py-2 text-sm font-semibold uppercase text-white transition hover:border-[#ea5b3a] hover:text-[#ea5b3a] lg:inline-flex";
@@ -13,6 +13,7 @@ export default function Header() {
   const totalCartQuantity = useSelector(getTotalCartQuantity);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
   const debounceSearch = useDebounce(search, 500);
@@ -96,8 +97,9 @@ export default function Header() {
               Online Sale
             </Link>
 
-            <Link
-              to="/cart"
+            <button
+              type="button"
+              onClick={() => dispatch(openCart())}
               aria-label="Cart"
               className="relative hidden h-11 w-11 items-center justify-center rounded-full border border-white/40 transition hover:border-[#ea5b3a] lg:flex"
             >
@@ -105,7 +107,7 @@ export default function Header() {
               <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#ea5b3a] text-[9px] font-semibold text-white">
                 {totalCartQuantity}
               </span>
-            </Link>
+            </button>
 
             <Link
               to={token ? "/dashboard" : "/login"}

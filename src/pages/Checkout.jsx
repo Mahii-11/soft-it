@@ -1,370 +1,446 @@
 import Swal from "sweetalert2";
-import { useSelector } from "react-redux";
-import { getCart, getTotalCartPrice } from "../cart/cartSlice";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/lebel";
-import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
-import { Button } from "../components/ui/button";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { Banknote, Check, MapPin, QrCode, ShieldCheck, Truck } from "lucide-react";
+import { clearCart, getCart, getTotalCartPrice } from "../cart/cartSlice";
 import { createOrder, getUserOrders } from "../services/api";
-import { useDispatch } from "react-redux";
-import { clearCart } from "../cart/cartSlice";
-import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-//import { Navigate } from "react-router-dom";
 
+// Backend payment_method ids. 1 = cash on delivery (existing). 2 for QR is an
+// assumption - confirm the id with the backend before going live.
+const PAYMENT_METHODS = { cod: 1, qr: 2 };
+const QR_IMAGE = "/images/payment-qr.png";
 
+const DELIVERY_OPTIONS = [
+  { value: "inside", label: "Inside Dhaka", note: "Delivery within Dhaka city", fee: 60, shippingMethod: 21 },
+  { value: "outside", label: "Outside Dhaka", note: "Delivery anywhere in the country", fee: 120, shippingMethod: 22 },
+];
 
+const fieldClass =
+  "w-full rounded-lg border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-[#ea5b3a] focus:ring-2 focus:ring-[#ea5b3a]/15";
 
+function SectionCard({ step, title, children }) {
+  return (
+    <section className="rounded-xl bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.06)] md:p-6">
+      <h2 className="mb-5 flex items-center gap-3 font-sans text-base font-bold text-neutral-900 md:text-lg">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#26282d] text-xs font-bold text-white">
+          {step}
+        </span>
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
 
-
+function OptionCard({ selected, onSelect, icon: Icon, title, note, aside }) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={selected}
+      onClick={onSelect}
+      className={`flex w-full items-center gap-4 rounded-xl border p-4 text-left transition ${
+        selected
+          ? "border-[#ea5b3a] bg-[#ea5b3a]/5 ring-1 ring-[#ea5b3a]"
+          : "border-neutral-200 hover:border-neutral-400"
+      }`}
+    >
+      <span
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${
+          selected ? "bg-[#ea5b3a] text-white" : "bg-[#f6f6f6] text-neutral-600"
+        }`}
+      >
+        <Icon size={20} />
+      </span>
+      <span className="flex-1">
+        <span className="block text-sm font-semibold text-neutral-900">{title}</span>
+        <span className="mt-0.5 block text-xs text-neutral-500">{note}</span>
+      </span>
+      {aside && <span className="text-sm font-bold text-neutral-900">{aside}</span>}
+      <span
+        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+          selected ? "border-[#ea5b3a] bg-[#ea5b3a] text-white" : "border-neutral-300"
+        }`}
+      >
+        {selected && <Check size={12} strokeWidth={3} />}
+      </span>
+    </button>
+  );
+}
 
 export default function CheckoutPage() {
   const location = useLocation();
   const buyNowItem = location.state?.item;
   const navigate = useNavigate();
-  const reduxCartItems = useSelector(getCart);
-  const cartItems = buyNowItem ? [buyNowItem] : reduxCartItems;
-  const subtotal = buyNowItem
-  ? buyNowItem.unit_price * buyNowItem.quantity
-  : useSelector(getTotalCartPrice);
   const dispatch = useDispatch();
+  const reduxCartItems = useSelector(getCart);
+  const cartTotal = useSelector(getTotalCartPrice);
+  const cartItems = buyNowItem ? [buyNowItem] : reduxCartItems;
+  const subtotal = buyNowItem ? buyNowItem.unit_price * buyNowItem.quantity : cartTotal;
+
   const [deliveryType, setDeliveryType] = useState("inside");
-  const deliveryFee = deliveryType === "inside" ? 60 : 120;
-  const total = subtotal + deliveryFee;
+  const [paymentType, setPaymentType] = useState("cod");
+  const [transactionId, setTransactionId] = useState("");
+  const [qrMissing, setQrMissing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-     shipping_name: "",
-     order_phone: "",
-     shipping_address: "",
+    shipping_name: "",
+    order_phone: "",
+    shipping_address: "",
   });
 
+  const delivery = DELIVERY_OPTIONS.find((option) => option.value === deliveryType);
+  const deliveryFee = delivery.fee;
+  const total = subtotal + deliveryFee;
 
   const handleChange = (e) => {
-  setFormData({
-    ...formData,
-    [e.target.name]: e.target.value,
-  });
-};
-
-const handleOrderSubmit = async () => {
-
-   if (loading) return;
-
-  if (cartItems.length === 0) {
-    Swal.fire({
-      icon: "warning",
-      title: "Cart is Empty",
-      text: "Please add product to cart first",
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
     });
-    return;
-  }
+  };
 
-   if (!formData.shipping_name || !formData.order_phone || !formData.shipping_address) {
-    Swal.fire({
-      icon: "warning",
-      title: "Missing Information",
-      text: "Please fill all required fields",
-    });
-    return;
-  }
+  const handleOrderSubmit = async () => {
+    if (loading) return;
 
-   const phoneRegex = /^01[3-9]\d{8}$/;
+    if (cartItems.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Cart is Empty",
+        text: "Please add product to cart first",
+      });
+      return;
+    }
 
-  if (!phoneRegex.test(formData.order_phone)) {
-    Swal.fire({
-      icon: "error",
-      title: "Invalid Phone Number",
-      text: "Please enter a valid Bangladeshi phone number",
-    });
-    return;
-  }
+    if (!formData.shipping_name || !formData.order_phone || !formData.shipping_address) {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Information",
+        text: "Please fill all required fields",
+      });
+      return;
+    }
 
-  try {
+    const phoneRegex = /^01[3-9]\d{8}$/;
+
+    if (!phoneRegex.test(formData.order_phone)) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Phone Number",
+        text: "Please enter a valid Bangladeshi phone number",
+      });
+      return;
+    }
+
+    if (paymentType === "qr" && !transactionId.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Transaction ID Required",
+        text: "Please scan the QR code, pay, and enter the transaction ID",
+      });
+      return;
+    }
+
+    try {
       setLoading(true);
 
       Swal.fire({
-      title: "Processing Order...",
-      text: "Please wait while we place your order",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
-
-    const data = new FormData();
-    data.append("shipping_name", formData.shipping_name);
-    data.append("order_phone", formData.order_phone);
-    data.append("shipping_address", formData.shipping_address);
-    data.append("product_qty", cartItems.reduce((sum, item) => sum + item.quantity, 0));
-    data.append("total_amount", total); 
-    data.append("shipping_cost", deliveryFee);
-    data.append("shipping_method", deliveryType === "inside" ? 21 : 22);
-    data.append("payment_method", 1);
-
-     cartItems.forEach((product, index) => {
-      data.append(`product_data[${index}][product_id]`, product.product_id || product.id);
-      data.append(`product_data[${index}][unit_price]`, product.unit_price);
-      data.append(`product_data[${index}][qty]`, product.quantity);
-      data.append(`product_data[${index}][variation_color_id]`, product.color_name);
-      data.append(`product_data[${index}][variation]`, product.variation_size);
-      data.append(`product_data[${index}][size_id]`, product.size_id);
-      data.append(`product_data[${index}][color_id]`, product.color_id);
-     // data.append(`product_data[${index}][product_image]`, product.image);
-      data.append(`product_data[${index}][product_image]`,product.image.split("/").pop());
-      data.append(`product_data[${index}][product_name]`, product.product_name);
-    });
-
-    // 🔹 Debug: FormData entries check
-    console.log("===== FormData Entries =====");
-   for (let [key, value] of data.entries()) {
-   console.log(key, value);
-   }
-    console.log("============================");
-
-    const result = await createOrder(data);
-
-     console.log("Order Result:", result);
-
-if (result.success) {
-  Swal.fire({
-  icon: "success",
-  title: "Order Placed 🎉",
-  html: "Your order has been confirmed successfully.",
-  confirmButtonColor: "#16a34a",
-  width: "300px",
-  padding: "1.2rem",
-  customClass: {
-    popup: "rounded-xl",
-    title: "text-base font-semibold",
-    htmlContainer: "text-sm text-gray-600",
-    confirmButton: "text-sm px-5 py-2"
-  }
-}).then(async () => {
-      if (!buyNowItem) {
-      dispatch(clearCart());
-    }
-    try {
-      // 🔥 fetch all orders again
-      const res = await getUserOrders();
-
-      const ordersArray = res?.data?.data || res?.data || [];
-
-      // 🔥 latest order (newly created)
-      const latestOrder = ordersArray[0]; 
-      // (if API returns newest first)
-
-      navigate("/thank-you", {
-        state: {
-          order: latestOrder
-        }
+        title: "Processing Order...",
+        text: "Please wait while we place your order",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
       });
 
-    } catch (err) {
-      console.log(err);
+      const data = new FormData();
+      data.append("shipping_name", formData.shipping_name);
+      data.append("order_phone", formData.order_phone);
+      data.append("shipping_address", formData.shipping_address);
+      data.append("product_qty", cartItems.reduce((sum, item) => sum + item.quantity, 0));
+      data.append("total_amount", total);
+      data.append("shipping_cost", deliveryFee);
+      data.append("shipping_method", delivery.shippingMethod);
+      data.append("payment_method", PAYMENT_METHODS[paymentType]);
+      if (paymentType === "qr") {
+        data.append("transaction_id", transactionId.trim());
+      }
 
-      // fallback
-      navigate("/thank-you", {
-        state: { order: null }
+      cartItems.forEach((product, index) => {
+        data.append(`product_data[${index}][product_id]`, product.product_id || product.id);
+        data.append(`product_data[${index}][unit_price]`, product.unit_price);
+        data.append(`product_data[${index}][qty]`, product.quantity);
+        data.append(`product_data[${index}][variation_color_id]`, product.color_name);
+        data.append(`product_data[${index}][variation]`, product.variation_size);
+        data.append(`product_data[${index}][size_id]`, product.size_id);
+        data.append(`product_data[${index}][color_id]`, product.color_id);
+        data.append(`product_data[${index}][product_image]`, product.image.split("/").pop());
+        data.append(`product_data[${index}][product_name]`, product.product_name);
       });
+
+      const result = await createOrder(data);
+
+      if (result.success) {
+        Swal.fire({
+          icon: "success",
+          title: "Order Placed 🎉",
+          html: "Your order has been confirmed successfully.",
+          confirmButtonColor: "#ea5b3a",
+          width: "300px",
+          padding: "1.2rem",
+          customClass: {
+            popup: "rounded-xl",
+            title: "text-base font-semibold",
+            htmlContainer: "text-sm text-gray-600",
+            confirmButton: "text-sm px-5 py-2",
+          },
+        }).then(async () => {
+          if (!buyNowItem) {
+            dispatch(clearCart());
+          }
+          try {
+            // fetch all orders again, the newest one is the order just placed
+            const res = await getUserOrders();
+            const ordersArray = res?.data?.data || res?.data || [];
+
+            navigate("/thank-you", {
+              state: { order: ordersArray[0] },
+            });
+          } catch (err) {
+            console.log(err);
+            navigate("/thank-you", {
+              state: { order: null },
+            });
+          }
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Order Failed ❌",
+          text: result.msg || "Order creation failed!",
+        });
+      }
+    } catch (error) {
+      console.error("Error in createOrder:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Order Failed ❌",
+        text: "Something went wrong. Please try again.",
+        confirmButtonColor: "#dc2626",
+      });
+    } finally {
+      setLoading(false);
     }
-  });
+  };
 
-
-
-} else {
-  Swal.fire({
-    icon: "error",
-    title: "Order Failed ❌",
-    text: result.msg || "Order creation failed!",
-  });
-}
-
-  } catch (error) {
-     console.error("Error in createOrder:", error);
-     Swal.fire({
-      icon: "error",
-      title: "Order Failed ❌",
-      text: "Something went wrong. Please try again.",
-      confirmButtonColor: "#dc2626",
-    });
-  }  finally {
-    setLoading(false);
+  // block access if nothing exists
+  if (reduxCartItems.length === 0 && !buyNowItem) {
+    return (
+      <div className="py-32 text-center">
+        <h2 className="text-xl font-semibold">No checkout session found</h2>
+        <p>Please add product to cart or use Buy Now</p>
+      </div>
+    );
   }
-};
-
-
-  const hasCartItems = reduxCartItems.length > 0;
-   const hasBuyNowItem = !!buyNowItem;
-
-
-// 🔥 BLOCK ACCESS IF NOTHING EXISTS
-if (!hasCartItems && !hasBuyNowItem) {
-  return (
-    <div className="text-center py-32">
-      <h2 className="text-xl font-semibold">No checkout session found</h2>
-      <p>Please add product to cart or use Buy Now</p>
-    </div>
-  );
-}
-
-
-
 
   return (
-   
-  <div className="bg-gray-100 min-h-screen py-4 md:py-8 lg:py-16 px-3 sm:px-4 md:px-6">
-    
-    <div className="max-w-7xl mx-auto">
-      
-      <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 lg:p-10">
-        
-        {/* Main Responsive Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
+    <div className="min-h-screen bg-[#f0f0f0] px-3 py-6 font-sans md:px-5 md:py-10">
+      <div className="mx-auto max-w-[1100px]">
+        <h1 className="mb-6 font-sans text-2xl font-bold text-neutral-900 md:text-3xl">Checkout</h1>
 
-          {/* ================= LEFT SIDE ================= */}
-          <div className="lg:col-span-2 space-y-6">
-
-            {/* Shipping Address */}
-            <div className="bg-background p-4 sm:p-6 rounded-2xl border">
-              <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">
-                Shipping Address
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
-                <div className="sm:col-span-2 space-y-2">
-                  <Label>Your Name</Label>
-                  <Input
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+          {/* ================= LEFT ================= */}
+          <div className="space-y-5">
+            <SectionCard step={1} title="Shipping Details">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <label className="mb-1.5 block text-xs font-semibold text-neutral-600">Full Name</label>
+                  <input
                     name="shipping_name"
                     value={formData.shipping_name}
                     onChange={handleChange}
-                    className="h-11"
+                    placeholder="Your full name"
+                    className={fieldClass}
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Your Phone</Label>
-                  <Input className="h-11"
-                  name="order_phone"
-                  value={formData.order_phone}
-                  onChange={handleChange}
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-neutral-600">Phone Number</label>
+                  <input
+                    name="order_phone"
+                    value={formData.order_phone}
+                    onChange={handleChange}
+                    inputMode="tel"
+                    placeholder="01XXXXXXXXX"
+                    className={fieldClass}
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Your Address</Label>
-                  <Input className="h-11"
-                   name="shipping_address"
-                   value={formData.shipping_address}
-                   onChange={handleChange}
-                  
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-neutral-600">Address</label>
+                  <input
+                    name="shipping_address"
+                    value={formData.shipping_address}
+                    onChange={handleChange}
+                    placeholder="House, road, area"
+                    className={fieldClass}
                   />
                 </div>
               </div>
-            </div>
+            </SectionCard>
 
-            {/* Payment Method */}
-            <div className="bg-background p-4 sm:p-6 rounded-2xl border">
-              <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">
-                Payment Method
-              </h2>
-
-              <RadioGroup 
-              value={deliveryType}
-              onValueChange={setDeliveryType}
-              className="flex flex-col gap-4">
-                
-                <div className="flex items-center gap-3 rounded-xl border p-4 cursor-pointer hover:bg-muted/50 transition">
-                  <RadioGroupItem value="inside" />
-                  <Label className="font-normal cursor-pointer flex-1 text-sm sm:text-base">
-                    Inside Dhaka - 60Tk
-                  </Label>
-                </div>
-
-                <div className="flex items-center gap-3 rounded-xl border p-4 cursor-pointer hover:bg-muted/50 transition">
-                  <RadioGroupItem value="outside" />
-                  <Label className="font-normal cursor-pointer flex-1 text-sm sm:text-base">
-                    Outside Dhaka - 120TK
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-          </div>
-
-          {/* ================= RIGHT SIDE ================= */}
-          <div className="bg-[#F8FAFC] p-4 sm:p-6 rounded-2xl shadow-inner h-fit lg:sticky lg:top-24">
-
-            <h2 className="text-lg sm:text-xl font-semibold mb-4">
-              Order Summary
-            </h2>
-
-            {/* Cart Items */}
-            <div className="flex flex-col gap-4 mb-4 max-h-[300px] overflow-y-auto pr-2">
-              {cartItems.map((product) => (
-                <div
-                  key={product.product_slug}
-                  className="flex items-start gap-3"
-                >
-                  <img
-                    src={product.image || "/images/motorola.png"}
-                    alt={product.product_name}
-                    className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/images/motorola.png";
-                    }}
+            <SectionCard step={2} title="Delivery Area">
+              <div role="radiogroup" className="grid gap-3 sm:grid-cols-2">
+                {DELIVERY_OPTIONS.map((option) => (
+                  <OptionCard
+                    key={option.value}
+                    selected={deliveryType === option.value}
+                    onSelect={() => setDeliveryType(option.value)}
+                    icon={option.value === "inside" ? MapPin : Truck}
+                    title={option.label}
+                    note={option.note}
+                    aside={`৳${option.fee}`}
                   />
+                ))}
+              </div>
+            </SectionCard>
 
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm sm:text-base truncate">
-                      {product.product_name}
-                    </p>
+            <SectionCard step={3} title="Payment Method">
+              <div role="radiogroup" className="space-y-3">
+                <OptionCard
+                  selected={paymentType === "cod"}
+                  onSelect={() => setPaymentType("cod")}
+                  icon={Banknote}
+                  title="Cash on Delivery"
+                  note="Pay in cash when your order arrives"
+                />
+                <OptionCard
+                  selected={paymentType === "qr"}
+                  onSelect={() => setPaymentType("qr")}
+                  icon={QrCode}
+                  title="Pay with QR Code"
+                  note="Scan the QR code and pay now"
+                />
+              </div>
 
-                    <p className="text-gray-500 text-xs sm:text-sm">
-                      Qty: {product.quantity}
-                    </p>
-                    <div className="text-muted-foreground text-xs sm:text-sm mt-0.5 flex flex-wrap gap-2">
-                      {product.variation_size && <span>Size: {product.variation_size}</span>}
-                      {product.color_name && <span>Color: {product.color_name}</span>}
-                     </div>
-                    <p className="text-red-500 font-semibold text-sm sm:text-base">
-                      ৳{(product.quantity * product.discount_price).toFixed(2)}
-                    </p>
+              {paymentType === "qr" && (
+                <div className="mt-5 rounded-xl bg-[#fafafa] p-5">
+                  <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-start">
+                    <div className="flex h-44 w-44 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-neutral-200 bg-white p-2">
+                      {qrMissing ? (
+                        <span className="px-3 text-center text-xs text-neutral-400">
+                          QR code image not added yet
+                        </span>
+                      ) : (
+                        <img
+                          src={QR_IMAGE}
+                          alt="Payment QR code"
+                          className="h-full w-full object-contain"
+                          onError={() => setQrMissing(true)}
+                        />
+                      )}
+                    </div>
+
+                    <div className="w-full flex-1">
+                      <p className="text-sm font-semibold text-neutral-900">
+                        Pay <span className="text-[#ea5b3a]">৳{total.toLocaleString()}</span> by scanning the QR code
+                      </p>
+                      <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs text-neutral-600">
+                        <li>Open your payment app and scan the QR code</li>
+                        <li>Pay the exact total amount</li>
+                        <li>Enter the transaction ID below</li>
+                      </ol>
+
+                      <label className="mb-1.5 mt-4 block text-xs font-semibold text-neutral-600">
+                        Transaction ID
+                      </label>
+                      <input
+                        value={transactionId}
+                        onChange={(e) => setTransactionId(e.target.value)}
+                        placeholder="e.g. 8N7A6D5EE7"
+                        className={fieldClass}
+                      />
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Delivery Fee */}
-            <div className="flex justify-between text-sm sm:text-base mb-2">
-              <span>Delivery Fee</span>
-              <span>
-                {deliveryFee === 0 ? "Free" : `৳${deliveryFee}`}
-              </span>
-            </div>
-
-            {/* Total */}
-            <div className="flex justify-between font-bold text-base sm:text-lg mb-4 border-t pt-3">
-              <span>Total:</span>
-              <span>৳{total.toFixed(2)}</span>
-            </div>
-
-              <Button
-                 onClick={handleOrderSubmit}
-                 disabled={loading}
-                 className="w-full h-11 text-sm sm:text-base bg-black text-white hover:bg-gray-800"
-               >
-                 {loading ? "Processing..." : "Proceed to Pay"}
-               </Button>
+              )}
+            </SectionCard>
           </div>
 
+          {/* ================= RIGHT ================= */}
+          <aside className="h-fit rounded-xl bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.06)] md:p-6 lg:sticky lg:top-40">
+            <h2 className="mb-5 font-sans text-base font-bold text-neutral-900 md:text-lg">Order Summary</h2>
+
+            <ul className="max-h-[300px] space-y-4 overflow-y-auto pr-1">
+              {cartItems.map((product) => (
+                <li
+                  key={`${product.product_slug}-${product.variation_id}-${product.color_id}`}
+                  className="flex items-start gap-3"
+                >
+                  <div className="relative h-16 w-16 shrink-0">
+                    <img
+                      src={product.image || "/images/motorola.png"}
+                      alt={product.product_name}
+                      className="h-full w-full rounded-lg bg-[#f6f6f6] object-contain"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/images/motorola.png";
+                      }}
+                    />
+                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#26282d] text-[10px] font-bold text-white">
+                      {product.quantity}
+                    </span>
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="line-clamp-2 text-sm font-medium text-neutral-900">{product.product_name}</p>
+                    {(product.variation_size || product.color_name) && (
+                      <p className="mt-0.5 text-xs capitalize text-neutral-500">
+                        {[product.variation_size && `Size: ${product.variation_size}`, product.color_name && `Color: ${product.color_name}`]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                    )}
+                  </div>
+
+                  <span className="text-sm font-bold text-neutral-900">
+                    ৳{(product.quantity * product.discount_price).toLocaleString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-5 space-y-2 border-t border-neutral-100 pt-4 text-sm">
+              <div className="flex justify-between text-neutral-600">
+                <span>Subtotal</span>
+                <span>৳{subtotal.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-neutral-600">
+                <span>Delivery Fee</span>
+                <span>৳{deliveryFee}</span>
+              </div>
+              <div className="flex justify-between border-t border-neutral-100 pt-3 font-sans text-lg font-bold text-neutral-900">
+                <span>Total</span>
+                <span>৳{total.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleOrderSubmit}
+              disabled={loading}
+              className="mt-5 h-12 w-full rounded-md bg-[#ea5b3a] text-sm font-bold uppercase tracking-wide text-white transition hover:bg-[#d44a2a] disabled:cursor-not-allowed disabled:bg-neutral-300"
+            >
+              {loading ? "Processing..." : "Place Order"}
+            </button>
+
+            <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-neutral-500">
+              <ShieldCheck size={13} /> Your information is safe with us
+            </p>
+          </aside>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 }
-
-
