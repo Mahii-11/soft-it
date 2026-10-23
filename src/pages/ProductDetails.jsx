@@ -205,7 +205,7 @@ export default function ProductDetails() {
 
   return (
     <div className="min-h-screen bg-[#f0f0f0] px-3 py-4 font-sans sm:py-8 md:px-5">
-      <div className="mx-auto max-w-[1400px] rounded-xl bg-white p-4 shadow-[0_1px_4px_rgba(0,0,0,0.06)] md:p-8">
+      <div className="mx-auto max-w-[1248px] rounded-xl bg-white p-4 shadow-[0_1px_4px_rgba(0,0,0,0.06)] md:p-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
 
           {/* LEFT - Gallery */}
@@ -383,7 +383,7 @@ export default function ProductDetails() {
 
       {/* Description */}
       {product.description && (
-        <div className="mx-auto mt-6 max-w-[1400px] rounded-xl bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.06)] md:p-8">
+        <div className="mx-auto mt-6 max-w-[1248px] rounded-xl bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.06)] md:p-8">
           <h2 className="mb-4 flex items-center gap-3 font-sans text-lg font-bold text-neutral-900">
             <span className="h-5 w-1 rounded bg-[#ea5b3a]" />
             Product Description
@@ -397,7 +397,7 @@ export default function ProductDetails() {
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (
-        <div className="mx-auto mt-8 max-w-[1400px] pb-4">
+        <div className="mx-auto mt-8 max-w-[1248px] pb-4">
           <h2 className="mb-4 font-sans text-lg font-bold text-neutral-900 md:text-xl">
             Related Products
           </h2>

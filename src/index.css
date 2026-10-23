@@ -128,7 +128,7 @@
 }
 
 .container-custom {
-  @apply max-w-[1400px] mx-auto px-3 md:px-5;
+  @apply max-w-[1280px] mx-auto px-3 md:px-4;
 }
 
 html,

@@ -10,7 +10,7 @@ import {
 } from "../components/ui/sheet";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -18,13 +18,8 @@ import {  getTotalCartQuantity, openCart } from "../cart/cartSlice";
 import { getTopMenuData } from "../services/api";
 
 
-// How many top-level categories fit in one row before the rest go under "More"
-function getMaxVisible() {
-  const w = window.innerWidth;
-  if (w >= 1536) return 9;
-  if (w >= 1280) return 7;
-  return 5;
-}
+const ITEM_GAP = 28; // gap-7
+const MORE_WIDTH = 96; // "More" button + gap
 
 const itemClass =
   "flex items-center justify-between gap-6 whitespace-nowrap rounded-md px-3 py-2.5 text-[15px] font-medium text-neutral-800 transition-colors hover:bg-[#ea5b3a] hover:text-white";
@@ -71,17 +66,12 @@ function DropdownPanel({ items, className = "" }) {
 export default function Navbar() {
   const [navItems, setNavItems] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [maxVisible, setMaxVisible] = useState(getMaxVisible);
+  const [maxVisible, setMaxVisible] = useState(Infinity);
+  const rowRef = useRef(null);
+  const measureRef = useRef(null);
   const totalCartQuantity = useSelector(getTotalCartQuantity);
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    const onResize = () => setMaxVisible(getMaxVisible());
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
 
 useEffect(() => {
   async function loadMenu() {
@@ -116,6 +106,39 @@ useEffect(() => {
 }, []);
 
 
+  // Show as many categories as actually fit in the row, the rest go under "More".
+  useLayoutEffect(() => {
+    const row = rowRef.current;
+    const measure = measureRef.current;
+    if (!row || !measure || navItems.length === 0) return;
+
+    const fit = () => {
+      const widths = Array.from(measure.children).map((el) => el.offsetWidth);
+      const available = row.clientWidth - 24; // minus the pr-6 gap before "Offer"
+      const totalWidth = widths.reduce((sum, w) => sum + w, 0) + ITEM_GAP * (widths.length - 1);
+
+      if (totalWidth <= available) {
+        setMaxVisible(widths.length);
+        return;
+      }
+
+      let used = MORE_WIDTH;
+      let count = 0;
+      for (const w of widths) {
+        if (used + w + ITEM_GAP > available) break;
+        used += w + ITEM_GAP;
+        count++;
+      }
+      setMaxVisible(Math.max(count, 1));
+    };
+
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(row);
+    document.fonts?.ready.then(fit);
+    return () => observer.disconnect();
+  }, [navItems]);
+
   const visibleItems = navItems.slice(0, maxVisible);
   const moreItems = navItems.slice(maxVisible);
 
@@ -125,7 +148,21 @@ useEffect(() => {
       {/* top-24 = Header height on desktop (32px utility bar + 64px main bar) */}
       <nav className="sticky top-24 z-40 hidden bg-[#26282d] text-white lg:block">
         <div className="container-custom flex h-12 items-center justify-between">
-          <div className="flex h-full items-center gap-7">
+          <div ref={rowRef} className="relative flex h-full min-w-0 flex-1 items-center gap-7 pr-6">
+            {/* hidden copy used only to measure each category label */}
+            <div
+              ref={measureRef}
+              aria-hidden="true"
+              className="pointer-events-none invisible absolute left-0 top-0 flex gap-7 whitespace-nowrap"
+            >
+              {navItems.map((item) => (
+                <span key={item.label} className="flex items-center gap-1 text-[15px] font-medium">
+                  {item.label}
+                  {item.children && <ChevronDown className="h-4 w-4" />}
+                </span>
+              ))}
+            </div>
+
             {visibleItems.map((item) => (
               <div
                 key={item.label}
@@ -169,7 +206,7 @@ useEffect(() => {
 
           <Link
             to="/online-sale"
-            className="flex items-center gap-2 rounded border border-white/20 border-b-[#ea5b3a] px-4 py-1.5 text-[15px] font-medium transition hover:text-[#ea5b3a]"
+            className="flex shrink-0 items-center gap-2 rounded border border-white/20 border-b-[#ea5b3a] px-4 py-1.5 text-[15px] font-medium transition hover:text-[#ea5b3a]"
           >
             <Megaphone className="h-4 w-4" />
             Offer

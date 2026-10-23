@@ -3,7 +3,7 @@ import React from "react";
 export default function PremiumWatchBannerOne() {
   return (
     <div className="w-full bg-[#f8f9fa] py-3 md:py-4">
-      <div className="max-w-[1400px] mx-auto px-3 md:px-5">
+      <div className="max-w-[1280px] mx-auto px-3 md:px-4">
         
         <a 
           href="/shop" 
