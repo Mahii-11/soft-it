@@ -1,5 +1,5 @@
 import { Button } from "../components/ui/button";
-import { ShoppingBag, Menu, User, ChevronDown, ChevronRight, Flame, Home, Megaphone } from "lucide-react";
+import { ShoppingBag, Menu, User, ChevronDown, ChevronRight, Flame, Home } from "lucide-react";
 import { HiOutlineMagnifyingGlass } from "react-icons/hi2";
 import {
   Sheet,
@@ -114,7 +114,7 @@ useEffect(() => {
 
     const fit = () => {
       const widths = Array.from(measure.children).map((el) => el.offsetWidth);
-      const available = row.clientWidth - 24; // minus the pr-6 gap before "Offer"
+      const available = row.clientWidth - 24; // minus the pr-6 right padding
       const totalWidth = widths.reduce((sum, w) => sum + w, 0) + ITEM_GAP * (widths.length - 1);
 
       if (totalWidth <= available) {
@@ -203,14 +203,6 @@ useEffect(() => {
               </div>
             )}
           </div>
-
-          <Link
-            to="/online-sale"
-            className="flex shrink-0 items-center gap-2 rounded border border-white/20 border-b-[#ea5b3a] px-4 py-1.5 text-[15px] font-medium transition hover:text-[#ea5b3a]"
-          >
-            <Megaphone className="h-4 w-4" />
-            Offer
-          </Link>
         </div>
       </nav>
 

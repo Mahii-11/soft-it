@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getDealofDayProducts } from "../../services/api";
 import useApiData from "../../hooks/useApiData";
 import ProductSlider, { ProductSliderSkeleton } from "./ProductSlider";
 import SectionHeading from "./SectionHeading";
+
+const FLASH_BREAKPOINTS = {
+  320: { slidesPerView: 2.1, spaceBetween: 10 },
+  640: { slidesPerView: 3.2, spaceBetween: 12 },
+  1024: { slidesPerView: 3, spaceBetween: 12 },
+};
 
 // API sends "YYYY-MM-DD HH:mm:ss"
 const toTimestamp = (value) => (value ? new Date(value.replace(" ", "T")).getTime() : NaN);
@@ -60,7 +67,23 @@ export default function DealofDayProducts() {
       <SectionHeading title="Flash Sale" to="/shop">
         <Countdown endTime={flashSale.end_time} />
       </SectionHeading>
-      <ProductSlider products={products} />
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,0.9fr)] lg:gap-5">
+        <div className="min-w-0">
+          <ProductSlider products={products} breakpoints={FLASH_BREAKPOINTS} />
+        </div>
+
+        <Link
+          to="/shop"
+          className="group hidden overflow-hidden rounded-lg bg-white shadow-[0_1px_4px_rgba(0,0,0,0.08)] sm:block"
+        >
+          <img
+            src="/images/banner%20square.jpg"
+            alt="Special offer banner"
+            draggable={false}
+            className="aspect-square h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+          />
+        </Link>
+      </div>
     </section>
   );
 }

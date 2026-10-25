@@ -8,7 +8,7 @@ import NewArrival from "../components/home/NewArrival";
 import CustomerFavorites from "../components/home/CustomerFavorites";
 import BrandsGrid from "../components/home/BrandsGrid";
 import WhyShopWithUs from "../components/home/WhyShopWithUs";
-import NewsletterSocial from "../components/home/NewsletterSocial";
+
 
 export default function Home() {
   return (
@@ -23,7 +23,6 @@ export default function Home() {
       <CustomerFavorites />
       <BrandsGrid />
       <WhyShopWithUs />
-      <NewsletterSocial />
     </div>
   );
 }

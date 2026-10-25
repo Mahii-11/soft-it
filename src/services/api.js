@@ -79,7 +79,18 @@ export const getPremimumCategories = async () => {
     return res.data || [];
 }
 
-export const getProductsByEndpoint = async (endpoint) => {
+// NOTE: the backend has no brands endpoint yet ("brand-data" is a guess).
+// Change the endpoint here once it exists; the response shape is handled loosely.
+export const getBrands = async () => {
+    const res = await fetchData("brand-data");
+    if (!(res.status ?? res.success)) {
+        throw new Error("Brands fetch unsuccessful");
+    }
+    const list = Array.isArray(res?.data) ? res.data : res?.data?.data;
+    return list || [];
+}
+
+export const getProductsByEndpoint =async (endpoint) => {
     const res = await fetchData(endpoint);
 
     if (!res.success) {

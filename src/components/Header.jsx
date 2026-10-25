@@ -1,4 +1,4 @@
-import { Search, ShoppingBag, User, Phone, Mail, Truck, MapPin } from "lucide-react";
+import { Search, ShoppingBag, User, Phone, Mail, Truck, MapPin, Megaphone } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getsearchProducts } from "../services/api";
@@ -90,11 +90,9 @@ export default function Header() {
           </div>
 
           <div className="ml-auto flex items-center gap-3">
-            <Link to="/our-location" className={outlineButton}>
-              Our Store
-            </Link>
             <Link to="/online-sale" className={outlineButton}>
-              Online Sale
+              <Megaphone className="mr-2 h-4 w-4" />
+              Hot Deal
             </Link>
 
             <button
