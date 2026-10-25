@@ -1,25 +1,26 @@
-import { Headset, Gift, Truck, ShieldCheck, BadgeCheck, RefreshCw } from "lucide-react";
+import { ShieldCheck, CreditCard, RefreshCw, Truck } from "lucide-react";
 
 const features = [
-  { icon: Headset, title: "24/7 Customer Support", text: "Our team is ready around the clock to help with any questions or issues" },
-  { icon: Gift, title: "Authentic Products", text: "We sell original products that come from trusted and verified sources" },
-  { icon: Truck, title: "Fast Delivery", text: "We deliver your order quickly and safely anywhere in the country" },
-  { icon: ShieldCheck, title: "Secure Payment", text: "We protect every transaction with safe and trusted payment systems" },
-  { icon: BadgeCheck, title: "Quality Checked", text: "We check every item carefully to make sure it is exactly as described" },
-  { icon: RefreshCw, title: "Easy Exchange", text: "Not the right fit? Exchange it with a simple, hassle-free process" },
+  { icon: ShieldCheck, title: "100% Authentic", text: "Trusted Products", color: "text-emerald-600" },
+  { icon: CreditCard, title: "EMI Facility", text: "Up to 12 Months", color: "text-blue-600" },
+  { icon: RefreshCw, title: "Easy Exchange", text: "Best Value Offer", color: "text-purple-600" },
+  { icon: Truck, title: "Fast Delivery", text: "Nationwide Shipping", color: "text-orange-600" },
 ];
 
 export default function WhyShopWithUs() {
   return (
-    <section className="mt-6 bg-white py-8 md:py-10">
-      <div className="container-custom grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 lg:grid-cols-6">
-        {features.map(({ icon: Icon, title, text }) => (
-          <div key={title} className="flex flex-col items-center text-center">
-            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-[#3e4045] text-white">
+    <section className="mt-6 bg-white py-6 md:py-8">
+      <div className="container-custom grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
+        {features.map(({ icon: Icon, title, text, color }) => (
+          <div
+            key={title}
+            className="flex flex-col items-center rounded-2xl border border-neutral-100 bg-white px-4 py-4 text-center shadow-sm"
+          >
+            <div className={`mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-white shadow ${color}`}>
               <Icon size={20} />
             </div>
-            <h3 className="font-sans text-xs font-bold text-neutral-900">{title}</h3>
-            <p className="mt-1 max-w-[170px] text-[11px] leading-4 text-neutral-500">{text}</p>
+            <h3 className="font-sans text-sm font-bold uppercase tracking-wide text-neutral-900">{title}</h3>
+            <p className="mt-1 text-xs text-neutral-500">{text}</p>
           </div>
         ))}
       </div>
