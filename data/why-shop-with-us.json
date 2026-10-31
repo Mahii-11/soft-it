@@ -1,0 +1,10 @@
+{
+  "status": true,
+  "message": "Why shop with us",
+  "data": [
+    { "id": 1, "title": "100% Authentic", "text": "Trusted Products", "icon": "shield-check", "serial": 1, "is_active": true },
+    { "id": 2, "title": "EMI Facility", "text": "Up to 12 Months", "icon": "credit-card", "serial": 2, "is_active": true },
+    { "id": 3, "title": "Easy Exchange", "text": "Best Value Offer", "icon": "refresh-cw", "serial": 3, "is_active": true },
+    { "id": 4, "title": "Fast Delivery", "text": "Nationwide Shipping", "icon": "truck", "serial": 4, "is_active": true }
+  ]
+}

@@ -1,7 +1,17 @@
 import { Link } from "react-router-dom";
-import { Tag } from "lucide-react";
 import { getTopMenuData } from "../../services/api";
 import useApiData from "../../hooks/useApiData";
+
+const IMAGES = [
+  "/images/recoimg-1.webp",
+  "/images/recoimg-2.webp",
+  "/images/recoimg-3.png",
+  "/images/recoimg-4.webp",
+  "/images/recoimg-5.webp",
+  "/images/recoimg-6.webp",
+  "/images/recoimg-7.webp",
+  "/images/recoimg-8.webp",
+];
 
 // Quick links built from the menu tree: top-level categories first, then their sub categories.
 function buildLinks(menu) {
@@ -32,19 +42,22 @@ export default function RecommendedForYou() {
   return (
     <section className="container-custom py-4 md:py-6">
       <h2 className="mb-4 font-sans text-lg font-bold text-neutral-900 md:text-xl">
-        Recommended for You
+        Just for You
       </h2>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-        {links.map((item) => (
+        {links.map((item, index) => (
           <Link
             key={item.id}
             to={item.to}
             className="group flex flex-col items-center gap-2 rounded-md bg-white px-2 py-3 text-center shadow-[0_1px_4px_rgba(0,0,0,0.08)] transition hover:shadow-[0_6px_18px_rgba(0,0,0,0.12)]"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded bg-[#f6f6f6] text-neutral-500 transition-colors group-hover:text-[#ea5b3a]">
-              <Tag size={18} />
-            </span>
+            <img
+              src={IMAGES[index % IMAGES.length]}
+              alt={item.name}
+              loading="lazy"
+              className="h-16 w-16 rounded object-cover"
+            />
             <span className="line-clamp-1 text-xs text-neutral-700">{item.name}</span>
           </Link>
         ))}

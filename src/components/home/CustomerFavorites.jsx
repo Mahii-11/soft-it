@@ -21,7 +21,7 @@ export default function CustomerFavorites() {
   return (
     <section className="container-custom py-4 md:py-6">
       <h2 className="mb-4 font-sans text-lg font-bold text-neutral-900 md:text-xl">
-        Customer Favorites
+        Customer Top Picks
       </h2>
 
       {loading ? (

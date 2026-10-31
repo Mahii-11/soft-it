@@ -1,0 +1,84 @@
+{
+  "status": true,
+  "message": "Brands",
+  "data": [
+    {
+      "id": 1,
+      "name": "Apple",
+      "slug": "apple",
+      "image": "/images/Apple_Brand_Logo_-_1.webp"
+    },
+    {
+      "id": 2,
+      "name": "Asus",
+      "slug": "asus",
+      "image": "/images/Asus_Brand.webp"
+    },
+    {
+      "id": 3,
+      "name": "EcoFlow",
+      "slug": "ecoflow",
+      "image": "/images/ecoflow_brand_logo_png.webp"
+    },
+    {
+      "id": 4,
+      "name": "HP",
+      "slug": "hp",
+      "image": "/images/HP_Brand_Logo_-_1.webp"
+    },
+    {
+      "id": 5,
+      "name": "Honor",
+      "slug": "honor",
+      "image": "/images/Honor.webp"
+    },
+    {
+      "id": 6,
+      "name": "Lenovo",
+      "slug": "lenovo",
+      "image": "/images/Lenovo_Brand_logo.webp"
+    },
+    {
+      "id": 7,
+      "name": "Oraimo",
+      "slug": "oraimo",
+      "image": "/images/Oraimo.webp"
+    },
+    {
+      "id": 8,
+      "name": "Dyson",
+      "slug": "dyson",
+      "image": "/images/Dyson_Brand_Logo_SEhfYmW.webp"
+    },
+    {
+      "id": 9,
+      "name": "Samsung",
+      "slug": "samsung",
+      "image": "/images/Samsung_Brand.webp"
+    },
+    {
+      "id": 10,
+      "name": "Sony",
+      "slug": "sony",
+      "image": "/images/Sony_.webp"
+    },
+    {
+      "id": 11,
+      "name": "TCL",
+      "slug": "tcl",
+      "image": "/images/TCL_Brand_Logo.webp"
+    },
+    {
+      "id": 12,
+      "name": "UGREEN",
+      "slug": "ugreen",
+      "image": "/images/UGREEN.webp"
+    },
+    {
+      "id": 13,
+      "name": "Xiaomi",
+      "slug": "xiaomi",
+      "image": "/images/Xiaomi_Brand.webp"
+    }
+  ]
+}

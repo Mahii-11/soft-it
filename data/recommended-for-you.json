@@ -1,0 +1,14 @@
+{
+  "status": true,
+  "message": "Recommended for you",
+  "data": [
+    { "id": 1, "name": "Smartphone", "image": "/images/recoimg-1.webp", "link": "/category/smartphone", "serial": 1, "is_active": true },
+    { "id": 2, "name": "Laptop", "image": "/images/recoimg-2.webp", "link": "/category/laptop", "serial": 2, "is_active": true },
+    { "id": 3, "name": "Smart Watch", "image": "/images/recoimg-3.png", "link": "/category/smart-watch", "serial": 3, "is_active": true },
+    { "id": 4, "name": "Earbuds", "image": "/images/recoimg-4.webp", "link": "/category/earbuds", "serial": 4, "is_active": true },
+    { "id": 5, "name": "Power Bank", "image": "/images/recoimg-5.webp", "link": "/category/power-bank", "serial": 5, "is_active": true },
+    { "id": 6, "name": "Camera", "image": "/images/recoimg-6.webp", "link": "/category/camera", "serial": 6, "is_active": true },
+    { "id": 7, "name": "Speaker", "image": "/images/recoimg-7.webp", "link": "/category/speaker", "serial": 7, "is_active": true },
+    { "id": 8, "name": "Accessories", "image": "/images/recoimg-8.webp", "link": "/category/accessories", "serial": 8, "is_active": true }
+  ]
+}

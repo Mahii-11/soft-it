@@ -1,0 +1,11 @@
+{
+  "status": true,
+  "message": "Flash sale banner",
+  "data": {
+    "id": 1,
+    "title": "Special offer banner",
+    "image": "/images/banner square.jpg",
+    "link": "/shop",
+    "is_active": true
+  }
+}

@@ -100,9 +100,9 @@ export default function HeroSection() {
             {slides.map((slide, index) => (
               <div
                 key={slide.id ?? index}
-                className="aspect-[2.3/1] w-full shrink-0 grow-0 basis-full md:aspect-[3.5/1]"
+                className="w-full shrink-0 grow-0 basis-full"
               >
-                <picture className="block h-full w-full">
+                <picture className="block w-full">
                   {slide.mobileImage && (
                     <source
                       media="(max-width: 767px)"
@@ -116,7 +116,7 @@ export default function HeroSection() {
                     fetchPriority={index === 0 ? "high" : "auto"}
                     decoding="async"
                     draggable="false"
-                    className="block h-full w-full select-none object-cover object-center"
+                    className="block h-auto w-full select-none"
                   />
                 </picture>
               </div>

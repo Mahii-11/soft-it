@@ -60,11 +60,30 @@ export default function DealofDayProducts() {
 
   const flashSale = data?.flashSale;
   const products = data?.products ?? [];
-  if (!flashSale?.is_running || products.length === 0) return null;
+  const bannerImage = flashSale?.image || "/images/banner%20square.jpg";
+  const bannerAlt = flashSale?.title || "Special offer banner";
+  // TEMP: no flash sale data -> show only the banner. Revert to `return null` later.
+  if (!flashSale?.is_running || products.length === 0) {
+    return (
+      <section className="container-custom py-4 md:py-6">
+        <Link
+          to="/shop"
+          className="group hidden overflow-hidden rounded-lg bg-white shadow-[0_1px_4px_rgba(0,0,0,0.08)] sm:block lg:ml-auto lg:w-[calc((100%-1.25rem)*0.9/2.9)]"
+        >
+          <img
+            src={bannerImage}
+            alt={bannerAlt}
+            draggable={false}
+            className="aspect-square h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+          />
+        </Link>
+      </section>
+    );
+  }
 
   return (
     <section className="container-custom py-4 md:py-6">
-      <SectionHeading title="Flash Sale" to="/shop">
+      <SectionHeading title={flashSale.title || "Gadget Globe Special Deal"} to="/shop">
         <Countdown endTime={flashSale.end_time} />
       </SectionHeading>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,0.9fr)] lg:gap-5">
@@ -77,8 +96,8 @@ export default function DealofDayProducts() {
           className="group hidden overflow-hidden rounded-lg bg-white shadow-[0_1px_4px_rgba(0,0,0,0.08)] sm:block"
         >
           <img
-            src="/images/banner%20square.jpg"
-            alt="Special offer banner"
+            src={bannerImage}
+            alt={bannerAlt}
             draggable={false}
             className="aspect-square h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
           />

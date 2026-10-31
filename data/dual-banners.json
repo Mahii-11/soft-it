@@ -1,0 +1,22 @@
+{
+  "status": true,
+  "message": "Dual promotional banners",
+  "data": [
+    {
+      "id": 1,
+      "title": "Air Fryer Collection Offer Banner",
+      "image": "/images/dual-banner-1.webp",
+      "link": "/shop",
+      "serial": 1,
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "title": "Kieslect BioKoop Health Tracker Offer Banner",
+      "image": "/images/dual-banner-2.webp",
+      "link": "/shop",
+      "serial": 2,
+      "is_active": true
+    }
+  ]
+}

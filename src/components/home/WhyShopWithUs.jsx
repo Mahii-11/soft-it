@@ -1,37 +1,41 @@
-import { ShieldCheck, CreditCard, RefreshCw, Truck } from "lucide-react";
+import { ShieldCheck, CreditCard, RefreshCw, Truck, Headphones, Package, BadgeCheck } from "lucide-react";
+import { getWhyShopWithUs } from "../../services/api";
+import useApiData from "../../hooks/useApiData";
 
-const features = [
+// API sends an icon name (e.g. "sheild-check"); match it loosely, ignoring case and dashes.
+const ICONS = {
+  shieldcheck: ShieldCheck,
+  sheildcheck: ShieldCheck,
+  creditcard: CreditCard,
+  refreshcw: RefreshCw,
+  truck: Truck,
+  headphones: Headphones,
+  package: Package,
+  badgecheck: BadgeCheck,
+};
+const getIcon = (name) => ICONS[String(name ?? "").toLowerCase().replace(/[^a-z]/g, "")] || BadgeCheck;
+
+// Card colors are cycled by position; the API doesn't send them.
+const styles = [
   {
-    icon: ShieldCheck,
-    title: "100% Authentic",
-    text: "Trusted Products",
     color: "text-emerald-600",
     glow: "from-emerald-100/70",
     iconHover: "group-hover:bg-emerald-50 group-hover:shadow-emerald-200",
     bar: "from-emerald-400 to-teal-500",
   },
   {
-    icon: CreditCard,
-    title: "EMI Facility",
-    text: "Up to 12 Months",
     color: "text-blue-600",
     glow: "from-blue-100/70",
     iconHover: "group-hover:bg-blue-50 group-hover:shadow-blue-200",
     bar: "from-blue-400 to-indigo-500",
   },
   {
-    icon: RefreshCw,
-    title: "Easy Exchange",
-    text: "Best Value Offer",
     color: "text-purple-600",
     glow: "from-purple-100/70",
     iconHover: "group-hover:bg-purple-50 group-hover:shadow-purple-200",
     bar: "from-purple-400 to-fuchsia-500",
   },
   {
-    icon: Truck,
-    title: "Fast Delivery",
-    text: "Nationwide Shipping",
     color: "text-orange-600",
     glow: "from-orange-100/70",
     iconHover: "group-hover:bg-orange-50 group-hover:shadow-orange-200",
@@ -40,12 +44,21 @@ const features = [
 ];
 
 export default function WhyShopWithUs() {
+  const { data, loading } = useApiData("why-shop", getWhyShopWithUs);
+  const features = data ?? [];
+
+  if (loading || features.length === 0) return null;
+
   return (
     <section className="mt-6 bg-white py-6 md:py-8">
       <div className="container-custom grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
-        {features.map(({ icon: Icon, title, text, color, glow, iconHover, bar }) => (
+        {features.map((item, i) => {
+          const { color, glow, iconHover, bar } = styles[i % styles.length];
+          const Icon = getIcon(item.icon);
+          const { title, subtitle: text } = item;
+          return (
           <div
-            key={title}
+            key={item.id ?? title}
             className="group relative flex cursor-pointer flex-col items-center overflow-hidden rounded-2xl border border-neutral-100 bg-white px-4 py-4 text-center shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-xl"
           >
             {/* soft corner glow */}
@@ -68,7 +81,8 @@ export default function WhyShopWithUs() {
               className={`absolute bottom-0 left-1/2 h-[3px] w-0 -translate-x-1/2 rounded-full bg-gradient-to-r ${bar} transition-all duration-300 group-hover:w-14`}
             />
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

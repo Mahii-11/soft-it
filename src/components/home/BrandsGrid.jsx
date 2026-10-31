@@ -55,7 +55,7 @@ export default function BrandsGrid() {
                       alt={brand.name}
                       loading="lazy"
                       draggable={false}
-                      className="max-h-10 max-w-[70%] object-contain mix-blend-multiply md:max-h-12"
+                      className="h-12 w-full max-w-[96px] object-contain mix-blend-multiply md:h-20 md:max-w-[160px]"
                     />
                   ) : (
                     <span className="font-sans text-sm font-bold uppercase tracking-wide text-neutral-700 transition-colors duration-300 group-hover:text-white md:text-base">

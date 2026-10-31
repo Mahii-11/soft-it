@@ -16,7 +16,7 @@ export default function PremiumCategories() {
   return (
     <section className="container-custom py-6 md:py-8">
       <h2 className="mb-4 font-sans text-lg font-bold text-neutral-900 md:text-xl">
-        Popular Categories
+        Shop by Categories
       </h2>
 
       <div className="overflow-x-auto rounded-lg bg-gradient-to-r from-white via-neutral-200 to-white scrollbar-hide">

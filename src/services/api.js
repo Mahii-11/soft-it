@@ -57,10 +57,13 @@ export const getsearchProducts = async (searchTerm) => {
 
 export const getWhyShopWithUs = async () => {
     const res = await fetchData("why-shop-data");
-    if (!res.success) {
+    if (!(res.status ?? res.success)) {
         throw new Error("Why shop with us fetch unsuccessful");
     }
-    return res?.data?.data || [];
+    const list = Array.isArray(res?.data) ? res.data : res?.data?.data;
+    return (list || [])
+        .filter((item) => item.is_active ?? true)
+        .sort((a, b) => (a.serial ?? 0) - (b.serial ?? 0));
 }
 
 export const getOfferBanner = async () => {
@@ -69,6 +72,16 @@ export const getOfferBanner = async () => {
         throw new Error("Offer banner fetch unsuccessful");
     }
     return res?.data?.data || [];
+}
+
+export const getPromoBanners = async () => {
+    const res = await fetchData("promo-banner-data");
+    if (!res.status) {
+        throw new Error("Promo banners fetch unsuccessful");
+    }
+    return (res.data || [])
+        .filter((banner) => banner.is_active)
+        .sort((a, b) => a.serial - b.serial);
 }
 
 export const getPremimumCategories = async () => {
