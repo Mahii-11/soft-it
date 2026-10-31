@@ -1,38 +1,29 @@
 export default function HeroSkeleton() {
   return (
-    <section className="w-full bg-[#ffffff] py-6 md:py-20 animate-pulse">
+    <section className="w-full bg-white pt-1 md:pt-4 pb-1 md:pb-4">
       <div className="container-custom">
-        
-        {/* Hero Slider Skeleton */}
-        <div className="relative w-full aspect-[21/9] overflow-hidden rounded-2xl bg-gray-100">
-          
-          {/* Main Image Skeleton */}
-          <div className="w-full h-full bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 animate-[pulse_1.8s_ease-in-out_infinite]" />
+        <div className="relative w-full overflow-hidden rounded-[12px] md:rounded-[18px]">
+          {/* Banner box, 1920x570 like the real slide */}
+          <div className="relative aspect-[1920/570] w-full animate-pulse bg-white">
+            {/* Brand logo */}
+            <div className="absolute left-[5%] top-[10%] h-[9%] w-[12%] rounded bg-gray-200 md:h-[11%]" />
 
-          {/* Optional Overlay Content Skeleton */}
-          <div className="absolute inset-0 flex flex-col justify-center px-6 md:px-14">
-            
-            {/* Small Badge */}
-            <div className="h-4 w-24 rounded-full bg-white/60 mb-4" />
-
-            {/* Heading */}
-            <div className="space-y-3">
-              <div className="h-8 md:h-12 w-[70%] rounded-lg bg-white/70" />
-              <div className="h-8 md:h-12 w-[50%] rounded-lg bg-white/60" />
+            {/* Text block + button */}
+            <div className="absolute left-[12%] top-[34%] flex w-[35%] flex-col items-center gap-[4%]">
+              <div className="h-2 w-[70%] rounded bg-gray-200 md:h-4" />
+              <div className="mt-2 h-2 w-full rounded bg-gray-200 md:h-4" />
+              <div className="mt-3 h-4 w-[55%] rounded bg-gray-300 md:mt-6 md:h-[52px]" />
             </div>
 
-            {/* Subtitle */}
-            <div className="mt-5 h-4 w-[40%] rounded bg-white/50" />
-
-            {/* Button */}
-            <div className="mt-7 h-11 w-36 rounded-xl bg-white/70" />
+            {/* Product image */}
+            <div className="absolute right-[6%] top-[12%] h-[78%] w-[34%] rounded-2xl bg-gray-200" />
           </div>
 
-          {/* Dots Skeleton */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-white/70" />
-            <div className="w-2.5 h-2.5 rounded-full bg-white/40" />
-            <div className="w-2.5 h-2.5 rounded-full bg-white/40" />
+          {/* Dots */}
+          <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 md:gap-2">
+            <div className="h-1.5 w-1.5 rounded-full bg-gray-300 md:h-2 md:w-2" />
+            <div className="h-1.5 w-1.5 rounded-full bg-gray-300 md:h-2 md:w-2" />
+            <div className="h-1.5 w-4 rounded-full bg-gray-400 md:h-2 md:w-5" />
           </div>
         </div>
       </div>
