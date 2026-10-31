@@ -19,8 +19,8 @@ export default function CustomerFavorites() {
   if (!loading && products.length === 0) return null;
 
   return (
-    <section className="container-custom py-4 md:py-6">
-      <h2 className="mb-4 font-sans text-lg font-bold text-neutral-900 md:text-xl">
+    <section className="container-custom py-3 md:py-6">
+      <h2 className="mb-4 font-sans text-base font-bold text-neutral-900 md:text-xl">
         Customer Top Picks
       </h2>
 

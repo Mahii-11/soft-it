@@ -10,7 +10,7 @@ export default function NewArrival() {
   if (!loading && products.length === 0) return null;
 
   return (
-    <section className="container-custom py-4 md:py-6">
+    <section className="container-custom py-3 md:py-6">
       <SectionHeading title="New Trending" to="/shop" />
       {loading ? <ProductSliderSkeleton /> : <ProductSlider products={products} />}
     </section>

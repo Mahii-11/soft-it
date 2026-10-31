@@ -3,7 +3,7 @@ import useApiData from "../../hooks/useApiData";
 import ProductSlider, { ProductSliderSkeleton } from "./ProductSlider";
 
 const TRENDING_BREAKPOINTS = {
-  320: { slidesPerView: 2.1, spaceBetween: 10 },
+  320: { slidesPerView: 2.5, spaceBetween: 8 },
   640: { slidesPerView: 3.2, spaceBetween: 12 },
   1024: { slidesPerView: 5, spaceBetween: 12 },
 };
@@ -15,9 +15,9 @@ export default function MostViewedProducts() {
   if (!loading && products.length === 0) return null;
 
   return (
-    <section className="container-custom py-4 md:py-6">
+    <section className="container-custom py-3 md:py-6">
       <div className="min-w-0">
-        <h2 className="mb-4 font-sans text-lg font-bold text-neutral-900 md:text-xl">
+        <h2 className="mb-4 font-sans text-base font-bold text-neutral-900 md:text-xl">
           Top Picks
         </h2>
         {loading ? (

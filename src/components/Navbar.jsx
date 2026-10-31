@@ -1,13 +1,11 @@
-import { Button } from "../components/ui/button";
-import { ShoppingBag, Menu, User, ChevronDown, ChevronRight, Flame, Home } from "lucide-react";
-import { HiOutlineMagnifyingGlass } from "react-icons/hi2";
+import { ShoppingBag, User, ChevronDown, ChevronRight, Gift, Home } from "lucide-react";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "../components/ui/sheet";
+import { OPEN_MOBILE_MENU_EVENT } from "./Header";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -20,6 +18,9 @@ import { getTopMenuData } from "../services/api";
 
 const ITEM_GAP = 28; // gap-7
 const MORE_WIDTH = 96; // "More" button + gap
+
+const bottomItemClass =
+  "flex flex-col items-center justify-center gap-1 text-[11px] font-medium text-white transition-transform active:scale-95";
 
 const itemClass =
   "flex items-center justify-between gap-6 whitespace-nowrap rounded-md px-3 py-2.5 text-[15px] font-medium text-neutral-800 transition-colors hover:bg-[#ea5b3a] hover:text-white";
@@ -67,6 +68,7 @@ export default function Navbar() {
   const [navItems, setNavItems] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [maxVisible, setMaxVisible] = useState(Infinity);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const rowRef = useRef(null);
   const measureRef = useRef(null);
   const totalCartQuantity = useSelector(getTotalCartQuantity);
@@ -105,6 +107,13 @@ useEffect(() => {
   loadMenu();
 }, []);
 
+
+  // The header's hamburger button opens the mobile menu sheet.
+  useEffect(() => {
+    const open = () => setMobileMenuOpen(true);
+    window.addEventListener(OPEN_MOBILE_MENU_EVENT, open);
+    return () => window.removeEventListener(OPEN_MOBILE_MENU_EVENT, open);
+  }, []);
 
   // Show as many categories as actually fit in the row, the rest go under "More".
   useLayoutEffect(() => {
@@ -208,15 +217,37 @@ useEffect(() => {
 
       {/* Mobile bottom bar */}
       <div className="fixed bottom-3 left-1/2 z-50 w-[92%] max-w-md -translate-x-1/2 lg:hidden">
-        <div className="grid grid-cols-6 place-items-center rounded-2xl border border-white/40 bg-white/80 px-2 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+        <div className="grid grid-cols-4 place-items-center rounded-2xl bg-[#26282d]/90 px-2 py-3 text-white shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl">
 
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden">
-                <Menu className="h-5 w-5 text-black" />
-              </Button>
-            </SheetTrigger>
+          <Link to="/" className={bottomItemClass}>
+            <Home className="h-5 w-5" />
+            Home
+          </Link>
 
+          <Link to="/online-sale" className={bottomItemClass}>
+            <Gift className="h-5 w-5" />
+            Offer
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => dispatch(openCart())}
+            aria-label="Cart"
+            className={`relative ${bottomItemClass}`}
+          >
+            <ShoppingBag className="h-5 w-5" />
+            <span className="absolute -top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#ea5b3a] text-[9px] text-white">
+              {totalCartQuantity}
+            </span>
+            Cart
+          </button>
+
+          <Link to={token ? "/dashboard" : "/login"} className={bottomItemClass}>
+            <User className="h-5 w-5" />
+            {token ? "Account" : "Login"}
+          </Link>
+
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetContent side="left" className="w-72">
               <SheetHeader>
                 <SheetTitle className="text-left text-xl font-bold text-black font-space">
@@ -265,7 +296,7 @@ useEffect(() => {
                                       isActive ? "text-red-600" : ""
                                     }`
                                   }
-                                  onClick={() => setIsOpen(false)}
+                                  onClick={() => setMobileMenuOpen(false)}
                                 >
                                   {child.label}
                                 </NavLink>
@@ -284,7 +315,7 @@ useEffect(() => {
                               : "text-gray-300 "
                           }`
                         }
-                        onClick={() => setIsOpen(false)}
+                        onClick={() => setMobileMenuOpen(false)}
                       >
                         {item.label}
                       </NavLink>
@@ -294,50 +325,6 @@ useEffect(() => {
               </div>
             </SheetContent>
           </Sheet>
-
-          <Link
-            to="/"
-            className="flex flex-col items-center justify-center text-black transition-transform active:scale-95"
-          >
-            <Home className="h-5 w-5" />
-          </Link>
-
-          <Link
-            to="/search"
-            className="flex flex-col items-center justify-center text-black transition-transform active:scale-95"
-          >
-            <HiOutlineMagnifyingGlass size={22} />
-          </Link>
-
-          <Link
-            to="/online-sale"
-            className="flex flex-col items-center justify-center text-black transition-transform active:scale-95"
-          >
-            <span className="relative flex h-5 w-5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75"></span>
-              <Flame className="h-5 w-5" />
-            </span>
-          </Link>
-
-          <button
-            type="button"
-            onClick={() => dispatch(openCart())}
-            aria-label="Cart"
-            className="relative flex flex-col items-center justify-center text-black transition-transform active:scale-95"
-          >
-            <ShoppingBag className="h-5 w-5" />
-            <span className="absolute -top-1 -right-2 h-4 w-4 text-[9px] bg-black text-white rounded-full flex items-center justify-center">
-              {totalCartQuantity}
-            </span>
-          </button>
-
-          <Link
-            to={token  ? "/dashboard" : "/login"}
-            className="flex flex-col items-center justify-center text-black transition-transform active:scale-95"
-          >
-            <User className="h-5 w-5" />
-          </Link>
-
         </div>
       </div>
     </>

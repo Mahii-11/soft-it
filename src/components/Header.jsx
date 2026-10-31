@@ -1,4 +1,4 @@
-import { Search, ShoppingBag, User, Phone, Mail, Truck, MapPin, Megaphone } from "lucide-react";
+import { Search, ShoppingBag, User, Phone, Mail, Truck, MapPin, Megaphone, Menu, MessageCircle, MessageSquare } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getsearchProducts } from "../services/api";
@@ -8,6 +8,15 @@ import { useDispatch, useSelector } from "react-redux";
 
 const outlineButton =
   "hidden items-center rounded border border-white/40 px-4 py-2 text-sm font-semibold uppercase text-white transition hover:border-[#ea5b3a] hover:text-[#ea5b3a] lg:inline-flex";
+
+// Mobile quick-contact buttons. Swap MESSENGER_HREF for the real Messenger page link.
+const PHONE = "+15551234567";
+const MESSENGER_HREF = "mailto:support@gadgetglobe.com";
+const mobileContactButton =
+  "flex h-9 w-9 items-center justify-center rounded-full bg-[#ea5b3a] text-white transition active:scale-95 lg:hidden";
+
+// Navbar owns the mobile menu sheet and listens for this event.
+export const OPEN_MOBILE_MENU_EVENT = "open-mobile-menu";
 
 export default function Header() {
   const totalCartQuantity = useSelector(getTotalCartQuantity);
@@ -46,7 +55,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-[#26282d] text-white">
+      <header className="sticky top-0 z-50 w-full rounded-b-3xl bg-[#26282d] text-white lg:rounded-none">
         {/* Top utility bar */}
         <div className="hidden bg-[#1a1b1e] text-xs lg:block">
           <div className="container-custom flex h-8 items-center justify-between">
@@ -69,24 +78,35 @@ export default function Header() {
         </div>
 
         {/* Main bar */}
-        <div className="container-custom flex h-16 items-center gap-4 lg:gap-8">
+        <div className="container-custom flex flex-wrap items-center gap-x-4 gap-y-3 py-3 lg:h-16 lg:flex-nowrap lg:gap-8 lg:py-0">
           <Link
             to="/"
-            className="shrink-0 -skew-x-6 font-brand text-[22px] font-bold uppercase leading-none tracking-[-0.02em] text-white md:text-[26px]"
+            className="shrink-0 -skew-x-6 font-brand text-[26px] font-bold uppercase leading-none tracking-[-0.02em] text-white md:text-[26px]"
           >
             Gadget<span className="ml-1 text-[#ea5b3a]">Globe</span>
           </Link>
 
-          <div className="relative hidden max-w-md flex-1 md:block">
-            <input
-              type="text"
-              value={search}
-              onChange={handleSearch}
-              onKeyDown={handleKeyDown}
-              placeholder="Search for products..."
-              className="h-11 w-full rounded bg-[#1a1b1e] pl-4 pr-11 text-sm text-white outline-none placeholder:text-neutral-400 focus:ring-1 focus:ring-[#ea5b3a]"
-            />
-            <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white" />
+          {/* Search: own row under the logo on mobile, inline from md up */}
+          <div className="order-last flex w-full items-center gap-3 md:order-none md:max-w-md md:flex-1">
+            <button
+              type="button"
+              aria-label="Open menu"
+              onClick={() => window.dispatchEvent(new Event(OPEN_MOBILE_MENU_EVENT))}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white md:hidden"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={search}
+                onChange={handleSearch}
+                onKeyDown={handleKeyDown}
+                placeholder="Search for products..."
+                className="h-11 w-full rounded-lg bg-[#1a1b1e] pl-4 pr-11 text-sm text-white outline-none placeholder:text-neutral-400 focus:ring-1 focus:ring-[#ea5b3a] md:rounded"
+              />
+              <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white" />
+            </div>
           </div>
 
           <div className="ml-auto flex items-center gap-3">
@@ -115,12 +135,15 @@ export default function Header() {
               <User className="h-5 w-5" />
             </Link>
 
-            <Link to="/our-location" aria-label="Our store" className="p-2 lg:hidden">
-              <MapPin className="h-5 w-5" />
-            </Link>
-            <Link to="/search" aria-label="Search" className="p-2 md:hidden">
-              <Search className="h-5 w-5" />
-            </Link>
+            <a href={MESSENGER_HREF} aria-label="Message us" className={mobileContactButton}>
+              <MessageCircle className="h-4 w-4" />
+            </a>
+            <a href={`sms:${PHONE}`} aria-label="Send SMS" className={mobileContactButton}>
+              <MessageSquare className="h-4 w-4" />
+            </a>
+            <a href={`tel:${PHONE}`} aria-label="Call us" className={mobileContactButton}>
+              <Phone className="h-4 w-4" />
+            </a>
           </div>
         </div>
       </header>

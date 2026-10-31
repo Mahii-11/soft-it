@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, A11y } from "swiper/modules";
+import { Navigation, A11y, Autoplay } from "swiper/modules";
 import "swiper/css";
 import ProductCard from "../ProductCard";
 
 const DEFAULT_BREAKPOINTS = {
-  320: { slidesPerView: 2.1, spaceBetween: 10 },
+  320: { slidesPerView: 2.5, spaceBetween: 8 },
   640: { slidesPerView: 3.2, spaceBetween: 12 },
   768: { slidesPerView: 4, spaceBetween: 12 },
   1024: { slidesPerView: 5, spaceBetween: 12 },
@@ -61,8 +61,10 @@ export default function ProductSlider({ products, breakpoints = DEFAULT_BREAKPOI
       )}
 
       <Swiper
-        modules={[Navigation, A11y]}
-        speed={500}
+        modules={[Navigation, A11y, Autoplay]}
+        speed={600}
+        autoplay={{ delay: 3000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+        rewind
         watchOverflow
         grabCursor
         breakpoints={breakpoints}

@@ -6,7 +6,7 @@ import ProductSlider, { ProductSliderSkeleton } from "./ProductSlider";
 import SectionHeading from "./SectionHeading";
 
 const FLASH_BREAKPOINTS = {
-  320: { slidesPerView: 2.1, spaceBetween: 10 },
+  320: { slidesPerView: 2.5, spaceBetween: 8 },
   640: { slidesPerView: 3.2, spaceBetween: 12 },
   1024: { slidesPerView: 3, spaceBetween: 12 },
 };
@@ -52,7 +52,7 @@ export default function DealofDayProducts() {
 
   if (loading) {
     return (
-      <section className="container-custom py-4 md:py-6">
+      <section className="container-custom py-3 md:py-6">
         <ProductSliderSkeleton />
       </section>
     );
@@ -65,7 +65,7 @@ export default function DealofDayProducts() {
   // TEMP: no flash sale data -> show only the banner. Revert to `return null` later.
   if (!flashSale?.is_running || products.length === 0) {
     return (
-      <section className="container-custom py-4 md:py-6">
+      <section className="container-custom py-3 md:py-6">
         <Link
           to="/shop"
           className="group hidden overflow-hidden rounded-lg bg-white shadow-[0_1px_4px_rgba(0,0,0,0.08)] sm:block lg:ml-auto lg:w-[calc((100%-1.25rem)*0.9/2.9)]"
@@ -82,7 +82,7 @@ export default function DealofDayProducts() {
   }
 
   return (
-    <section className="container-custom py-4 md:py-6">
+    <section className="container-custom py-3 md:py-6">
       <SectionHeading title={flashSale.title || "Gadget Globe Special Deal"} to="/shop">
         <Countdown endTime={flashSale.end_time} />
       </SectionHeading>

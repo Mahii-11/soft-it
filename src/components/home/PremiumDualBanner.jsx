@@ -8,7 +8,7 @@ export default function PremiumDualBanner() {
   if (!loading && banners.length === 0) return null;
 
   return (
-    <section className="container-custom select-none py-4 md:py-6">
+    <section className="container-custom select-none py-3 md:py-6">
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-5">
         {loading
           ? [0, 1].map((i) => (

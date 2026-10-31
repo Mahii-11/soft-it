@@ -25,7 +25,7 @@ const FALLBACK_BRANDS = [
 }));
 
 const cellClass =
-  "flex h-20 items-center justify-center rounded-lg px-3 transition-colors duration-300 md:h-[120px]";
+  "flex h-16 items-center justify-center rounded-lg px-3 transition-colors duration-300 md:h-[120px]";
 
 export default function BrandsGrid() {
   const { data, loading } = useApiData("brands", getBrands);
@@ -34,7 +34,7 @@ export default function BrandsGrid() {
   const brands = fetched.length > 0 ? fetched : loading ? [] : FALLBACK_BRANDS;
 
   return (
-    <section className="container-custom py-4 md:py-6">
+    <section className="container-custom py-3 md:py-6">
       <div className="grid grid-cols-3 gap-1 sm:grid-cols-4 lg:grid-cols-7">
         {loading
           ? Array.from({ length: 14 }).map((_, i) => (
@@ -55,7 +55,7 @@ export default function BrandsGrid() {
                       alt={brand.name}
                       loading="lazy"
                       draggable={false}
-                      className="h-12 w-full max-w-[96px] object-contain mix-blend-multiply md:h-20 md:max-w-[160px]"
+                      className="h-9 w-full max-w-[80px] object-contain mix-blend-multiply md:h-20 md:max-w-[160px]"
                     />
                   ) : (
                     <span className="font-sans text-sm font-bold uppercase tracking-wide text-neutral-700 transition-colors duration-300 group-hover:text-white md:text-base">

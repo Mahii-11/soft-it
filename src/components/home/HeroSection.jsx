@@ -81,7 +81,7 @@ export default function HeroSection() {
   if (!slides.length) return null;
 
   return (
-    <section className="w-full bg-white pt-1 md:pt-4 pb-1 md:pb-4">
+    <section className="w-full bg-[#f0f0f0] pt-3 pb-1 md:bg-white md:pt-4 md:pb-4">
       <div className="container-custom">
         {/* HERO CONTAINER */}
         <div

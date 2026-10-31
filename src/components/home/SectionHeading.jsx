@@ -5,7 +5,7 @@ export default function SectionHeading({ title, to, children }) {
   return (
     <div className="mb-4 flex items-center justify-between gap-3">
       <div className="flex items-center gap-3">
-        <h2 className="font-sans text-lg font-bold text-neutral-900 md:text-xl">{title}</h2>
+        <h2 className="font-sans text-base font-bold text-neutral-900 md:text-xl">{title}</h2>
         {children}
       </div>
       {to && (
