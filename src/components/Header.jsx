@@ -1,4 +1,5 @@
-import { Search, ShoppingBag, User, Phone, Mail, Truck, MapPin, Megaphone, Menu, MessageCircle, MessageSquare } from "lucide-react";
+import { Search, ShoppingBag, User, Phone, Mail, Truck, MapPin, Megaphone, Menu, MessageSquare } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getsearchProducts } from "../services/api";
@@ -9,9 +10,9 @@ import { useDispatch, useSelector } from "react-redux";
 const outlineButton =
   "hidden items-center rounded border border-white/40 px-4 py-2 text-sm font-semibold uppercase text-white transition hover:border-[#ea5b3a] hover:text-[#ea5b3a] lg:inline-flex";
 
-// Mobile quick-contact buttons. Swap MESSENGER_HREF for the real Messenger page link.
+// Mobile quick-contact buttons. Replace the placeholder number with the real WhatsApp number.
 const PHONE = "+15551234567";
-const MESSENGER_HREF = "mailto:support@gadgetglobe.com";
+const WHATSAPP_HREF = `https://wa.me/${PHONE.replace(/\D/g, "")}`;
 const mobileContactButton =
   "flex h-9 w-9 items-center justify-center rounded-full bg-[#ea5b3a] text-white transition active:scale-95 lg:hidden";
 
@@ -135,8 +136,14 @@ export default function Header() {
               <User className="h-5 w-5" />
             </Link>
 
-            <a href={MESSENGER_HREF} aria-label="Message us" className={mobileContactButton}>
-              <MessageCircle className="h-4 w-4" />
+            <a
+              href={WHATSAPP_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Chat on WhatsApp"
+              className={mobileContactButton}
+            >
+              <FaWhatsapp className="h-[18px] w-[18px]" />
             </a>
             <a href={`sms:${PHONE}`} aria-label="Send SMS" className={mobileContactButton}>
               <MessageSquare className="h-4 w-4" />
