@@ -6,15 +6,15 @@ const FALLBACK_IMAGE = "/images/motorola.png";
 export const formatPrice = (value) => `৳${Number(value ?? 0).toLocaleString()}`;
 
 // single product: offer_price (if any) over regular price
-// variable product: offer_price/price when the API sends them, else starts from min_price
+// variable product: starts from min_offer_price (if any) over min_price
 export function getProductPrices(product) {
   if (product.type === "variable") {
-    const hasOffer =
-      product.offer_price != null && product.price != null && product.offer_price < product.price;
+    const { min_price: regular, min_offer_price: offer } = product;
+    const hasOffer = offer != null && regular != null && offer < regular;
     return {
-      current: product.offer_price ?? product.min_price ?? product.price,
-      original: hasOffer ? product.price : null,
-      save: hasOffer ? product.price - product.offer_price : 0,
+      current: hasOffer ? offer : regular ?? product.price,
+      original: hasOffer ? regular : null,
+      save: hasOffer ? regular - offer : 0,
     };
   }
   const current = product.offer_price ?? product.price;
