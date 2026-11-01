@@ -3,7 +3,7 @@ import useApiData from "../../hooks/useApiData";
 import ProductSlider, { ProductSliderSkeleton } from "./ProductSlider";
 
 const TRENDING_BREAKPOINTS = {
-  320: { slidesPerView: 2.5, spaceBetween: 8 },
+  320: { slidesPerView: 2, spaceBetween: 8 },
   640: { slidesPerView: 3.2, spaceBetween: 12 },
   1024: { slidesPerView: 5, spaceBetween: 12 },
 };

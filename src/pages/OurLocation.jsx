@@ -261,7 +261,7 @@ export default function ContactPage() {
             center={coordsList[selected] || [23.7945, 90.3435]}
             zoom={13}
             scrollWheelZoom={true}
-            className="z-[400] h-[200px] w-full sm:h-[280px] md:h-[340px] lg:h-[400px]"
+            className="relative z-0 h-[200px] w-full sm:h-[280px] md:h-[340px] lg:h-[400px]"
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

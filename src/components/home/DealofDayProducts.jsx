@@ -6,7 +6,7 @@ import ProductSlider, { ProductSliderSkeleton } from "./ProductSlider";
 import SectionHeading from "./SectionHeading";
 
 const FLASH_BREAKPOINTS = {
-  320: { slidesPerView: 2.5, spaceBetween: 8 },
+  320: { slidesPerView: 2, spaceBetween: 8 },
   640: { slidesPerView: 3.2, spaceBetween: 12 },
   1024: { slidesPerView: 3, spaceBetween: 12 },
 };

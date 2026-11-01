@@ -6,14 +6,14 @@ import "swiper/css";
 import ProductCard from "../ProductCard";
 
 const DEFAULT_BREAKPOINTS = {
-  320: { slidesPerView: 2.5, spaceBetween: 8 },
+  320: { slidesPerView: 2, spaceBetween: 8 },
   640: { slidesPerView: 3.2, spaceBetween: 12 },
   768: { slidesPerView: 4, spaceBetween: 12 },
   1024: { slidesPerView: 5, spaceBetween: 12 },
 };
 
 const arrowClass =
-  "absolute top-1/2 z-10 hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-neutral-500/80 text-white shadow transition hover:bg-neutral-700 md:flex";
+  "absolute top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-neutral-500/80 text-white shadow transition hover:bg-neutral-700 md:h-8 md:w-8";
 
 export function ProductSliderSkeleton({ count = 5 }) {
   return (
@@ -44,9 +44,9 @@ export default function ProductSlider({ products, breakpoints = DEFAULT_BREAKPOI
           type="button"
           aria-label="Previous"
           onClick={() => swiper?.slidePrev()}
-          className={`${arrowClass} -left-4`}
+          className={`${arrowClass} -left-2 md:-left-4`}
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
         </button>
       )}
       {!edges.end && (
@@ -54,9 +54,9 @@ export default function ProductSlider({ products, breakpoints = DEFAULT_BREAKPOI
           type="button"
           aria-label="Next"
           onClick={() => swiper?.slideNext()}
-          className={`${arrowClass} -right-4`}
+          className={`${arrowClass} -right-2 md:-right-4`}
         >
-          <ChevronRight size={16} />
+          <ChevronRight className="h-3.5 w-3.5 md:h-4 md:w-4" />
         </button>
       )}
 
@@ -67,6 +67,8 @@ export default function ProductSlider({ products, breakpoints = DEFAULT_BREAKPOI
         rewind
         watchOverflow
         grabCursor
+        slidesPerView={2}
+        spaceBetween={8}
         breakpoints={breakpoints}
         onSwiper={(s) => {
           setSwiper(s);

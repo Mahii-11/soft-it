@@ -103,6 +103,15 @@ export const getBrands = async () => {
     return list || [];
 }
 
+export const getAllBrands = async () => {
+    const res = await fetchData("all-brand-data");
+    if (!(res.status ?? res.success)) {
+        throw new Error("All brands fetch unsuccessful");
+    }
+    const list = Array.isArray(res?.data) ? res.data : res?.data?.data;
+    return list || [];
+}
+
 export const getProductsByEndpoint =async (endpoint) => {
     const res = await fetchData(endpoint);
 
@@ -149,10 +158,11 @@ export const getOnlineSaleProducts = async () => {
 
 export const getOurLocations = async () => {
   const res = await fetchData("our-store-data");
-  if (!res.success) {
+  if (!(res.status ?? res.success)) {
     throw new Error("Our location fetch unsuccessful");
   }
-  return res?.data?.data || [];
+  const list = Array.isArray(res?.data) ? res.data : res?.data?.data;
+  return list || [];
 }
 
 
