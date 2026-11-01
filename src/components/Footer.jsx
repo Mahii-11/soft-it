@@ -38,7 +38,7 @@ const payments = ["VISA", "MC", "AMEX", "bKash", "Nagad"];
 
 export default function Footer() {
   return (
-    <footer className="bg-[#26282d] text-white">
+    <footer className="bg-[#26282d] pb-20 text-white lg:pb-0">
       <div className="container-custom grid gap-8 py-8 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1.4fr]">
         {columns.map((column) => (
           <div key={column.title}>

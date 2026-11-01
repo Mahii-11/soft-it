@@ -4,6 +4,7 @@ import Footer from './Footer'
 import Header from "./Header";
 import ScrollToTop from "./ScrollToTop";
 import CartDrawer from "./CartDrawer";
+import WhatsAppWidget from "./WhatsAppWidget";
 
 export default function AppLayout() {
 
@@ -13,11 +14,12 @@ export default function AppLayout() {
       <ScrollToTop/>
       <Header/>
       <Navbar/>
-      <main className="pb-20 lg:pb-0">
+      <main>
         <Outlet  /> 
       </main>
       <Footer/>
       <CartDrawer />
+      <WhatsAppWidget />
     </div>
   )
 }

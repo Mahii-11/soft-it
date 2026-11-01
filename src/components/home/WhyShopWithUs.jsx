@@ -50,7 +50,7 @@ export default function WhyShopWithUs() {
   if (loading || features.length === 0) return null;
 
   return (
-    <section className="mt-4 bg-white py-4 md:mt-6 md:py-8">
+    <section className="mt-4 bg-white pb-3 pt-4 md:mt-6 md:py-8">
       <div className="container-custom grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
         {features.map((item, i) => {
           const { color, glow, iconHover, bar } = styles[i % styles.length];

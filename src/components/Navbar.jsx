@@ -11,7 +11,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import {  getTotalCartQuantity, openCart } from "../cart/cartSlice";
 import { getTopMenuData } from "../services/api";
 
@@ -21,6 +20,15 @@ const MORE_WIDTH = 96; // "More" button + gap
 
 const bottomItemClass =
   "flex flex-col items-center justify-center gap-1 text-[11px] font-medium text-white transition-transform active:scale-95";
+
+// current page: orange icon + label with a small bar on top
+const bottomLinkClass = ({ isActive }) =>
+  `relative ${bottomItemClass} ${isActive ? "!text-[#ea5b3a]" : "!text-white/80"}`;
+
+const ActiveBar = ({ isActive }) =>
+  isActive ? (
+    <span className="absolute -top-3 h-[3px] w-8 rounded-full bg-[#ea5b3a]" />
+  ) : null;
 
 const itemClass =
   "flex items-center justify-between gap-6 whitespace-nowrap rounded-md px-3 py-2.5 text-[15px] font-medium text-neutral-800 transition-colors hover:bg-[#ea5b3a] hover:text-white";
@@ -219,15 +227,25 @@ useEffect(() => {
       <div className="fixed bottom-3 left-1/2 z-50 w-[92%] max-w-md -translate-x-1/2 lg:hidden">
         <div className="grid grid-cols-4 place-items-center rounded-2xl bg-[#26282d]/90 px-2 py-3 text-white shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl">
 
-          <Link to="/" className={bottomItemClass}>
-            <Home className="h-5 w-5" />
-            Home
-          </Link>
+          <NavLink to="/" end className={bottomLinkClass}>
+            {({ isActive }) => (
+              <>
+                <ActiveBar isActive={isActive} />
+                <Home className="h-5 w-5" />
+                Home
+              </>
+            )}
+          </NavLink>
 
-          <Link to="/online-sale" className={bottomItemClass}>
-            <Gift className="h-5 w-5" />
-            Offer
-          </Link>
+          <NavLink to="/online-sale" className={bottomLinkClass}>
+            {({ isActive }) => (
+              <>
+                <ActiveBar isActive={isActive} />
+                <Gift className="h-5 w-5" />
+                Offer
+              </>
+            )}
+          </NavLink>
 
           <button
             type="button"
@@ -242,10 +260,15 @@ useEffect(() => {
             Cart
           </button>
 
-          <Link to={token ? "/dashboard" : "/login"} className={bottomItemClass}>
-            <User className="h-5 w-5" />
-            {token ? "Account" : "Login"}
-          </Link>
+          <NavLink to={token ? "/dashboard" : "/login"} className={bottomLinkClass}>
+            {({ isActive }) => (
+              <>
+                <ActiveBar isActive={isActive} />
+                <User className="h-5 w-5" />
+                {token ? "Account" : "Login"}
+              </>
+            )}
+          </NavLink>
 
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetContent side="left" className="w-72">
