@@ -1,5 +1,6 @@
-import { Check,Heart,Eye, Star, ChevronDown, SlidersHorizontal, X } from "lucide-react";
+import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
+import ProductCard from "../../components/ProductCard";
 
 
 import p1 from "../../assets/products/p1.png";
@@ -228,16 +229,6 @@ const clearAll = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans sm:mt-10 md:mt-14">
-      <div className="relative w-full bg-[#faf9f8] h-40 md:h-56 flex flex-col items-center justify-center overflow-hidden">
-        <h1 className="text-4xl md:text-5xl font-bold font-serif tracking-tight text-gray-900 mb-2">
-            Shop
-        </h1>
-        <div className="text-sm font-medium text-gray-500 flex items-center space-x-2">
-            <span>Home</span>
-            <span className="text-gray-300">/</span>
-            <span className="text-accent">Shop</span>           
-        </div>
-      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 gap-8 flex flex-col lg:flex-row">
   {/* Left side */}
 
@@ -480,70 +471,21 @@ const clearAll = () => {
             </div>
 
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
-              >
-                <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-in-out"
-                  />
-
-                  {product.discount && (
-                    <div className="absolute top-3 left-3 bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
-                      {product.discount}
-                    </div>
-                  )}
-
-                  <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-x-4 group-hover:translate-x-0">
-                    <button className="bg-white p-2 rounded-full shadow-md text-gray-600 hover:text-accent hover:scale-110 transition-all duration-200">
-                      <Heart className="w-4 h-4" />
-                    </button>
-
-                    <button className="bg-white p-2 rounded-full shadow-md text-gray-600 hover:text-accent hover:scale-110 transition-all duration-200">
-                      <Eye className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="p-4 flex flex-col flex-1">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
-                      {product.category}
-                    </span>
-
-                    <div className="flex items-center text-accent">
-                      <Star className="w-3.5 h-3.5 fill-current" />
-                      <span className="text-xs font-medium ml-1 text-gray-600">
-                        {product.rating}
-                      </span>
-                    </div>
-                  </div>
-
-                  <h4
-                    className="font-semibold text-gray-900 mb-2 truncate"
-                    title={product.name}
-                  >
-                    {product.name}
-                  </h4>
-
-                  <div className="mt-auto flex items-center space-x-2">
-                    <span className="font-bold text-gray-900">
-                      ${product.price.toFixed(2)}
-                    </span>
-
-                    <span className="text-sm text-gray-400 line-through">
-                      ${product.oldPrice.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {products.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={{
+                    id: product.id,
+                    slug: String(product.id),
+                    name: product.name,
+                    image: product.image,
+                    price: product.oldPrice,
+                    offer_price: product.price,
+                  }}
+                />
+              ))}
+            </div>
 
 
 

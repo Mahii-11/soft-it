@@ -311,8 +311,8 @@ useEffect(() => {
                         className={({ isActive }) =>
                           `block py-2 font-medium ${
                             isActive
-                              ? "text-white"
-                              : "text-gray-300 "
+                              ? "text-red-600"
+                              : "text-[#0F172A] hover:text-red-600 transition"
                           }`
                         }
                         onClick={() => setMobileMenuOpen(false)}
