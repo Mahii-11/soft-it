@@ -24,17 +24,17 @@ const socials = [
   { label: "X", href: "#", Icon: FaXTwitter },
 ];
 
-const headingClass = "mb-5 text-xl font-bold text-white";
-const linkClass = "underline underline-offset-2 transition-colors hover:text-[#f7931e]";
+const headingClass = "mb-3 text-sm font-bold uppercase tracking-wide text-white";
+const linkClass = "hover:underline underline-offset-2 transition-colors hover:text-[#f7931e]";
 
 export default function Footer() {
   return (
     <footer className="bg-black pb-20 text-white lg:pb-0">
-      <div className="container-custom grid gap-10 py-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.1fr_1.4fr]">
+      <div className="container-custom grid gap-6 py-6 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.4fr]">
         {/* Brand */}
         <div>
-          <img src="/images/logo.png" alt="Gadget Globe" className="h-auto w-44" />
-          <p className="mt-6 text-sm font-semibold leading-snug">
+          <img src="/images/logo.png" alt="Gadget Globe" className="h-auto w-24" />
+          <p className="mt-3 text-xs leading-snug text-white/80">
             Your one-stop destination
             <br />
             for premium electronics and gadgets.
@@ -42,8 +42,8 @@ export default function Footer() {
             Quality guaranteed, fast delivery.
           </p>
 
-          <h4 className="mb-3 mt-8 text-lg font-bold">Follow Us:</h4>
-          <div className="flex items-center gap-3 text-[#f7931e]">
+          <h4 className="mb-2 mt-4 text-sm font-bold uppercase tracking-wide">Follow Us:</h4>
+          <div className="flex items-center gap-2.5 text-[#f7931e]">
             {socials.map(({ label, href, Icon }) => (
               <a
                 key={label}
@@ -51,7 +51,7 @@ export default function Footer() {
                 aria-label={label}
                 className="transition-opacity hover:opacity-80"
               >
-                <Icon size={38} />
+                <Icon size={20} />
               </a>
             ))}
           </div>
@@ -60,7 +60,7 @@ export default function Footer() {
         {/* Useful Links */}
         <div>
           <h4 className={headingClass}>Useful Links</h4>
-          <ul className="space-y-4 text-lg">
+          <ul className="space-y-2 text-xs text-white/80">
             {usefulLinks.map((link) => (
               <li key={link.label}>
                 <Link to={link.to} className={linkClass}>
@@ -74,7 +74,7 @@ export default function Footer() {
         {/* Customer Care */}
         <div>
           <h4 className={headingClass}>Customer Care</h4>
-          <ul className="space-y-4 text-lg">
+          <ul className="space-y-2 text-xs text-white/80">
             {customerCare.map((link) => (
               <li key={link.label}>
                 <Link to={link.to} className={linkClass}>
@@ -88,9 +88,9 @@ export default function Footer() {
         {/* Contact Us */}
         <div>
           <h4 className={headingClass}>Contact Us</h4>
-          <ul className="space-y-6 text-sm font-semibold">
-            <li className="flex items-start gap-3">
-              <MapPin size={28} className="shrink-0 fill-[#f7931e] text-[#f7931e]" />
+          <ul className="space-y-3 text-xs text-white/80">
+            <li className="flex items-start gap-2.5">
+              <MapPin size={18} className="shrink-0 fill-[#f7931e] text-[#f7931e]" />
               <span>
                 Shop No. 35, 3rd Floor,
                 <br />
@@ -99,14 +99,14 @@ export default function Footer() {
                 Dhaka-1230
               </span>
             </li>
-            <li className="flex items-center gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f7931e] text-[#f7931e]">
-                <Phone size={16} />
+            <li className="flex items-center gap-2.5">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#f7931e] text-[#f7931e]">
+                <Phone size={12} />
               </span>
-              <span className="text-xl font-bold">+018*********</span>
+              <span className="text-sm font-bold text-white">+018*********</span>
             </li>
-            <li className="flex items-center gap-3">
-              <Mail size={30} className="shrink-0 fill-[#f7931e] text-black" />
+            <li className="flex items-center gap-2.5">
+              <Mail size={20} className="shrink-0 fill-[#f7931e] text-black" />
               <a href="mailto:support@gadgetglobe.com">support@gadgetglobe.com</a>
             </li>
           </ul>
