@@ -24,6 +24,15 @@ const socials = [
   { label: "X", href: "#", Icon: FaXTwitter },
 ];
 
+const iconBadge =
+  "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f7931e]/10 text-[#f7931e] ring-1 ring-[#f7931e]/30";
+
+const contacts = [
+  { Icon: MapPin, content: "Shop No. 35, 3rd Floor, Rajlaxmi Complex, Uttara, Dhaka-1230" },
+  { Icon: Phone, content: "+018*********", href: "tel:+018" },
+  { Icon: Mail, content: "support@gadgetglobe.com", href: "mailto:support@gadgetglobe.com" },
+];
+
 const headingClass = "mb-3 text-sm font-bold uppercase tracking-wide text-white";
 const linkClass = "hover:underline underline-offset-2 transition-colors hover:text-[#f7931e]";
 
@@ -34,24 +43,20 @@ export default function Footer() {
         {/* Brand */}
         <div>
           <img src="/images/logo.png" alt="Gadget Globe" className="h-auto w-24" />
-          <p className="mt-3 text-xs leading-snug text-white/80">
-            Your one-stop destination
-            <br />
-            for premium electronics and gadgets.
-            <br />
-            Quality guaranteed, fast delivery.
+          <p className="mt-3 max-w-[16rem] text-xs leading-5 text-white/80">
+            Your one-stop destination for premium electronics and gadgets. Quality guaranteed, fast delivery.
           </p>
 
-          <h4 className="mb-2 mt-4 text-sm font-bold uppercase tracking-wide">Follow Us:</h4>
-          <div className="flex items-center gap-2.5 text-[#f7931e]">
+          <h4 className="mb-3 mt-5 text-sm font-bold uppercase tracking-wide">Follow Us</h4>
+          <div className="flex items-center gap-2">
             {socials.map(({ label, href, Icon }) => (
               <a
                 key={label}
                 href={href}
                 aria-label={label}
-                className="transition-opacity hover:opacity-80"
+                className={iconBadge + " transition-colors hover:bg-[#f7931e] hover:text-black"}
               >
-                <Icon size={20} />
+                <Icon size={14} />
               </a>
             ))}
           </div>
@@ -60,7 +65,7 @@ export default function Footer() {
         {/* Useful Links */}
         <div>
           <h4 className={headingClass}>Useful Links</h4>
-          <ul className="space-y-2 text-xs text-white/80">
+          <ul className="space-y-2.5 text-xs leading-5 text-white/80">
             {usefulLinks.map((link) => (
               <li key={link.label}>
                 <Link to={link.to} className={linkClass}>
@@ -74,7 +79,7 @@ export default function Footer() {
         {/* Customer Care */}
         <div>
           <h4 className={headingClass}>Customer Care</h4>
-          <ul className="space-y-2 text-xs text-white/80">
+          <ul className="space-y-2.5 text-xs leading-5 text-white/80">
             {customerCare.map((link) => (
               <li key={link.label}>
                 <Link to={link.to} className={linkClass}>
@@ -88,27 +93,21 @@ export default function Footer() {
         {/* Contact Us */}
         <div>
           <h4 className={headingClass}>Contact Us</h4>
-          <ul className="space-y-3 text-xs text-white/80">
-            <li className="flex items-start gap-2.5">
-              <MapPin size={18} className="shrink-0 fill-[#f7931e] text-[#f7931e]" />
-              <span>
-                Shop No. 35, 3rd Floor,
-                <br />
-                Rajlaxmi Complex, Uttara,
-                <br />
-                Dhaka-1230
-              </span>
-            </li>
-            <li className="flex items-center gap-2.5">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#f7931e] text-[#f7931e]">
-                <Phone size={12} />
-              </span>
-              <span className="text-sm font-bold text-white">+018*********</span>
-            </li>
-            <li className="flex items-center gap-2.5">
-              <Mail size={20} className="shrink-0 fill-[#f7931e] text-black" />
-              <a href="mailto:support@gadgetglobe.com">support@gadgetglobe.com</a>
-            </li>
+          <ul className="space-y-3 text-xs leading-5 text-white/80">
+            {contacts.map(({ Icon, content, href }) => (
+              <li key={content} className="flex items-start gap-3">
+                <span className={iconBadge}>
+                  <Icon size={14} strokeWidth={2} />
+                </span>
+                {href ? (
+                  <a href={href} className="pt-1 transition-colors hover:text-[#f7931e]">
+                    {content}
+                  </a>
+                ) : (
+                  <span className="pt-1">{content}</span>
+                )}
+              </li>
+            ))}
           </ul>
         </div>
       </div>
