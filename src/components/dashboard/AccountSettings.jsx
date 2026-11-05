@@ -113,7 +113,7 @@ export default function AccountSettings({ user, setUser }) {
       {isSaving && (
         <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white px-6 py-5 rounded-2xl shadow-xl flex items-center gap-3">
-            <div className="w-6 h-6 border-4 border-[#5B3DF5] border-t-transparent rounded-full animate-spin" />
+            <div className="w-6 h-6 border-4 border-[#ea5b3a] border-t-transparent rounded-full animate-spin" />
             <span className="text-sm font-medium text-slate-700">
               Saving changes...
             </span>
@@ -140,7 +140,7 @@ export default function AccountSettings({ user, setUser }) {
             }
             setIsEditingProfile((prev) => !prev);
           }}
-          className="bg-[#5B3DF5] hover:bg-[#4A2EE0] disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm shadow-[#5B3DF5]/20 transition-all active:scale-95 flex items-center gap-2"
+          className="bg-[#ea5b3a] hover:bg-[#d44a2a] disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm shadow-[#ea5b3a]/20 transition-all active:scale-95 flex items-center gap-2"
         >
           {isEditingProfile ? (
             <>
@@ -158,7 +158,7 @@ export default function AccountSettings({ user, setUser }) {
 
       {/* Profile Card */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mt-6">
-        <div className="h-32 bg-gradient-to-r from-[#5B3DF5] to-[#8C75F7]" />
+        <div className="h-32 bg-gradient-to-r from-[#ea5b3a] to-[#f58a6e]" />
 
         <div className="px-6 pb-6 pt-0">
           <div className="flex flex-col sm:flex-row sm:items-end gap-6 -mt-12 relative z-10">
@@ -176,7 +176,7 @@ export default function AccountSettings({ user, setUser }) {
               />
 
               {isEditingProfile && (
-                <label className="mt-2 cursor-pointer text-xs text-[#5B3DF5] font-medium">
+                <label className="mt-2 cursor-pointer text-xs text-[#ea5b3a] font-medium">
                   Change Photo
                   <input
                     type="file"
@@ -215,7 +215,7 @@ export default function AccountSettings({ user, setUser }) {
             {contactFields.map((field, i) => (
               <div key={i}>
                 <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-                  <field.icon className="w-4 h-4 text-[#5B3DF5]" />
+                  <field.icon className="w-4 h-4 text-[#ea5b3a]" />
                   {field.label}
                 </label>
 
@@ -225,7 +225,7 @@ export default function AccountSettings({ user, setUser }) {
                   value={formData[field.name]}
                   onChange={handleChange}
                   disabled={!isEditingProfile}
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 bg-white disabled:bg-slate-50 disabled:text-slate-500 focus:outline-none focus:border-[#5B3DF5] focus:ring-4 focus:ring-[#5B3DF5]/10 transition-all"
+                  className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 bg-white disabled:bg-slate-50 disabled:text-slate-500 focus:outline-none focus:border-[#ea5b3a] focus:ring-4 focus:ring-[#ea5b3a]/10 transition-all"
                 />
               </div>
             ))}
@@ -240,7 +240,7 @@ export default function AccountSettings({ user, setUser }) {
             {addressFields.map((field, i) => (
               <div key={i}>
                 <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-                  <field.icon className="w-4 h-4 text-[#5B3DF5]" />
+                  <field.icon className="w-4 h-4 text-[#ea5b3a]" />
                   {field.label}
                 </label>
 
@@ -249,7 +249,7 @@ export default function AccountSettings({ user, setUser }) {
                   value={formData[field.name]}
                   onChange={handleChange}
                   disabled={!isEditingProfile}
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 bg-white disabled:bg-slate-50 disabled:text-slate-500 focus:outline-none focus:border-[#5B3DF5] focus:ring-4 focus:ring-[#5B3DF5]/10 transition-all resize-none h-32"
+                  className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 bg-white disabled:bg-slate-50 disabled:text-slate-500 focus:outline-none focus:border-[#ea5b3a] focus:ring-4 focus:ring-[#ea5b3a]/10 transition-all resize-none h-32"
                 />
               </div>
             ))}
@@ -272,7 +272,7 @@ export default function AccountSettings({ user, setUser }) {
               <input
                 type="checkbox"
                 defaultChecked={pref.checked}
-                className="w-5 h-5 rounded border-slate-300 text-[#5B3DF5] focus:ring-[#5B3DF5]"
+                className="w-5 h-5 rounded border-slate-300 text-[#ea5b3a] focus:ring-[#ea5b3a]"
               />
               <span className="text-sm font-medium text-slate-700">
                 {pref.label}

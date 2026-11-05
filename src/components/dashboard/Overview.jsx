@@ -25,8 +25,9 @@ export default function Overview({ user, setActiveTab }) {
       try {
         const res = await getUserOrders();
 
-        if (res?.data) {
-          const formattedOrders = res.data.map((item) => ({
+        const list = res?.orders || res?.data;
+        if (Array.isArray(list)) {
+          const formattedOrders = list.map((item) => ({
             id: `#ORD-${item.order_id}`,
             product:
               item.order_products?.[0]?.product_name ||
@@ -171,7 +172,7 @@ export default function Overview({ user, setActiveTab }) {
           </p>
         </div>
 
-        <button className="bg-[#5B3DF5] hover:bg-[#4A2EE0] text-white px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm shadow-[#5B3DF5]/20 transition-all active:scale-95 flex items-center gap-2">
+        <button className="bg-[#ea5b3a] hover:bg-[#d44a2a] text-white px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm shadow-[#ea5b3a]/20 transition-all active:scale-95 flex items-center gap-2">
           <ShoppingBag className="w-4 h-4" />
           Continue Shopping
         </button>
@@ -212,7 +213,7 @@ export default function Overview({ user, setActiveTab }) {
 
             <button
               onClick={() => setActiveTab("orders")}
-              className="text-[#5B3DF5] hover:text-[#4A2EE0] text-sm font-medium hover:underline"
+              className="text-[#ea5b3a] hover:text-[#d44a2a] text-sm font-medium hover:underline"
             >
               View All
             </button>
@@ -271,7 +272,7 @@ export default function Overview({ user, setActiveTab }) {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full relative overflow-hidden">
-          <div className="h-24 bg-gradient-to-r from-[#5B3DF5] to-[#8C75F7]"></div>
+          <div className="h-24 bg-gradient-to-r from-[#ea5b3a] to-[#f58a6e]"></div>
 
           <div className="p-6 pt-0 flex-1 flex flex-col relative">
             <img
@@ -291,7 +292,7 @@ export default function Overview({ user, setActiveTab }) {
 
               <button
                 onClick={() => setActiveTab("profile")}
-                className="text-slate-400 hover:text-[#5B3DF5] transition-colors p-2 hover:bg-[#5B3DF5]/10 rounded-full cursor-pointer"
+                className="text-slate-400 hover:text-[#ea5b3a] transition-colors p-2 hover:bg-[#ea5b3a]/10 rounded-full cursor-pointer"
                 data-testid="button-profile-settings"
               >
                 <Settings className="w-5 h-5" />
@@ -342,7 +343,7 @@ export default function Overview({ user, setActiveTab }) {
             <div className="mt-auto pt-6">
               <button
                 onClick={() => setActiveTab("profile")}
-                className="block w-full text-center py-2.5 px-4 border border-[#5B3DF5]/20 text-[#5B3DF5] hover:bg-[#5B3DF5] hover:text-white rounded-lg text-sm font-medium transition-all focus:ring-4 focus:ring-[#5B3DF5]/10 cursor-pointer"
+                className="block w-full text-center py-2.5 px-4 border border-[#ea5b3a]/20 text-[#ea5b3a] hover:bg-[#ea5b3a] hover:text-white rounded-lg text-sm font-medium transition-all focus:ring-4 focus:ring-[#ea5b3a]/10 cursor-pointer"
                 data-testid="button-edit-profile"
               >
                 Edit Profile

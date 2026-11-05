@@ -101,7 +101,7 @@ export default function AuthPage() {
 
 
   return (
-    <div className="min-h-screen flex  justify-center pt-20 bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4">
+    <div className="min-h-screen flex  justify-center pt-20 bg-gradient-to-br from-orange-50 via-white to-orange-100 px-4">
       <div className="w-full max-w-md min-h-[520px] ">
 
         {/* Header */}
@@ -122,7 +122,7 @@ export default function AuthPage() {
             onClick={() => setIsLogin(true)}
             className={`flex-1 py-2 text-sm rounded-full font-medium transition ${
               isLogin
-                ? "bg-gray-700 text-white shadow"
+                ? "bg-[#ea5b3a] text-white shadow"
                 : "text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -133,7 +133,7 @@ export default function AuthPage() {
             onClick={() => setIsLogin(false)}
             className={`flex-1 py-2 text-sm rounded-full font-medium transition ${
               !isLogin
-                ? "bg-gray-700 text-white shadow"
+                ? "bg-[#ea5b3a] text-white shadow"
                 : "text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -167,7 +167,7 @@ export default function AuthPage() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl py-2.5 pl-10 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="w-full border border-gray-200 rounded-xl py-2.5 pl-10 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#ea5b3a] transition"
             />
 
             <button
@@ -191,7 +191,7 @@ export default function AuthPage() {
 
           {isLogin && (
             <div className="text-right">
-              <button className="text-blue-600 text-sm hover:underline">
+              <button className="text-[#ea5b3a] text-sm hover:underline">
                 Forgot Password?
               </button>
             </div>
@@ -210,7 +210,7 @@ export default function AuthPage() {
              className={`w-full py-3 rounded-xl font-semibold transition shadow-md text-white ${
              loading
              ? "bg-gray-400 cursor-not-allowed"
-             : "bg-gray-700 hover:bg-gray-800"
+             : "bg-[#ea5b3a] hover:bg-[#d44a2a]"
          }`}
          >
             {loading
@@ -228,7 +228,7 @@ export default function AuthPage() {
               Don’t have an account?{" "}
               <button
                 onClick={() => setIsLogin(false)}
-                className="text-blue-600 font-medium hover:underline"
+                className="text-[#ea5b3a] font-medium hover:underline"
               >
                 Register
               </button>
@@ -238,7 +238,7 @@ export default function AuthPage() {
               Already have an account?{" "}
               <button
                 onClick={() => setIsLogin(true)}
-                className="text-blue-600 font-medium hover:underline"
+                className="text-[#ea5b3a] font-medium hover:underline"
               >
                 Login
               </button>
@@ -260,7 +260,7 @@ function InputField({ icon, placeholder, type = "text",  value, onChange  }) {
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full border border-gray-200 rounded-xl py-2.5 pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        className="w-full border border-gray-200 rounded-xl py-2.5 pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#ea5b3a] transition"
       />
     </div>
   );

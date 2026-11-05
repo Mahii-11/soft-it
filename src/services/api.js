@@ -338,7 +338,7 @@ export const registerApi = async (data) => {
       console.log(pair[0], pair[1]);
     }
 
-    const res = await axios.post(`${BASE_URL}register-api`, formData);
+    const res = await axios.post(`${BASE_URL}auth/register`, formData);
 
     return res.data;
   } catch (error) {
@@ -361,13 +361,11 @@ export const loginApi = async (email, password) => {
       console.log(pair[0], pair[1]);
     }
 
-    const response = await fetch(
-      "https://gadget-backend.gadgetglobe.com.bd/api/store-login-api",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const response = await fetch(`${BASE_URL}auth/login`, {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      body: formData,
+    });
 
     const text = await response.text();
     console.log("RAW RESPONSE:", text);
@@ -409,7 +407,7 @@ export const getUserProfile = async () => {
   try {
     const token = localStorage.getItem("token");
 
-    const res = await fetch(`${BASE_URL}get-profile-details`, {
+    const res = await fetch(`${BASE_URL}auth/get-profile-details`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -460,16 +458,13 @@ export const getUserOrders = async () => {
       localStorage.getItem("token") ||
       localStorage.getItem("userToken");
 
-    const response = await fetch(
-      "https://gadget-backend.gadgetglobe.com.bd/api/get-all-orders",
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await fetch(`${BASE_URL}auth/get-all-order`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     const data = await response.json();
 
@@ -508,5 +503,30 @@ export const getSingleOrder = async (id) => {
     console.error("Error fetching single order:", error.response?.data || error);
 
     return { success: false };
+  }
+};
+
+// Change password
+// TODO: endpoint নামটা অনুমান করা (auth/change-password)। Backend dev এর API ready হলে Postman অনুযায়ী মিলিয়ে নিতে হবে।
+export const changePasswordApi = async (password, passwordConfirmation) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const formData = new FormData();
+    formData.append("password", password);
+    formData.append("password_confirmation", passwordConfirmation);
+
+    const res = await axios.post(`${BASE_URL}auth/change-password`, formData, {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data;
+  } catch (error) {
+    return (
+      error.response?.data || { status: false, message: "Server Error" }
+    );
   }
 };

@@ -26,7 +26,7 @@ export default function Orders() {
 
     //  console.log("ORDER API RESPONSE:", res);
 
-      const ordersArray = res?.data?.data || res?.data || [];
+      const ordersArray = res?.orders || res?.data?.data || res?.data || [];
 
       if (Array.isArray(ordersArray)) {
         const formattedOrders = ordersArray.map((item) => ({
@@ -187,7 +187,7 @@ export default function Orders() {
       <select
         value={status}
         onChange={(e) => setStatus(e.target.value)}
-        className="appearance-none bg-[#5B3DF5] hover:bg-[#4A2EE0] text-white px-4 py-2.5 pr-10 rounded-lg text-sm font-medium shadow-sm shadow-[#5B3DF5]/20 transition-all active:scale-95 cursor-pointer outline-none"
+        className="appearance-none bg-[#ea5b3a] hover:bg-[#d44a2a] text-white px-4 py-2.5 pr-10 rounded-lg text-sm font-medium shadow-sm shadow-[#ea5b3a]/20 transition-all active:scale-95 cursor-pointer outline-none"
       >
         {statusOptions.map((item) => (
           <option
@@ -280,7 +280,7 @@ export default function Orders() {
 
                     <td className="px-5 sm:px-6 py-4 whitespace-nowrap text-center">
                       <Link to={`/order-details/${order.id}`}>
-                        <button className="text-[#5B3DF5] hover:bg-[#5B3DF5]/10 p-2 rounded-lg transition-colors inline-flex items-center gap-1">
+                        <button className="text-[#ea5b3a] hover:bg-[#ea5b3a]/10 p-2 rounded-lg transition-colors inline-flex items-center gap-1">
                           <Eye className="w-4 h-4" />
                         </button>
                       </Link>

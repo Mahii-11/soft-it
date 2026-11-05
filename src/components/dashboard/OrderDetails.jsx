@@ -102,7 +102,7 @@ export default function OrderDetails() {
 
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex mt-5 bg-blue-600 text-white px-5 py-2 rounded-xl"
+            className="inline-flex mt-5 bg-[#ea5b3a] hover:bg-[#d44a2a] text-white px-5 py-2 rounded-xl"
           >
             Back
           </button>
@@ -147,7 +147,7 @@ export default function OrderDetails() {
           {/* Shipping */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
             <div className="flex items-center gap-2 mb-5">
-              <Truck className="text-blue-600" size={20} />
+              <Truck className="text-[#ea5b3a]" size={20} />
               <h2 className="font-bold text-lg text-slate-800">
                 Shipping Information
               </h2>
@@ -251,7 +251,7 @@ export default function OrderDetails() {
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="p-6 border-b">
             <div className="flex items-center gap-2">
-              <Package size={20} className="text-violet-600" />
+              <Package size={20} className="text-[#ea5b3a]" />
               <h2 className="font-bold text-lg text-slate-800">
                 Order Summary
               </h2>

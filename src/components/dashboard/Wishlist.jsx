@@ -34,7 +34,7 @@ export default function Wishlist() {
                 </div>
                 <div className="flex gap-2">
                   {item.status === "In Stock" && (
-                    <button className="p-2 bg-[#5B3DF5] text-white rounded-lg hover:bg-[#4A2EE0] transition-colors">
+                    <button className="p-2 bg-[#ea5b3a] text-white rounded-lg hover:bg-[#d44a2a] transition-colors">
                       <ShoppingCart className="w-4 h-4" />
                     </button>
                   )}

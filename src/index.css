@@ -41,7 +41,7 @@
   --foreground: 222 47% 11%;
   
   /* Indigo/Violet Primary */
-  --primary: 245 80% 60%; /* Vivid indigo/purple */
+  --primary: 11 81% 57%; /* Brand orange-red #ea5b3a */
   --primary-foreground: 0 0% 100%;
   
   /* Orange Accent for CTAs */
@@ -65,7 +65,7 @@
 
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
-  --ring: 245 80% 60%;
+  --ring: 11 81% 57%;
   
   --radius: 0.75rem;
 }
@@ -74,7 +74,7 @@
   --background: 222 47% 11%;
   --foreground: 210 40% 98%;
   
-  --primary: 245 80% 65%;
+  --primary: 11 81% 57%;
   --primary-foreground: 222 47% 11%;
   
   --accent: 24 95% 53%;
@@ -97,7 +97,7 @@
   
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
-  --ring: 245 80% 65%;
+  --ring: 11 81% 57%;
 }
 
 @layer base {
@@ -116,11 +116,11 @@
 
 /* Custom Utilities */
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-orange-400;
 }
 
 .bg-gradient-primary {
-  @apply bg-gradient-to-r from-primary to-violet-600;
+  @apply bg-gradient-to-r from-primary to-orange-500;
 }
 
 .glass-panel {

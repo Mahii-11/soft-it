@@ -5,6 +5,9 @@ import Overview from "../components/dashboard/Overview";
 import Orders from "../components/dashboard/Orders";
 import Wishlist from "../components/dashboard/Wishlist";
 import AccountSettings from "../components/dashboard/AccountSettings";
+import AddressBook from "../components/dashboard/AddressBook";
+import RewardPoints from "../components/dashboard/RewardPoints";
+import PasswordSettings from "../components/dashboard/PasswordSettings";
 import { getUserProfile } from "../services/api";
 
 export default function Dashboard() {
@@ -22,8 +25,8 @@ export default function Dashboard() {
 
       console.log("PROFILE RES:", res);
 
-      if (res?.succcess === true && res?.data) {
-        setUser(res.data); // 👈 IMPORTANT
+      if (res?.status === true && res?.user) {
+        setUser(res.user);
       } else {
         setUser(null);
       }
@@ -57,7 +60,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans text-slate-900 sm:mt-6 md:mt-8 lg:mt-16">
+    <div className="min-h-screen bg-slate-50 flex font-sans text-slate-900">
       
       <Sidebar
         sidebarOpen={sidebarOpen}
@@ -85,6 +88,12 @@ export default function Dashboard() {
             {activeTab === "orders" && <Orders />}
 
             {activeTab === "wishlist" && <Wishlist />}
+
+            {activeTab === "points" && <RewardPoints />}
+
+            {activeTab === "address" && <AddressBook user={user} />}
+
+            {activeTab === "password" && <PasswordSettings />}
 
             {activeTab === "profile" && (
               <AccountSettings user={user} setUser={setUser} />

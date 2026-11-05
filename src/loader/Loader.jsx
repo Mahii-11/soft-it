@@ -80,7 +80,7 @@ export const ProductsLoader = () => (
 
 /* ------------------ MOST VIEWED PRODUCTS LOADER ------------------ */
 export const MostViewedLoader = () => (
-  <section className="w-full py-24 bg-gradient-to-b from-white to-purple-50">
+  <section className="w-full py-24 bg-gradient-to-b from-white to-orange-50">
     <div className="max-w-7xl mx-auto px-4">
       <div className="text-center mb-16">
         <div className="h-8 w-1/3 bg-gray-300 rounded mx-auto animate-pulse"></div>

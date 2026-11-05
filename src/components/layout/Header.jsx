@@ -18,7 +18,7 @@ export default function Header({ setSidebarOpen, setActiveTab, user }) {
         </button>
 
         {/* Search input */}
-        <div className="hidden sm:flex items-center bg-slate-100 px-3 py-2 rounded-lg w-64 border border-transparent focus-within:border-[#5B3DF5] focus-within:bg-white transition-all focus-within:ring-4 focus-within:ring-[#5B3DF5]/10">
+        <div className="hidden sm:flex items-center bg-slate-100 px-3 py-2 rounded-lg w-64 border border-transparent focus-within:border-[#ea5b3a] focus-within:bg-white transition-all focus-within:ring-4 focus-within:ring-[#ea5b3a]/10">
           <Search className="w-4 h-4 text-slate-400 mr-2" />
           <input 
             type="text" 
@@ -42,13 +42,13 @@ export default function Header({ setSidebarOpen, setActiveTab, user }) {
         {/* Profile */}
         <div onClick={() => setActiveTab('profile')} className="flex items-center gap-3 cursor-pointer group" data-testid="button-profile-menu">
           <div className="hidden sm:block text-right">
-            <p className="text-sm font-semibold text-slate-700 group-hover:text-[#5B3DF5] transition-colors" data-testid="text-username"> {user?.name || "Guest"}</p>
+            <p className="text-sm font-semibold text-slate-700 group-hover:text-[#ea5b3a] transition-colors" data-testid="text-username"> {user?.name || "Guest"}</p>
             <p className="text-xs text-slate-500">Customer</p>
           </div>
           <img 
             src={user?.image ? baseURL + user.image : "/default-avatar.png"}
             alt="User avatar" 
-            className="w-9 h-9 rounded-full ring-2 ring-slate-100 group-hover:ring-[#5B3DF5]/30 transition-all object-cover" 
+            className="w-9 h-9 rounded-full ring-2 ring-slate-100 group-hover:ring-[#ea5b3a]/30 transition-all object-cover" 
             data-testid="img-avatar-header" 
           />
         </div>
