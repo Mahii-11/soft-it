@@ -7,7 +7,7 @@ const columns = [
     links: [
       { label: "Regarding Us", to: "#" },
       { label: "Terms and Conditions", to: "#" },
-      { label: "Track My Order", to: "/dashboard" },
+      { label: "Track My Order", to: "/dashboard?tab=track" },
       { label: "Career", to: "#" },
     ],
   },

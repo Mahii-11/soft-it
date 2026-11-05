@@ -7,12 +7,18 @@ import Wishlist from "../components/dashboard/Wishlist";
 import AccountSettings from "../components/dashboard/AccountSettings";
 import AddressBook from "../components/dashboard/AddressBook";
 import RewardPoints from "../components/dashboard/RewardPoints";
+import TrackOrder from "../components/dashboard/TrackOrder";
+import { useSearchParams } from "react-router-dom";
 import PasswordSettings from "../components/dashboard/PasswordSettings";
 import { getUserProfile } from "../services/api";
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("dashboard");
+  // ?tab=track এর মতো লিংক দিয়ে সরাসরি কোনো section এ খোলা যায় (যেমন Header এর Track Order)
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(
+    searchParams.get("tab") || "dashboard"
+  );
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -86,6 +92,8 @@ export default function Dashboard() {
             )}
 
             {activeTab === "orders" && <Orders />}
+
+            {activeTab === "track" && <TrackOrder />}
 
             {activeTab === "wishlist" && <Wishlist />}
 

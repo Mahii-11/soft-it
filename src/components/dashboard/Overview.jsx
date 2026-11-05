@@ -66,16 +66,16 @@ export default function Overview({ user, setActiveTab }) {
               color: "bg-orange-100 text-orange-700",
             },
             {
-              title: "Delivered",
-              value: delivered,
-              icon: CheckCircle2,
-              color: "bg-green-100 text-green-700",
-            },
-            {
               title: "Processing",
               value: processing,
               icon: Package,
               color: "bg-purple-100 text-purple-700",
+            },
+            {
+              title: "Delivered",
+              value: delivered,
+              icon: CheckCircle2,
+              color: "bg-green-100 text-green-700",
             },
           ]);
         }

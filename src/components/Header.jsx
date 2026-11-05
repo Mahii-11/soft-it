@@ -68,7 +68,7 @@ export default function Header() {
               <a href="mailto:support@gadgetglobe.com" className="flex items-center gap-1.5 hover:text-[#ea5b3a]">
                 <Mail size={13} /> Contact
               </a>
-              <Link to={token ? "/dashboard" : "/login"} className="flex items-center gap-1.5 hover:text-[#ea5b3a]">
+              <Link to={token ? "/dashboard?tab=track" : "/login"} className="flex items-center gap-1.5 hover:text-[#ea5b3a]">
                 <Truck size={13} /> Track Order
               </Link>
               <Link to="/our-location" className="flex items-center gap-1.5 hover:text-[#ea5b3a]">
