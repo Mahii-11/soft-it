@@ -4,11 +4,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Banknote, Check, MapPin, QrCode, ShieldCheck, Truck } from "lucide-react";
 import { clearCart, getCart, getTotalCartPrice } from "../cart/cartSlice";
-import { createOrder, getUserOrders } from "../services/api";
+import { createOrder } from "../services/api";
 
 // Backend payment_method ids. 1 = cash on delivery (existing). 2 for QR is an
 // assumption - confirm the id with the backend before going live.
-const PAYMENT_METHODS = { cod: 1, qr: 2 };
+const PAYMENT_METHODS = { cod: "cash_on_delivery", qr: "qr_payment" };
 const QR_IMAGE = "/images/payment-qr.png";
 
 const DELIVERY_OPTIONS = [
@@ -155,12 +155,10 @@ export default function CheckoutPage() {
       });
 
       const data = new FormData();
-      data.append("shipping_name", formData.shipping_name);
-      data.append("order_phone", formData.order_phone);
-      data.append("shipping_address", formData.shipping_address);
-      data.append("product_qty", cartItems.reduce((sum, item) => sum + item.quantity, 0));
-      data.append("total_amount", total);
-      data.append("shipping_cost", deliveryFee);
+      // New /checkout API: server calculates prices, so only ids + qty are sent
+      data.append("name", formData.shipping_name);
+      data.append("phone", formData.order_phone);
+      data.append("address", formData.shipping_address);
       data.append("shipping_method", delivery.shippingMethod);
       data.append("payment_method", PAYMENT_METHODS[paymentType]);
       if (paymentType === "qr") {
@@ -168,20 +166,16 @@ export default function CheckoutPage() {
       }
 
       cartItems.forEach((product, index) => {
-        data.append(`product_data[${index}][product_id]`, product.product_id || product.id);
-        data.append(`product_data[${index}][unit_price]`, product.unit_price);
-        data.append(`product_data[${index}][qty]`, product.quantity);
-        data.append(`product_data[${index}][variation_color_id]`, product.color_name);
-        data.append(`product_data[${index}][variation]`, product.variation_size);
-        data.append(`product_data[${index}][size_id]`, product.size_id);
-        data.append(`product_data[${index}][color_id]`, product.color_id);
-        data.append(`product_data[${index}][product_image]`, product.image.split("/").pop());
-        data.append(`product_data[${index}][product_name]`, product.product_name);
+        data.append(`items[${index}][product_id]`, product.product_id || product.id);
+        data.append(`items[${index}][quantity]`, product.quantity);
+        // size/color না থাকলে ("null" / 0 না পাঠিয়ে) field টাই বাদ দেওয়া হয়
+        if (product.size_id) data.append(`items[${index}][size_id]`, product.size_id);
+        if (product.color_id) data.append(`items[${index}][color_id]`, product.color_id);
       });
 
       const result = await createOrder(data);
 
-      if (result.success) {
+      if (result.status) {
         Swal.fire({
           icon: "success",
           title: "Order Placed 🎉",
@@ -199,20 +193,10 @@ export default function CheckoutPage() {
           if (!buyNowItem) {
             dispatch(clearCart());
           }
-          try {
-            // fetch all orders again, the newest one is the order just placed
-            const res = await getUserOrders();
-            const ordersArray = res?.data?.data || res?.data || [];
-
-            navigate("/thank-you", {
-              state: { order: ordersArray[0] },
-            });
-          } catch (err) {
-            console.log(err);
-            navigate("/thank-you", {
-              state: { order: null },
-            });
-          }
+          // checkout response already has the order info (no login / refetch needed)
+          navigate("/thank-you", {
+            state: { order: { id: result.data?.id, order_id: result.data?.invoice_no } },
+          });
         });
       } else {
         Swal.fire({
@@ -372,7 +356,7 @@ export default function CheckoutPage() {
           <aside className="h-fit rounded-xl bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.06)] md:p-6 lg:sticky lg:top-40">
             <h2 className="mb-5 font-sans text-base font-bold text-neutral-900 md:text-lg">Order Summary</h2>
 
-            <ul className="max-h-[300px] space-y-4 overflow-y-auto pr-1">
+            <ul className="max-h-[300px] space-y-4 overflow-y-auto pr-2 pt-3">
               {cartItems.map((product) => (
                 <li
                   key={`${product.product_slug}-${product.variation_id}-${product.color_id}`}

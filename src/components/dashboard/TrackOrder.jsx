@@ -17,12 +17,12 @@ const SPECIAL = {
   6: { label: "Return", icon: Undo2, cls: "bg-slate-100 text-slate-700 border-slate-200", note: "This order has been returned." },
 };
 
-const formatDate = (d) =>
+export const formatDate = (d) =>
   d
     ? new Date(d).toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" })
     : "N/A";
 
-function Stepper({ status }) {
+export function Stepper({ status }) {
   const special = SPECIAL[status];
 
   if (special) {

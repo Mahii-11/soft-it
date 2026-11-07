@@ -12,6 +12,7 @@ import OurLocation from "./pages/OurLocation";
 import Dashboard from "./pages/Dashboard";
 import OrderDetails from "./components/dashboard/OrderDetails";
 import AllBrands from "./pages/AllBrands";
+import TrackOrderPage from "./pages/TrackOrderPage";
 import ShopPage from "./pages/shoppages/ShopPage";
 
 const router = createBrowserRouter([
@@ -76,6 +77,11 @@ const router = createBrowserRouter([
       { 
         path: "/order-details/:id",
         element: <OrderDetails />
+      },
+
+      {
+        path: "/track-order",
+        element: <TrackOrderPage />
       },
 
       {

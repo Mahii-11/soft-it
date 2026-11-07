@@ -1,7 +1,7 @@
 import { Menu, Search, Bell } from "lucide-react";
 
 
-const baseURL = "https://gadget-backend.gadgetglobe.com.bd/";
+import { resolveImageUrl } from "../../utils/imageUrl";
 
 export default function Header({ setSidebarOpen, setActiveTab, user }) {
   return (
@@ -46,7 +46,7 @@ export default function Header({ setSidebarOpen, setActiveTab, user }) {
             <p className="text-xs text-slate-500">Customer</p>
           </div>
           <img 
-            src={user?.image ? baseURL + user.image : "/default-avatar.png"}
+            src={resolveImageUrl(user?.image)}
             alt="User avatar" 
             className="w-9 h-9 rounded-full ring-2 ring-slate-100 group-hover:ring-[#ea5b3a]/30 transition-all object-cover" 
             data-testid="img-avatar-header" 

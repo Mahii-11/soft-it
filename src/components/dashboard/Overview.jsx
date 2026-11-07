@@ -12,7 +12,7 @@ import { getUserOrders } from "../../services/api";
 import { useEffect, useState } from "react";
 import OrdersSkeleton from "./OrdersSkeleton";
 
-const baseURL = "https://gadget-backend.gadgetglobe.com.bd/";
+import { resolveImageUrl } from "../../utils/imageUrl";
 
 export default function Overview({ user, setActiveTab }) {
   const [allOrders, setAllOrders] = useState([]);
@@ -276,7 +276,7 @@ export default function Overview({ user, setActiveTab }) {
 
           <div className="p-6 pt-0 flex-1 flex flex-col relative">
             <img
-              src={user?.image ? baseURL + user.image : "/default-avatar.png"}
+              src={resolveImageUrl(user?.image)}
               alt="Profile"
               className="w-20 h-20 rounded-full border-4 border-white shadow-sm object-cover absolute -top-10 left-6 bg-white"
               data-testid="img-avatar-profile"

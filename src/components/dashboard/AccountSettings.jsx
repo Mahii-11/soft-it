@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Mail, Phone, MapPin, Edit2, Save } from "lucide-react";
-import { updateUserProfile } from "../../services/api";
+import Swal from "sweetalert2";
+import { updateUserProfile, getUserProfile } from "../../services/api";
 
-const baseURL = "https://gadget-backend.gadgetglobe.com.bd/";
+import { resolveImageUrl } from "../../utils/imageUrl";
 
 export default function AccountSettings({ user, setUser }) {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -70,22 +71,51 @@ export default function AccountSettings({ user, setUser }) {
 
       const res = await updateUserProfile(form);
 
-      if (res) {
-        setIsEditingProfile(false);
+      const failed = !res || res.status === false || res.success === false;
+      if (failed) {
+        // Laravel validation error: { message, errors: { field: [msg] } }
+        const firstError = res?.errors && Object.values(res.errors).flat()[0];
+        Swal.fire({
+          icon: "error",
+          title: "Update Failed",
+          text: firstError || res?.message || res?.msg || "Could not update your profile.",
+          confirmButtonColor: "#ea5b3a",
+        });
+        return;
+      }
 
+      // server এর আসল data (নতুন image path সহ) আবার নিয়ে আসা
+      const fresh = await getUserProfile();
+      if (fresh?.status === true && fresh?.user) {
+        setUser(fresh.user);
+      } else {
         setUser((prev) => ({
           ...prev,
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
           address: formData.address,
-          image: profileImage.startsWith("blob:")
-            ? prev.image
-            : profileImage,
         }));
       }
+
+      setImageFile(null);
+      setIsEditingProfile(false);
+
+      Swal.fire({
+        icon: "success",
+        title: "Profile Updated",
+        text: res?.message || res?.msg || "Your profile has been updated.",
+        confirmButtonColor: "#ea5b3a",
+        timer: 2000,
+      });
     } catch (err) {
       console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: "Something went wrong. Please try again.",
+        confirmButtonColor: "#ea5b3a",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -134,11 +164,10 @@ export default function AccountSettings({ user, setUser }) {
 
         <button
           disabled={isSaving}
-          onClick={async () => {
-            if (isEditingProfile) {
-              await handleSave();
-            }
-            setIsEditingProfile((prev) => !prev);
+          onClick={() => {
+            // save সফল হলে handleSave নিজেই edit mode বন্ধ করে; fail করলে edit mode খোলা থাকে
+            if (isEditingProfile) handleSave();
+            else setIsEditingProfile(true);
           }}
           className="bg-[#ea5b3a] hover:bg-[#d44a2a] disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm shadow-[#ea5b3a]/20 transition-all active:scale-95 flex items-center gap-2"
         >
@@ -164,13 +193,7 @@ export default function AccountSettings({ user, setUser }) {
           <div className="flex flex-col sm:flex-row sm:items-end gap-6 -mt-12 relative z-10">
             <div className="flex flex-col items-start">
               <img
-                src={
-                  profileImage
-                    ? profileImage.startsWith("blob:")
-                      ? profileImage
-                      : baseURL + profileImage
-                    : "/default.png"
-                }
+                src={resolveImageUrl(profileImage)}
                 alt="Profile"
                 className="w-28 h-28 rounded-2xl border-4 border-white shadow-lg object-cover bg-white"
               />

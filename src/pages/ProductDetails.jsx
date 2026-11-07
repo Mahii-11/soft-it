@@ -3,9 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getProductDetailsBySlug } from "../services/api";
 import Loader from "../loader/Loader";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Heart } from "lucide-react";
 import { normalizeProductForCart } from "../utils/cartAdapter";
 import { addItem } from "../cart/cartSlice";
+import { toggleWishlist, selectIsInWishlist } from "../cart/wishlistSlice";
 import ProductCard from "../components/ProductCard";
 
 export default function ProductDetails() {
@@ -22,6 +24,12 @@ export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
+
+  // Wishlist (redux, same item shape as the cart) - hooks must stay above the early returns
+  const wishlistItem = product
+    ? normalizeProductForCart(product, selectedVariant, selectedColor, 1)
+    : null;
+  const inWishlist = useSelector(selectIsInWishlist(wishlistItem));
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -361,6 +369,19 @@ export default function ProductDetails() {
 
             {/* Action Buttons */}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <button
+                onClick={() => dispatch(toggleWishlist(wishlistItem))}
+                aria-pressed={inWishlist}
+                className={`flex h-12 items-center justify-center gap-2 rounded-md border px-5 text-sm font-bold uppercase tracking-wide transition ${
+                  inWishlist
+                    ? "border-[#ea5b3a] bg-[#ea5b3a]/10 text-[#ea5b3a]"
+                    : "border-neutral-300 text-neutral-800 hover:border-neutral-500"
+                }`}
+              >
+                <Heart size={16} className={inWishlist ? "fill-[#ea5b3a]" : ""} />
+                {inWishlist ? "In Wishlist" : "Add to Wishlist"}
+              </button>
+
               <button
                 disabled={!isAvailableInStock}
                 onClick={() => handleBuyNow(1)}

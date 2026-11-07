@@ -288,10 +288,15 @@ export const getProductDetailsBySlug = async (slug) => {
 
 export async function createOrder(orderData) {
   try {
-    const response = await fetch(`${BASE_URL}store-order`, {
+    // login করা থাকলে token পাঠাতে হবে, না হলে order user এর সাথে link হয় না
+    // (dashboard এর get-all-order এ আসে না)। guest হলে token ছাড়াই যাবে।
+    const token = localStorage.getItem("token") || localStorage.getItem("userToken");
+
+    const response = await fetch(`${BASE_URL}checkout`, {
       method: "POST",
       headers: {
         Accept: "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: orderData,
     });
@@ -424,25 +429,33 @@ export const getUserProfile = async () => {
   }
 };
 
+// POST auth/update-user-profile (form-data: name, email, phone, address, image)
 export const updateUserProfile = async (formData) => {
   const token = localStorage.getItem("token");
 
-  const res = await fetch(`${BASE_URL}update-user-profile`, {
+  const res = await fetch(`${BASE_URL}auth/update-user-profile`, {
     method: "POST",
     headers: {
+      Accept: "application/json", // না দিলে validation error এ Laravel redirect করে
       Authorization: `Bearer ${token}`,
     },
     body: formData,
   });
 
   const text = await res.text();
-  console.log("RAW:", text);
 
+  let data;
   try {
-    return JSON.parse(text);
+    data = JSON.parse(text);
   } catch {
-    return { notification: text };
+    data = { message: text };
   }
+
+  // HTTP error (401, 422...) কে failure হিসেবে ধরা হয়
+  if (!res.ok && data.status !== false) {
+    data = { ...data, status: false };
+  }
+  return data;
 };
 
 
@@ -474,6 +487,23 @@ export const getUserOrders = async () => {
       throw new Error(data?.message || "Failed to fetch orders");
     }
 
+    // নতুন API: order_date + products[{name, image, qty, unit_price, total_price}]
+    // UI পুরনো নাম (created_at, order_products[].product_name) ব্যবহার করে, তাই এখানে map করা হলো
+    if (Array.isArray(data?.orders)) {
+      data.orders = data.orders.map((o) => ({
+        ...o,
+        created_at: o.created_at || o.order_date,
+        order_products:
+          o.order_products ||
+          (o.products || []).map((p) => ({
+            ...p,
+            product_name: p.product_name || p.name,
+            product_image: p.product_image || p.image,
+            quantity: p.quantity ?? p.qty,
+          })),
+      }));
+    }
+
     return data;
   } catch (error) {
     console.error("getUserOrders Error:", error);
@@ -483,6 +513,28 @@ export const getUserOrders = async () => {
 
 
 
+
+// Public order tracking (login লাগে না): POST track-order (form-data: order_id, phone)
+// Response: { status, data: [ { order_id, order_date, order_status, order_status_text, total_amount, products: [...] } ] }
+export const trackOrderPublic = async (orderId, phone) => {
+  const body = new FormData();
+  body.append("order_id", orderId);
+  body.append("phone", phone);
+
+  const response = await fetch(`${BASE_URL}track-order`, {
+    method: "POST",
+    headers: { Accept: "application/json" },
+    body,
+  });
+  const data = await response.json().catch(() => ({}));
+
+  const order = Array.isArray(data?.data) ? data.data[0] : data?.data;
+
+  if (!response.ok || data?.status === false || !order) {
+    throw new Error(data?.message || data?.msg || "Order not found. Please check your details.");
+  }
+  return order;
+};
 
 export const getSingleOrder = async (id) => {
   try {
@@ -506,27 +558,20 @@ export const getSingleOrder = async (id) => {
   }
 };
 
-// Change password
-// TODO: endpoint নামটা অনুমান করা (auth/change-password)। Backend dev এর API ready হলে Postman অনুযায়ী মিলিয়ে নিতে হবে।
+// Change password - profile update এর same API (auth/update-user-profile),
+// শুধু password + password_confirmation field পাঠানো হয়
 export const changePasswordApi = async (password, passwordConfirmation) => {
-  const token = localStorage.getItem("token");
-
   try {
     const formData = new FormData();
     formData.append("password", password);
     formData.append("password_confirmation", passwordConfirmation);
 
-    const res = await axios.post(`${BASE_URL}auth/change-password`, formData, {
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const data = await updateUserProfile(formData);
 
-    return res.data;
+    // backend এ status key না থাকলেও HTTP success হলে সফল ধরা হয়
+    // (updateUserProfile HTTP error এ status:false বসিয়ে দেয়)
+    return { ...data, status: data.status !== false && data.success !== false };
   } catch (error) {
-    return (
-      error.response?.data || { status: false, message: "Server Error" }
-    );
+    return { status: false, message: "Server Error" };
   }
 };

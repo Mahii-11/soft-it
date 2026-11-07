@@ -65,10 +65,17 @@ export default function Header() {
             </a>
 
             <div className="flex items-center gap-6 font-medium">
-              <a href="mailto:support@gadgetglobe.com" className="flex items-center gap-1.5 hover:text-[#ea5b3a]">
+              <a
+                href="#contact-us"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById("contact-us")?.scrollIntoView({ behavior: "smooth", block: "end" });
+                }}
+                className="flex items-center gap-1.5 hover:text-[#ea5b3a]"
+              >
                 <Mail size={13} /> Contact
               </a>
-              <Link to={token ? "/dashboard?tab=track" : "/login"} className="flex items-center gap-1.5 hover:text-[#ea5b3a]">
+              <Link to="/track-order" className="flex items-center gap-1.5 hover:text-[#ea5b3a]">
                 <Truck size={13} /> Track Order
               </Link>
               <Link to="/our-location" className="flex items-center gap-1.5 hover:text-[#ea5b3a]">

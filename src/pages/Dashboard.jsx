@@ -6,11 +6,65 @@ import Orders from "../components/dashboard/Orders";
 import Wishlist from "../components/dashboard/Wishlist";
 import AccountSettings from "../components/dashboard/AccountSettings";
 import AddressBook from "../components/dashboard/AddressBook";
-import RewardPoints from "../components/dashboard/RewardPoints";
+// import RewardPoints from "../components/dashboard/RewardPoints"; // Points - future এ চালু হবে
 import TrackOrder from "../components/dashboard/TrackOrder";
 import { useSearchParams } from "react-router-dom";
 import PasswordSettings from "../components/dashboard/PasswordSettings";
 import { getUserProfile } from "../services/api";
+
+// Dashboard এর layout এর মতো skeleton — loading এর সময় page jump করে না
+function DashboardSkeleton() {
+  const bar = "rounded-md bg-slate-200";
+  return (
+    <div className="min-h-screen bg-slate-50 flex" role="status" aria-label="Loading dashboard">
+      {/* Sidebar */}
+      <aside className="hidden lg:flex w-64 shrink-0 flex-col gap-3 border-r border-slate-200 bg-white p-5 animate-pulse">
+        <div className={`${bar} h-8 w-32 mb-4`} />
+        {Array.from({ length: 7 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <div className={`${bar} h-5 w-5`} />
+            <div className={`${bar} h-4 flex-1`} />
+          </div>
+        ))}
+      </aside>
+
+      <main className="flex-1 min-w-0">
+        {/* Top bar */}
+        <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 animate-pulse">
+          <div className={`${bar} h-5 w-40`} />
+          <div className="flex items-center gap-3">
+            <div className={`${bar} h-9 w-9 rounded-full`} />
+            <div className={`${bar} h-4 w-24 hidden sm:block`} />
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8 animate-pulse">
+          {/* Welcome banner */}
+          <div className="h-32 rounded-2xl bg-gradient-to-r from-[#ea5b3a]/25 to-[#ea5b3a]/10" />
+
+          {/* Stat cards */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3">
+                <div className={`${bar} h-10 w-10 rounded-xl`} />
+                <div className={`${bar} h-3 w-20`} />
+                <div className={`${bar} h-6 w-28`} />
+              </div>
+            ))}
+          </div>
+
+          {/* Table */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4">
+            <div className={`${bar} h-5 w-40`} />
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className={`${bar} h-10 w-full`} />
+            ))}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -49,11 +103,7 @@ export default function Dashboard() {
 
   // 🔵 LOADING STATE (IMPORTANT)
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading Dashboard...
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   // 🔴 NO USER STATE
@@ -97,7 +147,9 @@ export default function Dashboard() {
 
             {activeTab === "wishlist" && <Wishlist />}
 
+            {/* TODO: Points - future এ চালু করা হবে
             {activeTab === "points" && <RewardPoints />}
+            */}
 
             {activeTab === "address" && <AddressBook user={user} />}
 

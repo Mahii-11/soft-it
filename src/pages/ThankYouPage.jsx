@@ -52,10 +52,10 @@ export default function ThankYouPage() {
           </Link>
 
           <Link
-             to={`/order-details/${orderId}`}
+            to="/track-order"
             className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
           >
-            View Orders
+            Track Order
           </Link>
         </div>
 

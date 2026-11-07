@@ -1,4 +1,4 @@
-import { LayoutDashboard, ShoppingBag, Heart, Settings, LifeBuoy, LogOut, Package, X, MapPin, Lock, Sparkles, Truck } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Heart, Settings, LifeBuoy, LogOut, Package, X, MapPin, Lock, /* Sparkles, */ Truck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { loginApi } from "../../services/api";
 
@@ -76,10 +76,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, activeTab, setAct
             Wishlist
           </div>
           
+          {/* TODO: Points - এখন লাগছে না, future এ চালু করা হবে (সাথে Sparkles import + Dashboard.jsx এর RewardPoints ও uncomment করতে হবে)
           <div onClick={() => setActiveTab('points')} className={navItemClass('points')} data-testid="tab-points">
             <Sparkles className="w-5 h-5" />
             Points
           </div>
+          */}
 
           <div onClick={() => setActiveTab('address')} className={navItemClass('address')} data-testid="tab-address">
             <MapPin className="w-5 h-5" />

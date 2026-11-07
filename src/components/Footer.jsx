@@ -91,7 +91,7 @@ export default function Footer() {
         </div>
 
         {/* Contact Us */}
-        <div>
+        <div id="contact-us">
           <h4 className={headingClass}>Contact Us</h4>
           <ul className="space-y-3 text-xs leading-5 text-white/80">
             {contacts.map(({ Icon, content, href }) => (
