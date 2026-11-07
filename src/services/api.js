@@ -122,6 +122,15 @@ export const getProductsByEndpoint =async (endpoint) => {
     return res?.data?.data || [];
 };
 
+// "Just for You" section: [{ id, name, slug, image, total_views }]
+export const getJustForYou = async () => {
+    const res = await fetchData("just-for-you");
+    if (!res.status) {
+        throw new Error("Just for you fetch unsuccessful");
+    }
+    return res.data || [];
+}
+
 export const getMostViewedProducts = async () => {
     const res = await fetchData("most-viewed-products");
     if (!res.status) {
