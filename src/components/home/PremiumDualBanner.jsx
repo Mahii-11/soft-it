@@ -17,7 +17,7 @@ export default function PremiumDualBanner() {
           : banners.map((banner) => (
               <a
                 key={banner.id}
-                href="/shop"
+                href="/shop-page"
                 className="group block overflow-hidden rounded-lg bg-white shadow-[0_1px_4px_rgba(0,0,0,0.08)]"
               >
                 <img

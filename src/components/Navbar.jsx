@@ -9,7 +9,7 @@ import { OPEN_MOBILE_MENU_EVENT } from "./Header";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {  getTotalCartQuantity, openCart } from "../cart/cartSlice";
 import { getTopMenuData } from "../services/api";
@@ -91,15 +91,16 @@ useEffect(() => {
       const formattedMenu = data
         .map((item) => ({
           label: item.name,
-          href: `/category/${item.slug}`,
+          // every menu level opens the shop page, filtered by its category / brand
+          href: `/shop-page?category=${item.id}`,
           children: item.sub_categories?.length
             ? item.sub_categories.map((sub) => ({
                 label: sub.name,
-                href: `/category/${item.slug}/${sub.slug}`,
+                href: `/shop-page?category=${item.id}&brand=${sub.id}`,
                 children: sub.child_categories?.length
                   ? sub.child_categories.map((child) => ({
                       label: child.name,
-                      href: `/category/${item.slug}/${sub.slug}/${child.slug}`,
+                      href: `/shop-page?category=${item.id}&brand=${sub.id}&child_category=${child.id}`,
                     }))
                   : undefined,
               }))
@@ -311,18 +312,14 @@ useEffect(() => {
                               className="overflow-hidden pl-4"
                             >
                               {item.children.map((child) => (
-                                <NavLink
+                                <Link
                                   key={child.label}
                                   to={child.href}
-                                  className={({ isActive }) =>
-                                    `block py-2 text-[#64748B] hover:text-red-600 ${
-                                      isActive ? "text-red-600" : ""
-                                    }`
-                                  }
+                                  className="block py-2 text-[#64748B] hover:text-red-600"
                                   onClick={() => setMobileMenuOpen(false)}
                                 >
                                   {child.label}
-                                </NavLink>
+                                </Link>
                               ))}
                             </motion.div>
                           )}

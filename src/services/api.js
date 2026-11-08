@@ -44,15 +44,55 @@ export const getTopMenuData = async ()  => {
   return res.data || [];
 }
 
+// GET search-products?search=...  -> { status, data: [ {id, name, slug, type, image, price, offer_price, ...} ], meta }
 export const getsearchProducts = async (searchTerm) => {
-  const res = await fetchData(`search-products?search=${searchTerm}`)
+  const res = await fetchData(`search-products?search=${encodeURIComponent(searchTerm)}`)
 
   if (!res) {
     throw new Error("Search product fetch unsuccessful");
   }
 
-  return res?.data?.data || [];
+  // এখন data সরাসরি array; আগে data.data (paginated) ছিল - দুটোই চলবে
+  const list = Array.isArray(res.data) ? res.data : res.data?.data;
+  return list || [];
+};
 
+// GET shop/products?category=&size=&color=&min_price=&max_price=&page=&limit=
+// -> { status, data: [...products], filters: { categories, sizes, colors, price: {min, max} },
+//      meta: { total, per_page, current_page, last_page } }
+export const getShopProducts = async (params = {}) => {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") query.append(key, value);
+  });
+  const qs = query.toString();
+  const res = await fetchData(`shop/products${qs ? `?${qs}` : ""}`);
+  if (!res.status) {
+    throw new Error("Shop products fetch unsuccessful");
+  }
+  return {
+    products: res.data || [],
+    filters: res.filters || {},
+    meta: res.meta || {},
+  };
+};
+
+// GET setting-data -> { logo, email, phone, address, copyright, site_description }
+export const getSiteSettings = async () => {
+  const res = await fetchData("setting-data");
+  if (!res.status) {
+    throw new Error("Site settings fetch unsuccessful");
+  }
+  return res.data || {};
+};
+
+// GET social-data -> [ { id, link, icon: "bi bi-facebook" } ]
+export const getSocialLinks = async () => {
+  const res = await fetchData("social-data");
+  if (!res.status) {
+    throw new Error("Social links fetch unsuccessful");
+  }
+  return res.data || [];
 };
 
 export const getWhyShopWithUs = async () => {

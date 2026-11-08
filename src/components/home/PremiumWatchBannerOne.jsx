@@ -6,7 +6,7 @@ export default function PremiumWatchBannerOne() {
       <div className="max-w-[1280px] mx-auto px-3 md:px-4">
         
         <a 
-          href="/shop" 
+          href="/shop-page" 
           className="block w-full overflow-hidden rounded-xl md:rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_6px_18px_rgba(0,0,0,0.06)] transition-all duration-300 group"
         >
         

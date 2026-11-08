@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { updateUserProfile, getUserProfile } from "../../services/api";
 
 import { resolveImageUrl } from "../../utils/imageUrl";
+import { PROFILE_UPDATED_EVENT } from "../Header";
 
 export default function AccountSettings({ user, setUser }) {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -98,6 +99,9 @@ export default function AccountSettings({ user, setUser }) {
         }));
       }
 
+      // site header এর avatar refresh করতে
+      window.dispatchEvent(new Event(PROFILE_UPDATED_EVENT));
+
       setImageFile(null);
       setIsEditingProfile(false);
 
@@ -129,12 +133,6 @@ export default function AccountSettings({ user, setUser }) {
 
   const addressFields = [
     { label: "Shipping Address", icon: MapPin, type: "textarea", name: "address" },
-  ];
-
-  const preferencesFields = [
-    { label: "Receive promotional emails", checked: true },
-    { label: "Order status notifications", checked: true },
-    { label: "Weekly newsletter", checked: false },
   ];
 
   return (
@@ -280,32 +278,7 @@ export default function AccountSettings({ user, setUser }) {
         </div>
       </div>
 
-      {/* Preferences */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mt-6">
-        <h3 className="text-lg font-bold text-slate-900 mb-6">
-          Account Preferences
-        </h3>
-
-        <div className="space-y-4">
-          {preferencesFields.map((pref, i) => (
-            <label
-              key={i}
-              className="flex items-center gap-3 cursor-pointer hover:bg-slate-50 p-3 rounded-lg transition-colors w-max"
-            >
-              <input
-                type="checkbox"
-                defaultChecked={pref.checked}
-                className="w-5 h-5 rounded border-slate-300 text-[#ea5b3a] focus:ring-[#ea5b3a]"
-              />
-              <span className="text-sm font-medium text-slate-700">
-                {pref.label}
-              </span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Danger Zone */}
+      {/* TODO: Danger Zone - delete account API ready hole uncomment kore onClick e API call wire korte hobe
       <div className="bg-red-50 rounded-2xl border border-red-200 p-6 mt-6">
         <h3 className="text-lg font-bold text-red-700 mb-3">Danger Zone</h3>
         <p className="text-sm text-red-600 mb-4">
@@ -316,6 +289,7 @@ export default function AccountSettings({ user, setUser }) {
           Delete Account
         </button>
       </div>
+      */}
     </>
   );
 }

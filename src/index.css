@@ -154,6 +154,30 @@ body::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
 
+/* Slim orange scrollbar (shop filter sidebar) */
+.filter-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #fb923c #f3f4f6;
+}
+
+.filter-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filter-scrollbar::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 999px;
+}
+
+.filter-scrollbar::-webkit-scrollbar-thumb {
+  background: #fb923c;
+  border-radius: 999px;
+}
+
+.filter-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ea5b3a;
+}
+
 /* Custom hide scrollbar utility */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

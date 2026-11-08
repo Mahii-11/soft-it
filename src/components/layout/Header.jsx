@@ -1,4 +1,4 @@
-import { Menu, Search, Bell } from "lucide-react";
+import { Menu } from "lucide-react"; // Search, Bell: lagbe jokhon search/notification uncomment hobe
 
 
 import { resolveImageUrl } from "../../utils/imageUrl";
@@ -17,27 +17,29 @@ export default function Header({ setSidebarOpen, setActiveTab, user }) {
           <Menu className="w-5 h-5" />
         </button>
 
-        {/* Search input */}
+        {/* TODO: Search input - search API ready hole uncomment kore dynamic korte hobe (import e Search add korte hobe)
         <div className="hidden sm:flex items-center bg-slate-100 px-3 py-2 rounded-lg w-64 border border-transparent focus-within:border-[#ea5b3a] focus-within:bg-white transition-all focus-within:ring-4 focus-within:ring-[#ea5b3a]/10">
           <Search className="w-4 h-4 text-slate-400 mr-2" />
-          <input 
-            type="text" 
-            placeholder="Search..." 
+          <input
+            type="text"
+            placeholder="Search..."
             className="bg-transparent border-none outline-none text-sm w-full text-slate-700 placeholder:text-slate-400"
             data-testid="input-search"
           />
         </div>
+        */}
       </div>
 
       {/* Right: Notifications & Profile */}
       <div className="flex items-center gap-3 sm:gap-5">
-        {/* Notifications */}
+        {/* TODO: Notifications - notification API ready hole uncomment kore dynamic korte hobe (import e Bell add korte hobe)
         <button className="relative p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors" data-testid="button-notifications">
           <Bell className="w-5 h-5" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
         </button>
 
         <div className="h-8 w-px bg-slate-200 hidden sm:block"></div>
+        */}
 
         {/* Profile */}
         <div onClick={() => setActiveTab('profile')} className="flex items-center gap-3 cursor-pointer group" data-testid="button-profile-menu">

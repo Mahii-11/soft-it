@@ -1,7 +1,34 @@
 import { Link } from "react-router-dom";
 import { ArrowUp, Mail, MapPin, Phone } from "lucide-react";
-import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaYoutube,
+  FaWhatsapp,
+  FaLinkedin,
+  FaTiktok,
+  FaTelegram,
+  FaGlobe,
+} from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import useSiteInfo from "../hooks/useSiteInfo";
+
+// API এর icon class ("bi bi-facebook", "fab fa-whatsapp-square") থেকে icon বেছে নেওয়া
+const SOCIAL_ICONS = [
+  ["facebook", FaFacebook, "Facebook"],
+  ["instagram", FaInstagram, "Instagram"],
+  ["youtube", FaYoutube, "YouTube"],
+  ["whatsapp", FaWhatsapp, "WhatsApp"],
+  ["linkedin", FaLinkedin, "LinkedIn"],
+  ["tiktok", FaTiktok, "TikTok"],
+  ["telegram", FaTelegram, "Telegram"],
+  ["twitter", FaXTwitter, "X"],
+];
+
+function getSocialIcon(iconClass = "") {
+  const hit = SOCIAL_ICONS.find(([key]) => iconClass.toLowerCase().includes(key));
+  return hit ? { Icon: hit[1], label: hit[2] } : { Icon: FaGlobe, label: "Website" };
+}
 
 const usefulLinks = [
   { label: "About Us", to: "#" },
@@ -17,49 +44,64 @@ const customerCare = [
   { label: "Terms and Conditions", to: "#" },
 ];
 
-const socials = [
-  { label: "Facebook", href: "#", Icon: FaFacebook },
-  { label: "Instagram", href: "#", Icon: FaInstagram },
-  { label: "YouTube", href: "#", Icon: FaYoutube },
-  { label: "X", href: "#", Icon: FaXTwitter },
-];
-
 const iconBadge =
   "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f7931e]/10 text-[#f7931e] ring-1 ring-[#f7931e]/30";
-
-const contacts = [
-  { Icon: MapPin, content: "Shop No. 35, 3rd Floor, Rajlaxmi Complex, Uttara, Dhaka-1230" },
-  { Icon: Phone, content: "+018*********", href: "tel:+018" },
-  { Icon: Mail, content: "support@gadgetglobe.com", href: "mailto:support@gadgetglobe.com" },
-];
 
 const headingClass = "mb-3 text-sm font-bold uppercase tracking-wide text-white";
 const linkClass = "hover:underline underline-offset-2 transition-colors hover:text-[#f7931e]";
 
 export default function Footer() {
+  const { settings, socials, phone, dialPhone } = useSiteInfo();
+
+  // setting-data থেকে যেগুলো এসেছে শুধু সেগুলোই দেখানো হয়
+  const contacts = [
+    settings.address && { Icon: MapPin, content: settings.address },
+    phone && { Icon: Phone, content: phone, href: dialPhone ? `tel:${dialPhone}` : undefined },
+    settings.email && { Icon: Mail, content: settings.email, href: `mailto:${settings.email}` },
+  ].filter(Boolean);
+
   return (
     <footer className="bg-black pb-20 text-white lg:pb-0">
       <div className="container-custom grid gap-6 py-6 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.4fr]">
         {/* Brand */}
         <div>
-          <img src="/images/logo.png" alt="Gadget Globe" className="h-auto w-24" />
-          <p className="mt-3 max-w-[16rem] text-xs leading-5 text-white/80">
-            Your one-stop destination for premium electronics and gadgets. Quality guaranteed, fast delivery.
-          </p>
+          <img
+            src={settings.logo || "/images/logo.png"}
+            alt="Gadget Globe"
+            className="h-auto w-24"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/images/logo.png";
+            }}
+          />
+          {settings.site_description && (
+            <p className="mt-3 max-w-[16rem] text-xs leading-5 text-white/80">
+              {settings.site_description}
+            </p>
+          )}
 
-          <h4 className="mb-3 mt-5 text-sm font-bold uppercase tracking-wide">Follow Us</h4>
-          <div className="flex items-center gap-2">
-            {socials.map(({ label, href, Icon }) => (
-              <a
-                key={label}
-                href={href}
-                aria-label={label}
-                className={iconBadge + " transition-colors hover:bg-[#f7931e] hover:text-black"}
-              >
-                <Icon size={14} />
-              </a>
-            ))}
-          </div>
+          {socials.length > 0 && (
+            <>
+              <h4 className="mb-3 mt-5 text-sm font-bold uppercase tracking-wide">Follow Us</h4>
+              <div className="flex items-center gap-2">
+                {socials.map((s) => {
+                  const { Icon, label } = getSocialIcon(s.icon);
+                  return (
+                    <a
+                      key={s.id}
+                      href={s.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className={iconBadge + " transition-colors hover:bg-[#f7931e] hover:text-black"}
+                    >
+                      <Icon size={14} />
+                    </a>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Useful Links */}
@@ -114,7 +156,7 @@ export default function Footer() {
 
       <div className="border-t border-white/10">
         <div className="container-custom flex flex-col items-center justify-between gap-3 py-3 text-[11px] text-[#f7931e] sm:flex-row">
-          <p>© {new Date().getFullYear()} Gadget Globe. All rights reserved.</p>
+          <p>{settings.copyright || `© ${new Date().getFullYear()} Gadget Globe. All rights reserved.`}</p>
 
           <button
             type="button"

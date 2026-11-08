@@ -1,46 +1,107 @@
 import { Search, ShoppingBag, User, Phone, Mail, Truck, MapPin, Megaphone, Menu, MessageSquare } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getsearchProducts } from "../services/api";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { getsearchProducts, getUserProfile } from "../services/api";
+import { resolveImageUrl } from "../utils/imageUrl";
 import useDebounce from "../hooks/useDebounce";
+import useSiteInfo from "../hooks/useSiteInfo";
+import { formatPrice, getProductPrices } from "./ProductCard";
 import { getTotalCartQuantity, openCart } from "../cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const outlineButton =
   "hidden items-center rounded border border-white/40 px-4 py-2 text-sm font-semibold uppercase text-white transition hover:border-[#ea5b3a] hover:text-[#ea5b3a] lg:inline-flex";
 
-// Mobile quick-contact buttons. Replace the placeholder number with the real WhatsApp number.
-const PHONE = "+15551234567";
-const WHATSAPP_HREF = `https://wa.me/${PHONE.replace(/\D/g, "")}`;
+// Mobile quick-contact buttons (number আসে setting-data / social-data API থেকে)
 const mobileContactButton =
   "flex h-9 w-9 items-center justify-center rounded-full bg-[#ea5b3a] text-white transition active:scale-95 lg:hidden";
 
 // Navbar owns the mobile menu sheet and listens for this event.
 export const OPEN_MOBILE_MENU_EVENT = "open-mobile-menu";
+// Dashboard fires this after a profile update so the header avatar refreshes.
+export const PROFILE_UPDATED_EVENT = "profile-updated";
 
 export default function Header() {
+  const { phone, dialPhone, whatsappNumber } = useSiteInfo();
   const totalCartQuantity = useSelector(getTotalCartQuantity);
+  // useLocation: page change হলে re-render হয়, তাই login/logout এর পর token সঠিক থাকে
+  useLocation();
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+
+  // login করা থাকলে user এর profile photo account icon এ দেখানো হবে
+  const [avatar, setAvatar] = useState(null);
+  useEffect(() => {
+    if (!token) {
+      setAvatar(null);
+      return;
+    }
+    let active = true;
+    const load = async () => {
+      const res = await getUserProfile();
+      if (active) setAvatar(res?.status === true && res?.user?.image ? res.user.image : null);
+    };
+    load();
+    // dashboard এ profile update হলে icon ও update হবে
+    window.addEventListener(PROFILE_UPDATED_EVENT, load);
+    return () => {
+      active = false;
+      window.removeEventListener(PROFILE_UPDATED_EVENT, load);
+    };
+  }, [token]);
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
   const debounceSearch = useDebounce(search, 500);
 
+  // কোন term এর search শেষ হয়েছে - "No results" message দেখানোর জন্য
+  const [searchedTerm, setSearchedTerm] = useState(null);
+
   useEffect(() => {
+    let active = true;
+
     const fetchProducts = async () => {
-      if (!debounceSearch) {
+      if (!debounceSearch.trim()) {
         setProducts([]);
+        setSearchedTerm(null);
         return;
       }
 
-      const result = await getsearchProducts(debounceSearch);
+      let result = [];
+      try {
+        result = await getsearchProducts(debounceSearch);
+      } catch (error) {
+        console.error("Search error", error);
+      }
+      if (!active) return;
       setProducts(result);
+      setSearchedTerm(debounceSearch);
     };
 
     fetchProducts();
+    return () => {
+      active = false;
+    };
   }, [debounceSearch]);
+
+  // typing চলাকালীন পুরনো "no results" দেখানো হবে না
+  const noResults =
+    products.length === 0 && !!searchedTerm && searchedTerm === search && !!search.trim();
+  const closeSearch = () => {
+    setProducts([]);
+    setSearchedTerm(null);
+  };
+
+  // dropdown এর বাইরে click করলে বন্ধ
+  const searchBoxRef = useRef(null);
+  useEffect(() => {
+    const onDown = (e) => {
+      if (searchBoxRef.current && !searchBoxRef.current.contains(e.target)) closeSearch();
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, []);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -49,7 +110,7 @@ export default function Header() {
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && search.trim()) {
       setProducts([]);
-      navigate(`/search-results?q=${encodeURIComponent(search)}`);
+      navigate(`/shop-page?search=${encodeURIComponent(search.trim())}`);
       setSearch("");
     }
   };
@@ -60,9 +121,16 @@ export default function Header() {
         {/* Top utility bar */}
         <div className="hidden bg-[#1a1b1e] text-xs lg:block">
           <div className="container-custom flex h-8 items-center justify-between">
-            <a href="tel:+15551234567" className="flex items-center gap-1.5 font-semibold">
-              <Phone size={13} /> +1 (555) 123-4567
-            </a>
+            {phone ? (
+              <a
+                href={dialPhone ? `tel:${dialPhone}` : undefined}
+                className="flex items-center gap-1.5 font-semibold"
+              >
+                <Phone size={13} /> {phone}
+              </a>
+            ) : (
+              <span />
+            )}
 
             <div className="flex items-center gap-6 font-medium">
               <a
@@ -104,7 +172,7 @@ export default function Header() {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <div className="relative flex-1">
+            <div ref={searchBoxRef} className="relative flex-1">
               <input
                 type="text"
                 value={search}
@@ -114,6 +182,50 @@ export default function Header() {
                 className="h-11 w-full rounded-lg bg-[#1a1b1e] pl-4 pr-11 text-sm text-white outline-none placeholder:text-neutral-400 focus:ring-1 focus:ring-[#ea5b3a] md:rounded"
               />
               <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white" />
+
+              {/* Live search dropdown - input এর ঠিক নিচে, input এর সমান width */}
+              {(products.length > 0 || noResults) && (
+                <div className="absolute left-0 right-0 top-full z-[60] mt-1 max-h-[70vh] overflow-y-auto rounded-md bg-white text-neutral-900 shadow-[0_10px_30px_rgba(0,0,0,0.25)]">
+                  {noResults && (
+                    <p className="px-4 py-5 text-sm text-neutral-500">
+                      No products found for &ldquo;{search}&rdquo;
+                    </p>
+                  )}
+
+                  {products.slice(0, 8).map((product) => {
+                    const { current, original } = getProductPrices(product);
+                    return (
+                      <Link
+                        key={product.id}
+                        to={`/product-details/${product.slug}`}
+                        onClick={() => {
+                          closeSearch();
+                          setSearch("");
+                        }}
+                        className="flex items-center gap-3 border-b border-neutral-100 px-4 py-3 transition last:border-b-0 hover:bg-neutral-50"
+                      >
+                        <img
+                          src={product.image}
+                          alt=""
+                          className="h-8 w-8 shrink-0 object-contain"
+                        />
+                        <span className="min-w-0 truncate text-sm text-neutral-800">
+                          {product.name}
+                        </span>
+                        <span className="shrink-0 text-sm font-bold text-neutral-900">
+                          {product.type === "variable" && "From "}
+                          {formatPrice(current)}
+                        </span>
+                        {original && (
+                          <span className="shrink-0 text-xs text-neutral-400 line-through">
+                            {formatPrice(original)}
+                          </span>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 
@@ -140,78 +252,42 @@ export default function Header() {
               aria-label="Account"
               className="hidden h-11 w-11 items-center justify-center rounded-full bg-white text-[#26282d] transition hover:bg-neutral-200 lg:flex"
             >
-              <User className="h-5 w-5" />
+              {token && avatar ? (
+                <img
+                  src={resolveImageUrl(avatar)}
+                  alt="Profile"
+                  className="h-full w-full rounded-full object-cover"
+                  onError={() => setAvatar(null)}
+                />
+              ) : (
+                <User className="h-5 w-5" />
+              )}
             </Link>
 
-            <a
-              href={WHATSAPP_HREF}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Chat on WhatsApp"
-              className={mobileContactButton}
-            >
-              <FaWhatsapp className="h-[18px] w-[18px]" />
-            </a>
-            <a href={`sms:${PHONE}`} aria-label="Send SMS" className={mobileContactButton}>
-              <MessageSquare className="h-4 w-4" />
-            </a>
-            <a href={`tel:${PHONE}`} aria-label="Call us" className={mobileContactButton}>
-              <Phone className="h-4 w-4" />
-            </a>
+            {whatsappNumber && (
+              <a
+                href={`https://wa.me/${whatsappNumber}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Chat on WhatsApp"
+                className={mobileContactButton}
+              >
+                <FaWhatsapp className="h-[18px] w-[18px]" />
+              </a>
+            )}
+            {dialPhone && (
+              <>
+                <a href={`sms:${dialPhone}`} aria-label="Send SMS" className={mobileContactButton}>
+                  <MessageSquare className="h-4 w-4" />
+                </a>
+                <a href={`tel:${dialPhone}`} aria-label="Call us" className={mobileContactButton}>
+                  <Phone className="h-4 w-4" />
+                </a>
+              </>
+            )}
           </div>
         </div>
       </header>
-
-      {products.length > 0 && (
-        <div className="fixed inset-0 z-[999] bg-black/30 backdrop-blur-sm">
-          <div className="flex justify-center px-3 pt-20 sm:px-6">
-            <div className="max-h-[75vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-white shadow-2xl">
-              {/* Header */}
-              <div className="flex items-center justify-between border-b px-4 py-4 sm:px-6">
-                <h2 className="text-sm font-semibold sm:text-base">
-                  Product Search By:
-                  <span className="ml-1 text-orange-500">{search}</span>
-                </h2>
-
-                <button
-                  onClick={() => setProducts([])}
-                  className="text-sm text-gray-500 hover:text-black"
-                >
-                  Close
-                </button>
-              </div>
-
-              {/* Product List */}
-              <div className="space-y-3 p-3 sm:p-5">
-                {products.slice(0, 8).map((product) => (
-                  <div
-                    key={product.id}
-                    className="flex items-center gap-3 rounded-lg bg-gray-100 p-3 transition hover:shadow-md sm:gap-4 sm:p-4"
-                  >
-                    {/* Image */}
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="h-16 w-16 flex-shrink-0 object-contain sm:h-20 sm:w-20"
-                    />
-
-                    {/* Product Info */}
-                    <div className="flex-1">
-                      <p className="line-clamp-2 text-xs font-medium text-gray-800 sm:text-sm">
-                        {product.name}
-                      </p>
-
-                      <p className="mt-1 text-sm font-semibold text-orange-500 sm:text-base">
-                        Tk. {product.price}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

@@ -67,7 +67,7 @@ export default function DealofDayProducts() {
     return (
       <section className="container-custom py-3 md:py-6">
         <Link
-          to="/shop"
+          to="/shop-page"
           className="group hidden overflow-hidden rounded-lg bg-white shadow-[0_1px_4px_rgba(0,0,0,0.08)] sm:block lg:ml-auto lg:w-[calc((100%-1.25rem)*0.9/2.9)]"
         >
           <img
@@ -83,7 +83,7 @@ export default function DealofDayProducts() {
 
   return (
     <section className="container-custom py-3 md:py-6">
-      <SectionHeading title={flashSale.title || "Gadget Globe Special Deal"} to="/shop">
+      <SectionHeading title={flashSale.title || "Gadget Globe Special Deal"} to="/shop-page">
         <Countdown endTime={flashSale.end_time} />
       </SectionHeading>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,0.9fr)] lg:gap-5">
@@ -92,7 +92,7 @@ export default function DealofDayProducts() {
         </div>
 
         <Link
-          to="/shop"
+          to="/shop-page"
           className="group hidden overflow-hidden rounded-lg bg-white shadow-[0_1px_4px_rgba(0,0,0,0.08)] sm:block"
         >
           <img

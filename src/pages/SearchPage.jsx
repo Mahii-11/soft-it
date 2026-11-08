@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getsearchProducts } from "../services/api";
 import useDebounce from "../hooks/useDebounce";
+import { formatPrice, getProductPrices } from "../components/ProductCard";
 
 export default function SearchPage() {
   const navigate = useNavigate();
@@ -14,26 +15,38 @@ export default function SearchPage() {
 
 
 
+  // কোন term এর search শেষ হয়েছে - "No results" message দেখানোর জন্য
+  const [searchedTerm, setSearchedTerm] = useState(null);
+
   useEffect(() => {
+    let active = true;
 
     const fetchProducts = async () => {
-
-      if (!debounceSearch) {
+      if (!debounceSearch.trim()) {
         setProducts([]);
+        setSearchedTerm(null);
         return;
       }
 
-      const result = await getsearchProducts(debounceSearch);
-
-      console.log("Products:", result);
-
+      let result = [];
+      try {
+        result = await getsearchProducts(debounceSearch);
+      } catch (error) {
+        console.error("Search error", error);
+      }
+      if (!active) return;
       setProducts(result);
-
+      setSearchedTerm(debounceSearch);
     };
 
     fetchProducts();
-
+    return () => {
+      active = false;
+    };
   }, [debounceSearch]);
+
+  const noResults =
+    products.length === 0 && !!searchedTerm && searchedTerm === search && !!search.trim();
   
 
 
@@ -46,7 +59,7 @@ export default function SearchPage() {
   if (e.key === "Enter" && search.trim()) {
 
     setProducts([]);
-    navigate(`/search-results?q=${encodeURIComponent(search)}`);
+    navigate(`/shop-page?search=${encodeURIComponent(search.trim())}`);
     setSearch("");
 
   }
@@ -104,6 +117,16 @@ export default function SearchPage() {
 
             <div className="px-4">
 
+              {noResults && (
+                <div className="flex flex-col items-center py-16 text-center">
+                  <Search className="mb-3 h-12 w-12 text-gray-300" />
+                  <p className="text-base font-semibold text-gray-800">No products found</p>
+                  <p className="mt-1 text-sm text-gray-500">
+                    We couldn&apos;t find anything for &ldquo;{search}&rdquo;. Try a different keyword.
+                  </p>
+                </div>
+              )}
+
               {products.length > 0 && (
   <div className="fixed inset-0 z-[999] bg-black/30 backdrop-blur-sm">
 
@@ -152,8 +175,14 @@ export default function SearchPage() {
                   {product.name}
                 </p>
 
-                <p className="text-orange-500 font-semibold mt-1 text-sm sm:text-base">
-                  Tk. {product.price}
+                <p className="text-orange-500 font-semibold mt-1 text-sm sm:text-base flex items-baseline gap-2">
+                  {product.type === "variable" && "From "}
+                  {formatPrice(getProductPrices(product).current)}
+                  {getProductPrices(product).original && (
+                    <span className="text-xs font-normal text-gray-400 line-through">
+                      {formatPrice(getProductPrices(product).original)}
+                    </span>
+                  )}
                 </p>
 
               </div>

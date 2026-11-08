@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { X } from "lucide-react";
+import useSiteInfo from "../hooks/useSiteInfo";
 
-// Replace the placeholder number with the real WhatsApp number (digits only, with country code).
-const PHONE = "15551234567";
 const DEFAULT_MESSAGE = "Hello! I need help with a product.";
 
 export default function WhatsAppWidget() {
+  // WhatsApp number আসে social-data API এর wa.me link থেকে
+  const { whatsappNumber: PHONE } = useSiteInfo();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState(DEFAULT_MESSAGE);
+
+  // number না এলে (API load হয়নি / link নেই) widget দেখানো হয় না
+  if (!PHONE) return null;
 
   const send = (e) => {
     e.preventDefault();
