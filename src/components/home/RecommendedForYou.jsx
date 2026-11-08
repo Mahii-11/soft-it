@@ -19,7 +19,7 @@ export default function RecommendedForYou() {
         {items.map((item) => (
           <Link
             key={item.id}
-            to={`/category/${item.slug}`}
+            to={`/shop-page?category=${item.id}`}
             className="group flex flex-col items-center gap-2 rounded-md bg-white px-2 py-3 text-center shadow-[0_1px_4px_rgba(0,0,0,0.08)] transition hover:shadow-[0_6px_18px_rgba(0,0,0,0.12)]"
           >
             <img

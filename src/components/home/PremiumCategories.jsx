@@ -4,6 +4,16 @@ import useApiData from "../../hooks/useApiData";
 
 const PLACEHOLDER = "https://via.placeholder.com/150?text=Category";
 
+// featured item -> shop page filtered by its category (+ sub category / child category if set)
+const shopLink = (item) => {
+  const params = new URLSearchParams();
+  if (item.category_id) params.set("category", item.category_id);
+  if (item.sub_category_id) params.set("brand", item.sub_category_id);
+  if (item.child_category_id) params.set("child_category", item.child_category_id);
+  const qs = params.toString();
+  return qs ? `/shop-page?${qs}` : "/shop-page";
+};
+
 export default function PremiumCategories() {
   const { data, loading } = useApiData("premium-categories", getPremimumCategories);
 
@@ -31,7 +41,7 @@ export default function PremiumCategories() {
             : categories.map((item) => (
                 <Link
                   key={item.id}
-                  to={`/category/${item.slug}`}
+                  to={shopLink(item)}
                   className="group flex min-w-0 shrink-0 flex-col items-center gap-1.5 md:gap-3"
                 >
                   <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-transform duration-300 group-hover:-translate-y-1 md:h-[76px] md:w-[76px]">
