@@ -1,10 +1,11 @@
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { Banknote, Check, MapPin, QrCode, ShieldCheck, Truck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Banknote, Check, MapPin, Plus, QrCode, ShieldCheck, Truck } from "lucide-react";
 import { clearCart, getCart, getTotalCartPrice } from "../cart/cartSlice";
 import { createOrder } from "../services/api";
+import { getAddresses } from "../services/addresses";
 
 // Backend payment_method ids. 1 = cash on delivery (existing). 2 for QR is an
 // assumption - confirm the id with the backend before going live.
@@ -90,6 +91,29 @@ export default function CheckoutPage() {
     shipping_address: "",
   });
 
+  // logged-in user: পুরোনো saved address থেকে বেছে নেওয়া যাবে, নতুন করে লিখতে হবে না
+  const token = localStorage.getItem("token") || localStorage.getItem("userToken");
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [addressesLoading, setAddressesLoading] = useState(false);
+  const [addressMode, setAddressMode] = useState("manual"); // "saved" | "manual"
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+
+  useEffect(() => {
+    if (!token) return;
+    setAddressesLoading(true);
+    getAddresses()
+      .then((list) => {
+        setSavedAddresses(list);
+        if (list.length > 0) {
+          setAddressMode("saved");
+          setSelectedAddressId((list.find((a) => a.isDefault) || list[0]).id);
+        }
+      })
+      .finally(() => setAddressesLoading(false));
+  }, [token]);
+
+  const usingSavedAddress = addressMode === "saved" && !!selectedAddressId;
+
   const delivery = DELIVERY_OPTIONS.find((option) => option.value === deliveryType);
   const deliveryFee = delivery.fee;
   const total = subtotal + deliveryFee;
@@ -113,24 +137,35 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (!formData.shipping_name || !formData.order_phone || !formData.shipping_address) {
-      Swal.fire({
-        icon: "warning",
-        title: "Missing Information",
-        text: "Please fill all required fields",
-      });
-      return;
-    }
+    if (usingSavedAddress) {
+      if (!selectedAddressId) {
+        Swal.fire({
+          icon: "warning",
+          title: "Select an Address",
+          text: "Please choose a shipping address",
+        });
+        return;
+      }
+    } else {
+      if (!formData.shipping_name || !formData.order_phone || !formData.shipping_address) {
+        Swal.fire({
+          icon: "warning",
+          title: "Missing Information",
+          text: "Please fill all required fields",
+        });
+        return;
+      }
 
-    const phoneRegex = /^01[3-9]\d{8}$/;
+      const phoneRegex = /^01[3-9]\d{8}$/;
 
-    if (!phoneRegex.test(formData.order_phone)) {
-      Swal.fire({
-        icon: "error",
-        title: "Invalid Phone Number",
-        text: "Please enter a valid Bangladeshi phone number",
-      });
-      return;
+      if (!phoneRegex.test(formData.order_phone)) {
+        Swal.fire({
+          icon: "error",
+          title: "Invalid Phone Number",
+          text: "Please enter a valid Bangladeshi phone number",
+        });
+        return;
+      }
     }
 
     if (paymentType === "qr" && !transactionId.trim()) {
@@ -156,9 +191,13 @@ export default function CheckoutPage() {
 
       const data = new FormData();
       // New /checkout API: server calculates prices, so only ids + qty are sent
-      data.append("name", formData.shipping_name);
-      data.append("phone", formData.order_phone);
-      data.append("address", formData.shipping_address);
+      if (usingSavedAddress) {
+        data.append("address_id", selectedAddressId);
+      } else {
+        data.append("name", formData.shipping_name);
+        data.append("phone", formData.order_phone);
+        data.append("address", formData.shipping_address);
+      }
       data.append("shipping_method", delivery.shippingMethod);
       data.append("payment_method", PAYMENT_METHODS[paymentType]);
       if (paymentType === "qr") {
@@ -237,41 +276,101 @@ export default function CheckoutPage() {
           {/* ================= LEFT ================= */}
           <div className="space-y-5">
             <SectionCard step={1} title="Shipping Details">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="sm:col-span-2">
-                  <label className="mb-1.5 block text-xs font-semibold text-neutral-600">Full Name</label>
-                  <input
-                    name="shipping_name"
-                    value={formData.shipping_name}
-                    onChange={handleChange}
-                    placeholder="Your full name"
-                    className={fieldClass}
-                  />
+              {addressesLoading ? (
+                <p className="text-sm text-neutral-500">Loading your saved addresses...</p>
+              ) : addressMode === "saved" ? (
+                <div className="space-y-3">
+                  <div role="radiogroup" className="grid gap-3 sm:grid-cols-2">
+                    {savedAddresses.map((addr) => (
+                      <button
+                        key={addr.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={selectedAddressId === addr.id}
+                        onClick={() => setSelectedAddressId(addr.id)}
+                        className={`flex flex-col items-start gap-1.5 rounded-xl border p-4 text-left transition ${
+                          selectedAddressId === addr.id
+                            ? "border-[#ea5b3a] bg-[#ea5b3a]/5 ring-1 ring-[#ea5b3a]"
+                            : "border-neutral-200 hover:border-neutral-400"
+                        }`}
+                      >
+                        <span className="flex w-full items-start justify-between gap-2">
+                          <span className="text-sm font-semibold text-neutral-900">
+                            {addr.name}{" "}
+                            <span className="font-normal text-neutral-500">({addr.phone})</span>
+                          </span>
+                          <span
+                            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                              selectedAddressId === addr.id
+                                ? "border-[#ea5b3a] bg-[#ea5b3a] text-white"
+                                : "border-neutral-300"
+                            }`}
+                          >
+                            {selectedAddressId === addr.id && <Check size={12} strokeWidth={3} />}
+                          </span>
+                        </span>
+                        <span className="text-xs text-neutral-500">
+                          {[addr.address, addr.zone, addr.district].filter(Boolean).join(", ")}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setAddressMode("manual")}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#ea5b3a] hover:underline"
+                  >
+                    <Plus size={14} /> Use a different address
+                  </button>
                 </div>
+              ) : (
+                <div className="space-y-4">
+                  {token && savedAddresses.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setAddressMode("saved")}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#ea5b3a] hover:underline"
+                    >
+                      <ArrowLeft size={14} /> Choose from saved addresses
+                    </button>
+                  )}
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="sm:col-span-2">
+                      <label className="mb-1.5 block text-xs font-semibold text-neutral-600">Full Name</label>
+                      <input
+                        name="shipping_name"
+                        value={formData.shipping_name}
+                        onChange={handleChange}
+                        placeholder="Your full name"
+                        className={fieldClass}
+                      />
+                    </div>
 
-                <div>
-                  <label className="mb-1.5 block text-xs font-semibold text-neutral-600">Phone Number</label>
-                  <input
-                    name="order_phone"
-                    value={formData.order_phone}
-                    onChange={handleChange}
-                    inputMode="tel"
-                    placeholder="01XXXXXXXXX"
-                    className={fieldClass}
-                  />
-                </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-semibold text-neutral-600">Phone Number</label>
+                      <input
+                        name="order_phone"
+                        value={formData.order_phone}
+                        onChange={handleChange}
+                        inputMode="tel"
+                        placeholder="01XXXXXXXXX"
+                        className={fieldClass}
+                      />
+                    </div>
 
-                <div>
-                  <label className="mb-1.5 block text-xs font-semibold text-neutral-600">Address</label>
-                  <input
-                    name="shipping_address"
-                    value={formData.shipping_address}
-                    onChange={handleChange}
-                    placeholder="House, road, area"
-                    className={fieldClass}
-                  />
+                    <div>
+                      <label className="mb-1.5 block text-xs font-semibold text-neutral-600">Address</label>
+                      <input
+                        name="shipping_address"
+                        value={formData.shipping_address}
+                        onChange={handleChange}
+                        placeholder="House, road, area"
+                        className={fieldClass}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </SectionCard>
 
             <SectionCard step={2} title="Delivery Area">

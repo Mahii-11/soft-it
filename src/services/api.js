@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_URL = "https://gadget-backend.gadgetglobe.com.bd/api/";
+export const BASE_URL = "https://gadget-backend.gadgetglobe.com.bd/api/";
 
 
 /* For all Get requests */
@@ -204,6 +204,25 @@ export const getOnlineSaleProducts = async () => {
   return res?.data?.data || [];
 }
 
+
+// GET locations/districts -> [{ id, name }]
+export const getDistricts = async () => {
+  const res = await fetchData("locations/districts");
+  if (!res.status) {
+    throw new Error("Districts fetch unsuccessful");
+  }
+  return res.data || [];
+};
+
+// GET locations/districts/{districtId}/zones -> [{ id, name }]
+export const getZonesByDistrict = async (districtId) => {
+  if (!districtId) return [];
+  const res = await fetchData(`locations/districts/${districtId}/zones`);
+  if (!res.status) {
+    throw new Error("Zones fetch unsuccessful");
+  }
+  return res.data || [];
+};
 
 export const getOurLocations = async () => {
   const res = await fetchData("our-store-data");

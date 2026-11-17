@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
-import { MapPin, Plus, ArrowLeft, Check, Pencil, Trash2 } from "lucide-react";
-import {
-  getAddresses,
-  saveAddress,
-  deleteAddress,
-  setDefaultAddress,
-} from "../../services/addresses";
+import { MapPin, Plus, ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { getAddresses, saveAddress, deleteAddress } from "../../services/addresses";
+import { getDistricts, getZonesByDistrict } from "../../services/api";
 
 const BRAND = "#ea5b3a";
 
@@ -13,8 +9,8 @@ const emptyForm = {
   name: "",
   phone: "",
   email: "",
-  district: "",
-  zone: "",
+  districtId: "",
+  zoneId: "",
   address: "",
 };
 
@@ -24,14 +20,35 @@ export default function AddressBook({ user }) {
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [districts, setDistricts] = useState([]);
+  const [zones, setZones] = useState([]);
+  const [zonesLoading, setZonesLoading] = useState(false);
 
   useEffect(() => {
     getAddresses().then(setAddresses);
+    getDistricts().then(setDistricts).catch(() => setDistricts([]));
   }, []);
+
+  const loadZones = async (districtId) => {
+    if (!districtId) {
+      setZones([]);
+      return;
+    }
+    setZonesLoading(true);
+    try {
+      setZones(await getZonesByDistrict(districtId));
+    } catch {
+      setZones([]);
+    } finally {
+      setZonesLoading(false);
+    }
+  };
 
   const openCreate = () => {
     setEditingId(null);
     setError("");
+    setZones([]);
     setForm({
       ...emptyForm,
       name: user?.name || "",
@@ -48,35 +65,54 @@ export default function AddressBook({ user }) {
       name: addr.name,
       phone: addr.phone,
       email: addr.email,
-      district: addr.district,
-      zone: addr.zone,
+      districtId: addr.districtId != null ? String(addr.districtId) : "",
+      zoneId: addr.zoneId != null ? String(addr.zoneId) : "",
       address: addr.address,
     });
     setView("form");
+    loadZones(addr.districtId);
   };
 
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
+  const handleDistrictChange = (e) => {
+    const districtId = e.target.value;
+    setForm((prev) => ({ ...prev, districtId, zoneId: "" }));
+    loadZones(districtId);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.name.trim() || !form.phone.trim() || !form.address.trim()) {
-      setError("Name, phone number and address line are required.");
+    if (
+      !form.name.trim() ||
+      !form.phone.trim() ||
+      !form.address.trim() ||
+      !form.districtId ||
+      !form.zoneId
+    ) {
+      setError("Name, phone number, address, district and zone are required.");
       return;
     }
 
-    const list = await saveAddress({ ...form, ...(editingId && { id: editingId }) });
-    setAddresses(list);
-    setView("list");
+    setSaving(true);
+    setError("");
+    try {
+      const list = await saveAddress({ ...form, ...(editingId && { id: editingId }) });
+      setAddresses(list);
+      setView("list");
+    } catch (err) {
+      setError(err.message || "Failed to save address. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this address?")) return;
     setAddresses(await deleteAddress(id));
   };
-
-  const handleSelect = async (id) => setAddresses(await setDefaultAddress(id));
 
   const inputClass =
     "w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#ea5b3a] focus:ring-4 focus:ring-[#ea5b3a]/10 transition-all";
@@ -127,11 +163,36 @@ export default function AddressBook({ user }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label className={labelClass}>District</label>
-              <input name="district" value={form.district} onChange={handleChange} className={inputClass} />
+              <select
+                name="districtId"
+                value={form.districtId}
+                onChange={handleDistrictChange}
+                className={inputClass}
+              >
+                <option value="">Select District</option>
+                {districts.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className={labelClass}>Zone</label>
-              <input name="zone" value={form.zone} onChange={handleChange} className={inputClass} />
+              <select
+                name="zoneId"
+                value={form.zoneId}
+                onChange={handleChange}
+                disabled={!form.districtId || zonesLoading}
+                className={inputClass}
+              >
+                <option value="">{zonesLoading ? "Loading..." : "Select Zone"}</option>
+                {zones.map((z) => (
+                  <option key={z.id} value={z.id}>
+                    {z.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -154,8 +215,8 @@ export default function AddressBook({ user }) {
             >
               Cancel
             </button>
-            <button type="submit" className={brandBtn}>
-              <Plus className="w-4 h-4" /> Save Address
+            <button type="submit" disabled={saving} className={`${brandBtn} disabled:opacity-60`}>
+              <Plus className="w-4 h-4" /> {saving ? "Saving..." : "Save Address"}
             </button>
           </div>
         </form>
@@ -196,25 +257,26 @@ export default function AddressBook({ user }) {
           {addresses.map((addr) => (
             <div
               key={addr.id}
-              onClick={() => handleSelect(addr.id)}
-              className="relative cursor-pointer rounded-xl p-4 transition-all border-2"
+              className="relative rounded-xl p-4 transition-all border-2"
               style={{ borderColor: addr.isDefault ? BRAND : "#e2e8f0" }}
             >
               <div className="flex items-start gap-3">
                 <div
-                  className="mt-0.5 w-6 h-6 shrink-0 rounded-full flex items-center justify-center border-2"
-                  style={{
-                    background: addr.isDefault ? BRAND : "transparent",
-                    borderColor: addr.isDefault ? BRAND : "#cbd5e1",
-                  }}
+                  className="mt-0.5 w-6 h-6 shrink-0 rounded-full flex items-center justify-center"
+                  style={{ background: addr.isDefault ? BRAND : "#f1f5f9" }}
                 >
-                  {addr.isDefault && <Check className="w-3.5 h-3.5 text-white" />}
+                  <MapPin className="w-3.5 h-3.5" style={{ color: addr.isDefault ? "#fff" : "#94a3b8" }} />
                 </div>
 
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-slate-900">
                     {addr.name}{" "}
                     <span className="font-normal text-sm text-slate-500">({addr.phone})</span>
+                    {addr.isDefault && (
+                      <span className="ml-2 inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide text-white align-middle" style={{ background: BRAND }}>
+                        Default
+                      </span>
+                    )}
                   </p>
                   <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">
                     {[addr.address, addr.zone, addr.district].filter(Boolean).join(", ")}
@@ -224,7 +286,7 @@ export default function AddressBook({ user }) {
                   )}
                 </div>
 
-                <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+                <div className="flex gap-1">
                   <button
                     onClick={() => openEdit(addr)}
                     className="p-1.5 text-slate-400 hover:text-[#ea5b3a] rounded"

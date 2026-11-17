@@ -1,60 +1,70 @@
-// Address book service.
-// TODO: Backend এ address API ready হলে এই ফাইলের function গুলো API call দিয়ে replace করতে হবে।
-// এখন data browser এর localStorage এ (user অনুযায়ী আলাদা key এ) থাকে।
+// Address book service - backed by the live auth/addresses API.
+import { BASE_URL } from "./api";
 
-const storageKey = () => {
-  try {
-    const user = JSON.parse(localStorage.getItem("user") || "null");
-    return `addresses_${user?.id || user?.email || "guest"}`;
-  } catch {
-    return "addresses_guest";
-  }
+const getToken = () => localStorage.getItem("token") || localStorage.getItem("userToken");
+
+const authHeaders = () => {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-const read = () => {
-  try {
-    return JSON.parse(localStorage.getItem(storageKey()) || "[]");
-  } catch {
-    return [];
-  }
+const adaptAddress = (a) => ({
+  id: a.id,
+  name: a.name,
+  phone: a.phone,
+  email: a.email,
+  districtId: a.district_id,
+  district: a.district,
+  zoneId: a.zone_id,
+  zone: a.zone,
+  address: a.address,
+  isDefault: !!a.is_default,
+});
+
+export const getAddresses = async () => {
+  const res = await fetch(`${BASE_URL}auth/addresses`, {
+    headers: { Accept: "application/json", ...authHeaders() },
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!data.status) return [];
+  return (data.addresses || []).map(adaptAddress);
 };
-
-const write = (list) => localStorage.setItem(storageKey(), JSON.stringify(list));
-
-export const getAddresses = async () => read();
 
 export const saveAddress = async (address) => {
-  const list = read();
+  const formData = new FormData();
+  formData.append("name", address.name);
+  formData.append("phone", address.phone);
+  formData.append("email", address.email || "");
+  formData.append("district_id", address.districtId);
+  formData.append("zone_id", address.zoneId);
+  formData.append("address", address.address);
 
-  if (address.id) {
-    const updated = list.map((a) =>
-      a.id === address.id ? { ...a, ...address } : a
-    );
-    write(updated);
-    return updated;
+  const url = address.id
+    ? `${BASE_URL}auth/addresses/${address.id}`
+    : `${BASE_URL}auth/addresses`;
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { Accept: "application/json", ...authHeaders() },
+    body: formData,
+  });
+  const data = await res.json().catch(() => ({}));
+
+  if (!data.status) {
+    throw new Error(data.message || "Failed to save address.");
   }
-
-  const created = {
-    ...address,
-    id: Date.now(),
-    isDefault: list.length === 0,
-  };
-  const next = [...list, created];
-  write(next);
-  return next;
+  return getAddresses();
 };
 
 export const deleteAddress = async (id) => {
-  let list = read().filter((a) => a.id !== id);
-  if (list.length && !list.some((a) => a.isDefault)) {
-    list[0] = { ...list[0], isDefault: true };
-  }
-  write(list);
-  return list;
+  await fetch(`${BASE_URL}auth/addresses/${id}`, {
+    method: "DELETE",
+    headers: { Accept: "application/json", ...authHeaders() },
+  });
+  return getAddresses();
 };
 
-export const setDefaultAddress = async (id) => {
-  const list = read().map((a) => ({ ...a, isDefault: a.id === id }));
-  write(list);
-  return list;
-};
+// NOTE: backend এ এখনো "set default address" এর আলাদা কোনো endpoint নেই
+// (is_default শুধু নতুন address create এর সময় backend নিজে থেকে সেট করে -
+// প্রথম address টা default হয়)। তাই আপাতত এই function টা শুধু list refresh করে।
+export const setDefaultAddress = async () => getAddresses();
