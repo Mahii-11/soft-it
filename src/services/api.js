@@ -196,15 +196,6 @@ export const getDealofDayProducts = async () => {
 }
 
 
-export const getOnlineSaleProducts = async () => {
-  const res = await fetchData("offer-products");
-  if (!res.success) {
-    throw new Error("Online Sale Products fetch unsuccessful")
-  }
-  return res?.data?.data || [];
-}
-
-
 // GET locations/districts -> [{ id, name }]
 export const getDistricts = async () => {
   const res = await fetchData("locations/districts");

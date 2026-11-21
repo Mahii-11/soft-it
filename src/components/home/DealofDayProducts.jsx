@@ -49,6 +49,18 @@ function Countdown({ endTime }) {
 
 export default function DealofDayProducts() {
   const { data, loading } = useApiData("flash-sale", getDealofDayProducts);
+  const [now, setNow] = useState(Date.now());
+
+  // re-render the moment the countdown hits zero so the section flips to the "ended" message
+  const endAt = toTimestamp(data?.flashSale?.end_time);
+  useEffect(() => {
+    if (Number.isNaN(endAt)) return;
+    const wait = endAt - Date.now();
+    if (wait <= 0) return;
+    // setTimeout caps at ~24.8 days; re-check periodically for longer offers
+    const t = setTimeout(() => setNow(Date.now()), Math.min(wait, 2 ** 31 - 1));
+    return () => clearTimeout(t);
+  }, [endAt, now]);
 
   if (loading) {
     return (
@@ -62,21 +74,20 @@ export default function DealofDayProducts() {
   const products = data?.products ?? [];
   const bannerImage = flashSale?.image || "/images/banner%20square.jpg";
   const bannerAlt = flashSale?.title || "Special offer banner";
-  // TEMP: no flash sale data -> show only the banner. Revert to `return null` later.
-  if (!flashSale?.is_running || products.length === 0) {
+
+  // offer over (not running / time is up / nothing on sale) -> no banner, no products, just a message
+  const ended = !flashSale?.is_running || products.length === 0 || now >= toTimestamp(flashSale.end_time);
+  if (ended) {
     return (
       <section className="container-custom py-3 md:py-6">
-        <Link
-          to="/shop-page"
-          className="group hidden overflow-hidden rounded-lg bg-white shadow-[0_1px_4px_rgba(0,0,0,0.08)] sm:block lg:ml-auto lg:w-[calc((100%-1.25rem)*0.9/2.9)]"
-        >
-          <img
-            src={bannerImage}
-            alt={bannerAlt}
-            draggable={false}
-            className="aspect-square h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-          />
-        </Link>
+        <div className="rounded-lg bg-white px-4 py-10 text-center shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+          <h2 className="font-sans text-base font-bold text-neutral-900 md:text-xl">
+            This offer has ended
+          </h2>
+          <p className="mt-1 text-sm text-neutral-500">
+            Stay tuned, a new special offer is coming soon.
+          </p>
+        </div>
       </section>
     );
   }
