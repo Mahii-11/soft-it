@@ -329,7 +329,7 @@ export default function ShopPage() {
           {!filterOptions && loading ? (
             <SidebarSkeleton />
           ) : (
-          <div className="space-y-8 lg:max-h-[calc(100vh-11rem)] lg:overflow-y-auto lg:pr-3 filter-scrollbar">
+          <div className="space-y-8 lg:pr-3">
             <div className="hidden lg:block">
               <h2 className="text-lg font-bold font-serif mb-4">Filter Option</h2>
             </div>
