@@ -1,8 +1,8 @@
 import { Check, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import ProductCard, { formatPrice } from "../../components/ProductCard";
-import { getAllBrands, getShopProducts } from "../../services/api";
+import { getAllBrands, getShopProducts, getTopMenuData } from "../../services/api";
 
 const LIMIT = 12;
 
@@ -85,6 +85,16 @@ export default function ShopPage() {
     if (!keepPage) next.delete("page");
     setSearchParams(next);
   };
+
+  // lock body scroll while the mobile filter drawer is open
+  useEffect(() => {
+    if (!mobileFiltersOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileFiltersOpen]);
 
   // ---- fetch ----
   useEffect(() => {
@@ -198,6 +208,40 @@ export default function ShopPage() {
       label: `Price: ${formatPrice(minPrice || priceBounds.min)} - ${formatPrice(maxPrice || priceBounds.max)}`,
     });
 
+  // ---- breadcrumb + page title (Home > Category > Sub category > Child) ----
+  // names come from the navbar menu (same ids the menu links use)
+  const [menu, setMenu] = useState([]);
+  useEffect(() => {
+    getTopMenuData().then((d) => setMenu(d || [])).catch(() => {});
+  }, []);
+
+  const menuCat = menu.find((m) => String(m.id) === category);
+  const menuSub = (menuCat?.sub_categories || []).find((s) => String(s.id) === brand);
+  const menuChild = (menuSub?.child_categories || []).find((c) => String(c.id) === childCategory);
+
+  const categoryName = menuCat?.name || categories.find((c) => String(c.id) === category)?.name;
+  const brandName = menuSub?.name || brands.find((b) => String(b.id) === brand)?.name;
+  const childName = menuChild?.name;
+
+  const crumbs = [{ label: "Home", to: "/" }];
+  if (!category && !brand && !childCategory && !search) crumbs.push({ label: "Shop" });
+  if (category && categoryName) crumbs.push({ label: categoryName, to: `/shop-page?category=${category}` });
+  if (brand && brandName)
+    crumbs.push({
+      label: brandName,
+      to: `/shop-page?${category ? `category=${category}&` : ""}brand=${brand}`,
+    });
+  if (childCategory && childName)
+    crumbs.push({
+      label: childName,
+      to: `/shop-page?${category ? `category=${category}&` : ""}${brand ? `brand=${brand}&` : ""}child_category=${childCategory}`,
+    });
+  if (search) crumbs.push({ label: `Search: ${search}` });
+
+  const pageTitle = search
+    ? `Search: ${search}`
+    : childName || brandName || categoryName || "All Products";
+
   const removeFilter = (type) => {
     if (type === "price") updateParams({ min_price: "", max_price: "" });
     else if (type === "brand") updateParams({ brand: "", child_category: "" });
@@ -241,19 +285,39 @@ export default function ShopPage() {
     <div className="min-h-screen bg-white text-gray-900 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 md:pt-6 md:pb-12 gap-8 flex flex-col lg:flex-row">
         {/* Left side */}
+        {/* Mobile overlay */}
         <div
-          className={`lg:w-64 shrink-0 lg:self-start lg:sticky lg:top-40${
-            mobileFiltersOpen ? "block" : "hidden lg:block"
+          onClick={() => setMobileFiltersOpen(false)}
+          className={`fixed inset-0 z-[100] bg-black/50 transition-opacity duration-300 lg:hidden ${
+            mobileFiltersOpen ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
+        />
+        <aside
+          className={`fixed inset-y-0 left-0 z-[110] flex w-[85%] max-w-xs flex-col bg-white shadow-xl transition-transform duration-300 ease-out
+            lg:z-auto lg:w-64 lg:max-w-none lg:translate-x-0 lg:self-start lg:sticky lg:top-40 lg:bg-transparent lg:shadow-none lg:block shrink-0 ${
+              mobileFiltersOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
         >
+          {/* Mobile drawer header */}
+          <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 lg:hidden">
+            <span className="text-base font-bold">Filters</span>
+            <button
+              onClick={() => setMobileFiltersOpen(false)}
+              aria-label="Close filters"
+              className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-gray-100"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 lg:overflow-visible lg:p-0">
           {!filterOptions && loading ? (
             <SidebarSkeleton />
           ) : (
           <div className="space-y-8 lg:max-h-[calc(100vh-11rem)] lg:overflow-y-auto lg:pr-3 filter-scrollbar">
-            <div>
+            <div className="hidden lg:block">
               <h2 className="text-lg font-bold font-serif mb-4">Filter Option</h2>
             </div>
-
             {/* Category */}
             {categories.length > 0 && (
               <div>
@@ -368,21 +432,86 @@ export default function ShopPage() {
             )}
           </div>
           )}
-        </div>
+          </div>
+
+          {/* Mobile drawer footer */}
+          <div className="flex gap-3 border-t border-gray-200 p-4 pb-24 lg:hidden">
+            {activeFilters.length > 0 && (
+              <button
+                onClick={clearAll}
+                className="flex-1 rounded-md border border-gray-300 py-2.5 text-sm font-medium"
+              >
+                Clear All
+              </button>
+            )}
+            <button
+              onClick={() => setMobileFiltersOpen(false)}
+              className="flex-1 rounded-md bg-gray-900 py-2.5 text-sm font-semibold text-white"
+            >
+              {loading ? "Loading..." : `Show ${total} results`}
+            </button>
+          </div>
+        </aside>
 
         {/* Right side */}
         <div className="flex-1 min-w-0">
-          <div className="lg:hidden mb-4">
-            <button
-              onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-              className="flex items-center justify-center space-x-2 text-gray-900 font-medium border border-gray-200 px-4 py-2 rounded-md w-full"
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              <span>{mobileFiltersOpen ? "Hide Filters" : "Show Filters"}</span>
-            </button>
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="mb-3 flex flex-wrap items-center gap-1 text-sm text-gray-500">
+            {crumbs.map((c, i) => {
+              const last = i === crumbs.length - 1;
+              return (
+                <span key={`${c.label}-${i}`} className="flex items-center gap-1">
+                  {i > 0 && <ChevronRight className="h-3.5 w-3.5 text-gray-400" />}
+                  {last || !c.to ? (
+                    <span className={last ? "font-medium text-gray-900" : ""}>{c.label}</span>
+                  ) : (
+                    <Link to={c.to} className="hover:text-accent transition-colors">
+                      {c.label}
+                    </Link>
+                  )}
+                </span>
+              );
+            })}
+          </nav>
+
+          {/* Title + filter button + sort */}
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <button
+                onClick={() => setMobileFiltersOpen(true)}
+                aria-label="Open filters"
+                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white lg:hidden"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                {activeFilters.length > 0 && (
+                  <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white">
+                    {activeFilters.length}
+                  </span>
+                )}
+              </button>
+              <h1 className="truncate text-xl font-bold md:text-2xl">{pageTitle}</h1>
+            </div>
+
+            <div className="relative shrink-0">
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                aria-label="Sort products"
+                className="appearance-none border border-gray-200 rounded-md py-1.5 pl-3 pr-8 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+              >
+                {SORT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                <ChevronDown className="w-4 h-4" />
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-3">
             <div className="text-sm text-gray-500 whitespace-nowrap">
               {loading ? (
                 <span className="inline-block h-4 w-40 animate-pulse rounded bg-gray-200 align-middle" />
@@ -417,25 +546,6 @@ export default function ShopPage() {
               </div>
             )}
 
-            <div className="flex items-center space-x-2 whitespace-nowrap">
-              <span className="text-sm text-gray-600">Sort By:</span>
-              <div className="relative">
-                <select
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value)}
-                  className="appearance-none border border-gray-200 rounded-md py-1.5 pl-3 pr-8 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
-                >
-                  {SORT_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                  <ChevronDown className="w-4 h-4" />
-                </div>
-              </div>
-            </div>
           </div>
 
           {error ? (
