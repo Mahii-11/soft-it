@@ -1,6 +1,6 @@
 import { Check, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import ProductCard, { formatPrice } from "../../components/ProductCard";
 import { getAllBrands, getShopProducts, getTopMenuData } from "../../services/api";
 
@@ -56,6 +56,8 @@ function SidebarSkeleton() {
 
 export default function ShopPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  // /brand/:slug -> same shop page, restricted to one brand
+  const { slug: brandSlug = "" } = useParams();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [sort, setSort] = useState("default");
 
@@ -96,6 +98,11 @@ export default function ShopPage() {
     };
   }, [mobileFiltersOpen]);
 
+  // different brand page -> drop the previous brand's filter options
+  useEffect(() => {
+    setFilterOptions(null);
+  }, [brandSlug]);
+
   // ---- fetch ----
   useEffect(() => {
     let cancelled = false;
@@ -108,6 +115,7 @@ export default function ShopPage() {
       color,
       search,
       brand,
+      brand_slug: brandSlug,
       child_category: childCategory,
       min_price: minPrice,
       max_price: maxPrice,
@@ -119,7 +127,7 @@ export default function ShopPage() {
         setProducts(products);
         setMeta(meta);
         // keep the full option lists while filters are applied, so options don't vanish
-        const hasFilter = category || size || color || search || brand || childCategory || minPrice || maxPrice;
+        const hasFilter = brandSlug || category || size || color || search || brand || childCategory || minPrice || maxPrice;
         setFilterOptions((prev) => (!prev || !hasFilter ? filters : prev));
       })
       .catch((err) => {
@@ -133,14 +141,14 @@ export default function ShopPage() {
     return () => {
       cancelled = true;
     };
-  }, [category, size, color, search, brand, childCategory, minPrice, maxPrice, page]);
+  }, [category, size, color, search, brand, brandSlug, childCategory, minPrice, maxPrice, page]);
 
   // brand names for the "Active Filter" chip (brands come from the navbar menu)
   const [brands, setBrands] = useState([]);
   useEffect(() => {
-    if (!brand) return;
+    if (!brand && !brandSlug) return;
     getAllBrands().then(setBrands).catch(() => {});
-  }, [brand]);
+  }, [brand, brandSlug]);
 
   const categories = filterOptions?.categories || [];
   const sizes = filterOptions?.sizes || [];
@@ -222,9 +230,16 @@ export default function ShopPage() {
   const categoryName = menuCat?.name || categories.find((c) => String(c.id) === category)?.name;
   const brandName = menuSub?.name || brands.find((b) => String(b.id) === brand)?.name;
   const childName = menuChild?.name;
+  const pageBrandName = brandSlug
+    ? brands.find((b) => b.slug === brandSlug)?.name ||
+      brandSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    : "";
 
   const crumbs = [{ label: "Home", to: "/" }];
-  if (!category && !brand && !childCategory && !search) crumbs.push({ label: "Shop" });
+  if (brandSlug) {
+    crumbs.push({ label: "All Brands", to: "/all-brands" });
+    crumbs.push({ label: pageBrandName, to: `/brand/${brandSlug}` });
+  } else if (!category && !brand && !childCategory && !search) crumbs.push({ label: "Shop" });
   if (category && categoryName) crumbs.push({ label: categoryName, to: `/shop-page?category=${category}` });
   if (brand && brandName)
     crumbs.push({
@@ -240,7 +255,7 @@ export default function ShopPage() {
 
   const pageTitle = search
     ? `Search: ${search}`
-    : childName || brandName || categoryName || "All Products";
+    : childName || brandName || pageBrandName || categoryName || "All Products";
 
   const removeFilter = (type) => {
     if (type === "price") updateParams({ min_price: "", max_price: "" });

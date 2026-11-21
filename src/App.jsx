@@ -92,6 +92,11 @@ const router = createBrowserRouter([
       {
         path: "/shop-page",
         element: <ShopPage />
+      },
+
+      {
+        path: "/brand/:slug",
+        element: <ShopPage />
       }
  
   
