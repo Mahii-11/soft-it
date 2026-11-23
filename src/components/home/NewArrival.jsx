@@ -1,10 +1,10 @@
-import { getNewArrivalProducts } from "../../services/api";
+import { getTrendingProducts } from "../../services/api";
 import useApiData from "../../hooks/useApiData";
 import ProductSlider, { ProductSliderSkeleton } from "./ProductSlider";
 import SectionHeading from "./SectionHeading";
 
 export default function NewArrival() {
-  const { data, loading } = useApiData("new-arrival", getNewArrivalProducts);
+  const { data, loading } = useApiData("trending", getTrendingProducts);
   const products = data ?? [];
 
   if (!loading && products.length === 0) return null;

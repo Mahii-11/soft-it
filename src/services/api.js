@@ -187,6 +187,15 @@ export const getNewArrivalProducts = async () => {
     return res.data || [];
 }
 
+// "New Trending" section: [{ id, name, slug, type, image, price, offer_price, discount_percent, ... }]
+export const getTrendingProducts = async () => {
+    const res = await fetchData("trending-products");
+    if (!res.status) {
+        throw new Error("Trending products fetch unsuccessful");
+    }
+    return res.data || [];
+}
+
 export const getDealofDayProducts = async () => {
     const res = await fetchData("flash-sale-products");
     if (!res.status) {

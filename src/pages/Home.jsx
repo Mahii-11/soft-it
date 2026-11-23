@@ -5,7 +5,7 @@ import MostViewedProducts from "../components/home/MostViewedProducts";
 import PremiumDualBanner from "../components/home/PremiumDualBanner";
 import RecommendedForYou from "../components/home/RecommendedForYou";
 import NewArrival from "../components/home/NewArrival";
-import CustomerFavorites from "../components/home/CustomerFavorites";
+// import CustomerFavorites from "../components/home/CustomerFavorites"; // same API as Top Picks - re-enable when it gets its own API
 import BrandsGrid from "../components/home/BrandsGrid";
 import WhyShopWithUs from "../components/home/WhyShopWithUs";
 
@@ -20,7 +20,7 @@ export default function Home() {
       <PremiumDualBanner />
       <RecommendedForYou />
       <NewArrival />
-      <CustomerFavorites />
+      {/* <CustomerFavorites /> */}
       <BrandsGrid />
       <WhyShopWithUs />
     </div>

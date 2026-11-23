@@ -1,31 +1,62 @@
+import { useRef, useState } from "react";
+import { ArrowRight, ArrowUp } from "lucide-react";
 import { getMostViewedProducts } from "../../services/api";
 import useApiData from "../../hooks/useApiData";
-import ProductSlider, { ProductSliderSkeleton } from "./ProductSlider";
+import ProductCard from "../ProductCard";
+import { ProductSliderSkeleton } from "./ProductSlider";
 
-const TRENDING_BREAKPOINTS = {
-  320: { slidesPerView: 2, spaceBetween: 8 },
-  640: { slidesPerView: 3.2, spaceBetween: 12 },
-  1024: { slidesPerView: 5, spaceBetween: 12 },
-};
+// one row on desktop (5 columns); View More adds another row each time
+const PAGE_SIZE = 5;
+
+const buttonClass =
+  "inline-flex items-center gap-2 rounded bg-[#26282d] px-5 py-2 text-xs font-semibold text-white transition hover:bg-black";
 
 export default function MostViewedProducts() {
   const { data, loading } = useApiData("most-viewed", getMostViewedProducts);
-  const products = (data ?? []).slice(0, 5);
+  const [visible, setVisible] = useState(PAGE_SIZE);
+  const sectionRef = useRef(null);
+  const products = data ?? [];
 
   if (!loading && products.length === 0) return null;
 
   return (
-    <section className="container-custom py-3 md:py-6">
-      <div className="min-w-0">
-        <h2 className="mb-4 font-sans text-base font-bold text-neutral-900 md:text-xl">
-          Top Picks
-        </h2>
-        {loading ? (
-          <ProductSliderSkeleton count={5} />
-        ) : (
-          <ProductSlider products={products} breakpoints={TRENDING_BREAKPOINTS} />
-        )}
-      </div>
+    <section ref={sectionRef} className="container-custom scroll-mt-32 py-3 md:py-6">
+      <h2 className="mb-4 font-sans text-base font-bold text-neutral-900 md:text-xl">
+        Top Picks
+      </h2>
+
+      {loading ? (
+        <ProductSliderSkeleton count={PAGE_SIZE} />
+      ) : (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {products.slice(0, visible).map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      )}
+
+      {/* View More reveals more products here (no navigation); at the end View Less collapses.
+          Nothing to expand (<= one row) -> no button. */}
+      {!loading && products.length > PAGE_SIZE && (
+        <div className="mt-6 flex justify-center">
+          {visible < products.length ? (
+            <button type="button" onClick={() => setVisible((v) => v + PAGE_SIZE)} className={buttonClass}>
+              View More <ArrowRight size={14} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setVisible(PAGE_SIZE);
+                sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className={buttonClass}
+            >
+              View Less <ArrowUp size={14} />
+            </button>
+          )}
+        </div>
+      )}
     </section>
   );
 }

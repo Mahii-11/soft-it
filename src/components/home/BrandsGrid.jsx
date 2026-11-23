@@ -24,6 +24,9 @@ const FALLBACK_BRANDS = [
   image: `/images/${file}`,
 }));
 
+// + the "View All Brands" cell = 14 cells = 2 full rows on desktop (7 columns), same as the loaded grid
+const SKELETON_COUNT = 13;
+
 const cellClass =
   "flex h-16 items-center justify-center border-b border-r border-[#dfe1e5] transition-colors duration-300 md:h-[120px]";
 
@@ -37,8 +40,10 @@ export default function BrandsGrid() {
     <section className="container-custom pt-3 md:pt-[35px]">
       <div className="grid grid-cols-3 gap-0 border-l border-t border-[#dfe1e5] sm:grid-cols-4 lg:grid-cols-[repeat(7,minmax(0,1fr))]">
         {loading
-          ? Array.from({ length: 14 }).map((_, i) => (
-              <div key={i} className={`${cellClass} animate-pulse bg-white`} />
+          ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+              <div key={i} className={`${cellClass} bg-white`}>
+                <div className="h-5 w-3/5 max-w-[120px] animate-pulse rounded bg-neutral-200 md:h-8" />
+              </div>
             ))
           : brands.map((brand) => {
               const logo = brand.image || brand.logo;
