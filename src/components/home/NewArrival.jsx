@@ -11,7 +11,7 @@ export default function NewArrival() {
 
   return (
     <section className="container-custom py-3 md:py-6">
-      <SectionHeading title="New Trending" to="/trending-products" />
+      <SectionHeading title="New Trending" to="/new-trending" />
       {loading ? <ProductSliderSkeleton /> : <ProductSlider products={products} />}
     </section>
   );

@@ -238,7 +238,7 @@ useEffect(() => {
             )}
           </NavLink>
 
-          <NavLink to="/online-sale" className={bottomLinkClass}>
+          <NavLink to="/special-offer" className={bottomLinkClass}>
             {({ isActive }) => (
               <>
                 <ActiveBar isActive={isActive} />

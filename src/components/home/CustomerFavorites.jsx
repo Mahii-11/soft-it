@@ -5,7 +5,7 @@ import useApiData from "../../hooks/useApiData";
 import ProductCard from "../ProductCard";
 import { ProductSliderSkeleton } from "./ProductSlider";
 
-// products shown on the home page; "View More" opens /top-picks with all of them
+// products shown on the home page; "View More" opens /customer-top-picks with all of them
 const HOME_COUNT = 10;
 
 const buttonClass =
@@ -34,7 +34,7 @@ export default function CustomerFavorites() {
       )}
 
       <div className="mt-6 flex justify-center">
-        <Link to="/top-picks" className={buttonClass}>
+        <Link to="/customer-top-picks" className={buttonClass}>
           View More <ArrowRight size={14} />
         </Link>
       </div>

@@ -58,7 +58,7 @@ const router = createBrowserRouter([
 
       {
 
-        path: "/online-sale",
+        path: "/special-offer",
         element: <OnlineSale/>
       },
 
@@ -103,12 +103,12 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "/trending-products",
+        path: "/new-trending",
         element: <AllTrending />
       },
 
       {
-        path: "/top-picks",
+        path: "/customer-top-picks",
         element: <AllTopPicks />
       },
 

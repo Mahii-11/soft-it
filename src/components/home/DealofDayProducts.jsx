@@ -14,36 +14,24 @@ const FLASH_BREAKPOINTS = {
 // API sends "YYYY-MM-DD HH:mm:ss"
 export const toTimestamp = (value) => (value ? new Date(value.replace(" ", "T")).getTime() : NaN);
 
+// Shows the real end date, e.g. "Ends: 1 Feb 2027, 7:25 PM"
 export function Countdown({ endTime }) {
   const end = toTimestamp(endTime);
-  const [now, setNow] = useState(Date.now());
-
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   if (Number.isNaN(end)) return null;
 
-  const left = Math.max(0, Math.floor((end - now) / 1000));
-  const parts = [
-    { value: Math.floor(left / 3600), label: "HRS" },
-    { value: Math.floor((left % 3600) / 60), label: "MINS" },
-    { value: left % 60, label: "SECS" },
-  ];
+  const date = new Date(end).toLocaleString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 
   return (
-    <div className="flex items-center gap-1">
-      {parts.map((part, i) => (
-        <div key={part.label} className="flex items-center gap-1">
-          {i > 0 && <span className="text-sm font-bold text-neutral-700">:</span>}
-          <div className="flex h-8 min-w-[34px] flex-col items-center justify-center rounded bg-[#ea5b3a] px-1 leading-none text-white">
-            <span className="text-xs font-bold">{String(part.value).padStart(2, "0")}</span>
-            <span className="mt-0.5 text-[7px] font-medium">{part.label}</span>
-          </div>
-        </div>
-      ))}
-    </div>
+    <span className="rounded bg-[#ea5b3a] px-2.5 py-1.5 text-xs font-semibold leading-none text-white">
+      Ends: {date}
+    </span>
   );
 }
 
@@ -98,7 +86,7 @@ export default function DealofDayProducts() {
 
   return (
     <section className="container-custom py-3 md:py-6">
-      <SectionHeading title={flashSale.title || "Gadget Globe Special Deal"} to="/online-sale">
+      <SectionHeading title={flashSale.title || "Gadget Globe Special Deal"} to="/special-offer">
         <Countdown endTime={flashSale.end_time} />
       </SectionHeading>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,0.9fr)] lg:gap-5">
