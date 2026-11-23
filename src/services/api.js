@@ -216,7 +216,7 @@ export const getTopPicksProducts = async () => {
 
 // "View More" page of Customer Top Picks: every top-pick product
 export const getAllTopPicksProducts = async () => {
-    const res = await fetchData("all-top-picks-products");
+    const res = await fetchData("all-top-picks-product");
     if (!res.status) {
         throw new Error("All top picks products fetch unsuccessful");
     }
