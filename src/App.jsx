@@ -15,6 +15,8 @@ import AllBrands from "./pages/AllBrands";
 import TrackOrderPage from "./pages/TrackOrderPage";
 import ShopPage from "./pages/shoppages/ShopPage";
 import InfoPage from "./pages/InfoPage";
+import AllTopPicks from "./pages/AllTopPicks";
+import AllTrending from "./pages/AllTrending";
 
 const router = createBrowserRouter([
   {
@@ -98,6 +100,16 @@ const router = createBrowserRouter([
       {
         path: "/brand/:slug",
         element: <ShopPage />
+      },
+
+      {
+        path: "/trending-products",
+        element: <AllTrending />
+      },
+
+      {
+        path: "/top-picks",
+        element: <AllTopPicks />
       },
 
       {

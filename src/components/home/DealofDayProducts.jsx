@@ -12,9 +12,9 @@ const FLASH_BREAKPOINTS = {
 };
 
 // API sends "YYYY-MM-DD HH:mm:ss"
-const toTimestamp = (value) => (value ? new Date(value.replace(" ", "T")).getTime() : NaN);
+export const toTimestamp = (value) => (value ? new Date(value.replace(" ", "T")).getTime() : NaN);
 
-function Countdown({ endTime }) {
+export function Countdown({ endTime }) {
   const end = toTimestamp(endTime);
   const [now, setNow] = useState(Date.now());
 
@@ -98,7 +98,7 @@ export default function DealofDayProducts() {
 
   return (
     <section className="container-custom py-3 md:py-6">
-      <SectionHeading title={flashSale.title || "Gadget Globe Special Deal"} to="/shop-page">
+      <SectionHeading title={flashSale.title || "Gadget Globe Special Deal"} to="/online-sale">
         <Countdown endTime={flashSale.end_time} />
       </SectionHeading>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,0.9fr)] lg:gap-5">

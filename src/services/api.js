@@ -187,6 +187,42 @@ export const getNewArrivalProducts = async () => {
     return res.data || [];
 }
 
+// Arrow of the "New Trending" section: every trending product
+export const getAllTrendingProducts = async () => {
+    const res = await fetchData("all-trending-products");
+    if (!res.status) {
+        throw new Error("All trending products fetch unsuccessful");
+    }
+    return res.data || [];
+}
+
+// "Hot Deal" page + Special Offer arrow: every flash sale product (flash_sale has no product_slug here)
+export const getAllFlashSaleProducts = async () => {
+    const res = await fetchData("all-flash-sale-products");
+    if (!res.status) {
+        throw new Error("All flash sale products fetch unsuccessful");
+    }
+    return { flashSale: res.flash_sale || null, products: res.data || [] };
+}
+
+// "Customer Top Picks" section: same product shape as the other home sections
+export const getTopPicksProducts = async () => {
+    const res = await fetchData("top-picks-products");
+    if (!res.status) {
+        throw new Error("Top picks products fetch unsuccessful");
+    }
+    return res.data || [];
+}
+
+// "View More" page of Customer Top Picks: every top-pick product
+export const getAllTopPicksProducts = async () => {
+    const res = await fetchData("all-top-picks-products");
+    if (!res.status) {
+        throw new Error("All top picks products fetch unsuccessful");
+    }
+    return res.data || [];
+}
+
 // "New Trending" section: [{ id, name, slug, type, image, price, offer_price, discount_percent, ... }]
 export const getTrendingProducts = async () => {
     const res = await fetchData("trending-products");
