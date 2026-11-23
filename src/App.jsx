@@ -14,6 +14,7 @@ import OrderDetails from "./components/dashboard/OrderDetails";
 import AllBrands from "./pages/AllBrands";
 import TrackOrderPage from "./pages/TrackOrderPage";
 import ShopPage from "./pages/shoppages/ShopPage";
+import InfoPage from "./pages/InfoPage";
 
 const router = createBrowserRouter([
   {
@@ -97,6 +98,11 @@ const router = createBrowserRouter([
       {
         path: "/brand/:slug",
         element: <ShopPage />
+      },
+
+      {
+        path: "/page/:slug",
+        element: <InfoPage />
       }
  
   

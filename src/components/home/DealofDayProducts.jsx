@@ -74,6 +74,10 @@ export default function DealofDayProducts() {
   const products = data?.products ?? [];
   const bannerImage = flashSale?.image || "/images/banner%20square.jpg";
   const bannerAlt = flashSale?.title || "Special offer banner";
+  // banner click -> product details page of the flash sale's featured product
+  const bannerLink = flashSale?.product_slug
+    ? `/product-details/${flashSale.product_slug}`
+    : "/shop-page";
 
   // offer over (not running / time is up / nothing on sale) -> no banner, no products, just a message
   const ended = !flashSale?.is_running || products.length === 0 || now >= toTimestamp(flashSale.end_time);
@@ -103,7 +107,7 @@ export default function DealofDayProducts() {
         </div>
 
         <Link
-          to="/shop-page"
+          to={bannerLink}
           className="group hidden overflow-hidden rounded-lg bg-white shadow-[0_1px_4px_rgba(0,0,0,0.08)] sm:block"
         >
           <img

@@ -196,6 +196,24 @@ export const getDealofDayProducts = async () => {
 }
 
 
+// Footer pages. Slugs from the API can carry a trailing slash ("about-us/"), so normalise them.
+export const cleanPageSlug = (slug = "") => slug.replace(/^\/+|\/+$/g, "");
+
+// GET pages/{type} (type: "information" | "policy") -> [{ id, page_name, slug, type }]
+export const getPagesByType = async (type) => {
+    const res = await fetchData(`pages/${type}`);
+    if (!res.status) {
+        throw new Error(`Pages fetch unsuccessful for type: ${type}`);
+    }
+    return (res.pages || []).map((p) => ({ ...p, slug: cleanPageSlug(p.slug) }));
+}
+
+// GET page/{slug} -> { page: { id, page_name, slug, type, description (HTML) } | null }
+export const getPageBySlug = async (slug) => {
+    const res = await fetchData(`page/${cleanPageSlug(slug)}`);
+    return res.page || null;
+}
+
 // GET locations/districts -> [{ id, name }]
 export const getDistricts = async () => {
   const res = await fetchData("locations/districts");

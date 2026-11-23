@@ -12,6 +12,8 @@ import {
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import useSiteInfo from "../hooks/useSiteInfo";
+import useApiData from "../hooks/useApiData";
+import { getPagesByType } from "../services/api";
 
 // API এর icon class ("bi bi-facebook", "fab fa-whatsapp-square") থেকে icon বেছে নেওয়া
 const SOCIAL_ICONS = [
@@ -30,19 +32,9 @@ function getSocialIcon(iconClass = "") {
   return hit ? { Icon: hit[1], label: hit[2] } : { Icon: FaGlobe, label: "Website" };
 }
 
-const usefulLinks = [
-  { label: "About Us", to: "#" },
-  { label: "Online Delivery", to: "#" },
-];
-
-const customerCare = [
-  { label: "EMI Policy", to: "#" },
-  { label: "Delivery Policy", to: "#" },
-  { label: "Refund Policy", to: "#" },
-  { label: "Warranty Policy", to: "#" },
-  { label: "Get Point Policy", to: "#" },
-  { label: "Terms and Conditions", to: "#" },
-];
+// API page list -> footer link list
+const toLinks = (pages) =>
+  (pages ?? []).map((p) => ({ label: p.page_name, to: `/page/${p.slug}`, key: p.id }));
 
 const iconBadge =
   "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f7931e]/10 text-[#f7931e] ring-1 ring-[#f7931e]/30";
@@ -52,6 +44,12 @@ const linkClass = "hover:underline underline-offset-2 transition-colors hover:te
 
 export default function Footer() {
   const { settings, socials, phone, dialPhone } = useSiteInfo();
+
+  // Useful Links = "information" pages, Customer Care = "policy" pages
+  const { data: infoPages } = useApiData("pages-information", () => getPagesByType("information"));
+  const { data: policyPages } = useApiData("pages-policy", () => getPagesByType("policy"));
+  const usefulLinks = toLinks(infoPages);
+  const customerCare = toLinks(policyPages);
 
   // setting-data থেকে যেগুলো এসেছে শুধু সেগুলোই দেখানো হয়
   const contacts = [
@@ -109,7 +107,7 @@ export default function Footer() {
           <h4 className={headingClass}>Useful Links</h4>
           <ul className="space-y-2.5 text-xs leading-5 text-white/80">
             {usefulLinks.map((link) => (
-              <li key={link.label}>
+              <li key={link.key}>
                 <Link to={link.to} className={linkClass}>
                   {link.label}
                 </Link>
@@ -123,7 +121,7 @@ export default function Footer() {
           <h4 className={headingClass}>Customer Care</h4>
           <ul className="space-y-2.5 text-xs leading-5 text-white/80">
             {customerCare.map((link) => (
-              <li key={link.label}>
+              <li key={link.key}>
                 <Link to={link.to} className={linkClass}>
                   {link.label}
                 </Link>

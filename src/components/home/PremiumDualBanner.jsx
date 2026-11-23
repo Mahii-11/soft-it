@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { getPromoBanners } from "../../services/api";
 import useApiData from "../../hooks/useApiData";
 
@@ -15,9 +16,9 @@ export default function PremiumDualBanner() {
               <div key={i} className="aspect-[2/1] animate-pulse rounded-lg bg-neutral-200" />
             ))
           : banners.map((banner) => (
-              <a
+              <Link
                 key={banner.id}
-                href="/shop-page"
+                to={banner.product_slug ? `/product-details/${banner.product_slug}` : "/shop-page"}
                 className="group block overflow-hidden rounded-lg bg-white shadow-[0_1px_4px_rgba(0,0,0,0.08)]"
               >
                 <img
@@ -26,7 +27,7 @@ export default function PremiumDualBanner() {
                   draggable={false}
                   className="block h-auto w-full transition-transform duration-500 group-hover:scale-[1.02]"
                 />
-              </a>
+              </Link>
             ))}
       </div>
     </section>

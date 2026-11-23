@@ -1,6 +1,6 @@
 import { Check, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ProductCard, { formatPrice } from "../../components/ProductCard";
 import { getAllBrands, getShopProducts, getTopMenuData } from "../../services/api";
 
@@ -56,6 +56,7 @@ function SidebarSkeleton() {
 
 export default function ShopPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   // /brand/:slug -> same shop page, restricted to one brand
   const { slug: brandSlug = "" } = useParams();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -114,8 +115,8 @@ export default function ShopPage() {
       size,
       color,
       search,
-      brand,
-      brand_slug: brandSlug,
+      // backend "brand" filter accepts a brand id or slug
+      brand: brand || brandSlug,
       child_category: childCategory,
       min_price: minPrice,
       max_price: maxPrice,
@@ -151,6 +152,9 @@ export default function ShopPage() {
   }, [brand, brandSlug]);
 
   const categories = filterOptions?.categories || [];
+  const brandOptions = filterOptions?.brands || [];
+  // names for chips / breadcrumb: shop filter list first, all-brands list as fallback
+  const brandLookup = brandOptions.length > 0 ? brandOptions : brands;
   const sizes = filterOptions?.sizes || [];
   const colors = filterOptions?.colors || [];
   const priceBounds = {
@@ -198,7 +202,7 @@ export default function ShopPage() {
   if (brand)
     activeFilters.push({
       type: "brand",
-      label: brands.find((b) => String(b.id) === brand)?.name || "Brand",
+      label: brandLookup.find((b) => String(b.id) === brand)?.name || "Brand",
     });
   if (color)
     activeFilters.push({
@@ -228,10 +232,10 @@ export default function ShopPage() {
   const menuChild = (menuSub?.child_categories || []).find((c) => String(c.id) === childCategory);
 
   const categoryName = menuCat?.name || categories.find((c) => String(c.id) === category)?.name;
-  const brandName = menuSub?.name || brands.find((b) => String(b.id) === brand)?.name;
+  const brandName = menuSub?.name || brandLookup.find((b) => String(b.id) === brand)?.name;
   const childName = menuChild?.name;
   const pageBrandName = brandSlug
-    ? brands.find((b) => b.slug === brandSlug)?.name ||
+    ? brandLookup.find((b) => b.slug === brandSlug)?.name ||
       brandSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
     : "";
 
@@ -268,6 +272,17 @@ export default function ShopPage() {
   // single-select toggle: click again to un-select
   const toggleParam = (key, id, current) =>
     updateParams({ [key]: String(id) === current ? "" : id });
+
+  // Brand filter. On /brand/:slug the brand lives in the path, so switching brand
+  // changes the route (other filters stay); elsewhere it is the ?brand= param.
+  const isBrandActive = (b) => (brandSlug ? b.slug === brandSlug : String(b.id) === brand);
+  const selectBrand = (b) => {
+    if (!brandSlug) return toggleParam("brand", b.id, brand);
+    const next = new URLSearchParams(searchParams);
+    next.delete("page");
+    const qs = next.toString() ? `?${next.toString()}` : "";
+    navigate(b.slug === brandSlug ? `/shop-page${qs}` : `/brand/${b.slug}${qs}`);
+  };
 
   // sorting is applied on the loaded page
   const sortedProducts = useMemo(() => {
@@ -351,6 +366,32 @@ export default function ShopPage() {
                           </span>
                           <span className={labelClass(active)}>{cat.name}</span>
                           <span className="ml-auto text-xs text-gray-400">({cat.products_count})</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {/* Brand */}
+            {brandOptions.length > 0 && (
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-3">Brand</h3>
+                <ul className="space-y-2">
+                  {brandOptions.map((b) => {
+                    const active = isBrandActive(b);
+                    return (
+                      <li key={b.id} className="flex items-center text-sm">
+                        <button
+                          onClick={() => selectBrand(b)}
+                          className="flex items-center group w-full text-left"
+                        >
+                          <span className={checkboxClass(active)}>
+                            {active && <Check className="w-2 h-2 text-white" />}
+                          </span>
+                          <span className={labelClass(active)}>{b.name}</span>
+                          <span className="ml-auto text-xs text-gray-400">({b.products_count})</span>
                         </button>
                       </li>
                     );
