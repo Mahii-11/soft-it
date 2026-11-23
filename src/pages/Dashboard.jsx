@@ -8,7 +8,7 @@ import AccountSettings from "../components/dashboard/AccountSettings";
 import AddressBook from "../components/dashboard/AddressBook";
 // import RewardPoints from "../components/dashboard/RewardPoints"; // Points - future এ চালু হবে
 import TrackOrder from "../components/dashboard/TrackOrder";
-import { useSearchParams } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import PasswordSettings from "../components/dashboard/PasswordSettings";
 import { getUserProfile } from "../services/api";
 
@@ -76,37 +76,53 @@ export default function Dashboard() {
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  // server answered but rejected the token (expired / invalid / user deleted)
+  const [unauthorized, setUnauthorized] = useState(false);
+  const hasToken = Boolean(localStorage.getItem("token"));
 
   // ✅ Load user safely
-    useEffect(() => {
-  const loadUser = async () => {
-    try {
-      const res = await getUserProfile();
+  useEffect(() => {
+    // login করা নেই -> API call লাগবে না, নিচে /login এ redirect হবে
+    if (!hasToken) return;
 
-      console.log("PROFILE RES:", res);
+    const loadUser = async () => {
+      try {
+        const res = await getUserProfile();
 
-      if (res?.status === true && res?.user) {
-        setUser(res.user);
-      } else {
+        if (res?.status === true && res?.user) {
+          setUser(res.user);
+        } else {
+          setUser(null);
+          // res null মানে network error; অন্যথায় server token টা reject করেছে
+          if (res) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("user");
+            setUnauthorized(true);
+          }
+        }
+      } catch (err) {
+        console.error(err);
         setUser(null);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error(err);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  loadUser();
-}, []);
+    loadUser();
+  }, [hasToken]);
+
+  // 🔐 login নেই বা token invalid -> সরাসরি login page এ
+  if (!hasToken || unauthorized) {
+    return <Navigate to="/login" replace />;
+  }
 
   // 🔵 LOADING STATE (IMPORTANT)
   if (loading) {
     return <DashboardSkeleton />;
   }
 
-  // 🔴 NO USER STATE
+  // 🔴 NO USER STATE (e.g. network error)
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">

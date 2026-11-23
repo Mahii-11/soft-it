@@ -613,12 +613,15 @@ export const trackOrderPublic = async (orderId, phone) => {
   return order;
 };
 
+// GET auth/get-single-order/{id} (login required)
+// -> { status, message, order: { id, order_id, order_date, order_status_text, payment_method, payment_status,
+//      shipping_method, summary: {...}, billing_address, shipping_address, products: [...] } }
 export const getSingleOrder = async (id) => {
   try {
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token") || localStorage.getItem("userToken");
 
     const response = await axios.get(
-      `${BASE_URL}order-details/${id}`,
+      `${BASE_URL}auth/get-single-order/${id}`,
       {
         headers: {
           Accept: "application/json",
@@ -631,7 +634,7 @@ export const getSingleOrder = async (id) => {
   } catch (error) {
     console.error("Error fetching single order:", error.response?.data || error);
 
-    return { success: false };
+    return { status: false };
   }
 };
 

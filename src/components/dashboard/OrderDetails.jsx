@@ -1,6 +1,6 @@
 // OrderDetails.jsx
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -8,6 +8,7 @@ import {
   Truck,
   User,
   Phone,
+  Mail,
   MapPin,
   CalendarDays,
   Receipt,
@@ -31,11 +32,7 @@ export default function OrderDetails() {
       setLoading(true);
       const res = await getSingleOrder(id);
 
-      if (res?.success) {
-        setOrder(res.data);
-      } else {
-        setOrder(null);
-      }
+      setOrder(res?.status && res.order ? res.order : null);
     } catch (error) {
       console.error("Order fetch failed:", error);
       setOrder(null);
@@ -46,19 +43,23 @@ export default function OrderDetails() {
 
   const currency = (amount) => `৳${Number(amount || 0).toLocaleString()}`;
 
-  const subtotal = useMemo(() => {
-    if (!order?.order_products) return 0;
+  // all amounts come from the API summary
+  const summary = order?.summary || {};
+  const subtotal = Number(summary.subtotal || 0);
+  const shipping = Number(summary.shipping_cost || 0);
+  const coupon = Number(summary.coupon_discount || 0);
+  const special = Number(summary.special_discount || 0);
+  const advance = Number(summary.advance_amount || 0);
+  const grandTotal = Number(summary.total_amount ?? subtotal - coupon - special - advance + shipping);
 
-    return order.order_products.reduce((sum, item) => {
-      return sum + Number(item.unit_price) * Number(item.qty);
-    }, 0);
-  }, [order]);
+  const paymentLabel = (method) =>
+    method ? String(method).replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "N/A";
 
-  const shipping = Number(order?.shipping_cost || 0);
-  const discount = Number(order?.discount_amount || 0);
-  const advance = Number(order?.advance_amount || 0);
-
-  const grandTotal = subtotal - discount - advance + shipping;
+  const shipAddr = order?.shipping_address || {};
+  const billAddr = order?.billing_address || {};
+  const joinAddress = (a) => [a.address, a.city, a.state, a.country].filter(Boolean).join(", ");
+  const hasBilling = Object.values(billAddr).some(Boolean);
+  const note = order?.note && order.note !== "0" ? order.note : "";
 
   const formatDate = (date) => {
     if (!date) return "N/A";
@@ -159,9 +160,7 @@ export default function OrderDetails() {
                 <div>
                   <p className="text-slate-500">Name</p>
                   <p className="font-semibold text-slate-800">
-                    {order?.order_address?.shipping_name ||
-                      order?.user?.name ||
-                      "N/A"}
+                    {shipAddr.name || "N/A"}
                   </p>
                 </div>
               </div>
@@ -171,9 +170,7 @@ export default function OrderDetails() {
                 <div>
                   <p className="text-slate-500">Phone</p>
                   <p className="font-semibold text-slate-800">
-                    {order?.order_address?.shipping_phone ||
-                      order?.user?.phone ||
-                      "N/A"}
+                    {shipAddr.phone || "N/A"}
                   </p>
                 </div>
               </div>
@@ -183,10 +180,32 @@ export default function OrderDetails() {
                 <div>
                   <p className="text-slate-500">Address</p>
                   <p className="font-semibold text-slate-800">
-                    {order?.order_address?.shipping_address || "N/A"}
+                    {joinAddress(shipAddr) || "N/A"}
                   </p>
                 </div>
               </div>
+
+              {shipAddr.email && (
+                <div className="flex gap-3">
+                  <Mail size={18} className="text-slate-400 mt-0.5" />
+                  <div>
+                    <p className="text-slate-500">Email</p>
+                    <p className="font-semibold text-slate-800">{shipAddr.email}</p>
+                  </div>
+                </div>
+              )}
+
+              {hasBilling && (
+                <div className="flex gap-3 border-t pt-4">
+                  <MapPin size={18} className="text-slate-400 mt-0.5" />
+                  <div>
+                    <p className="text-slate-500">Billing Address</p>
+                    <p className="font-semibold text-slate-800">
+                      {[billAddr.name, billAddr.phone, joinAddress(billAddr)].filter(Boolean).join(" · ")}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -203,7 +222,7 @@ export default function OrderDetails() {
               <div>
                 <p className="text-slate-500">Date</p>
                 <p className="font-semibold text-slate-800">
-                  {formatDate(order.created_at)}
+                  {formatDate(order.order_date)}
                 </p>
               </div>
 
@@ -224,25 +243,51 @@ export default function OrderDetails() {
               <div>
                 <p className="text-slate-500">Payment</p>
                 <p className="font-semibold text-slate-800">
-                  {order.payment_method == 1
-                    ? "Cash On Delivery"
-                    : "Online Payment"}
+                  {paymentLabel(order.payment_method)}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-slate-500">Payment Status</p>
+                <p className="font-semibold text-slate-800">
+                  {Number(order.payment_status) === 1 ? "Paid" : "Unpaid"}
                 </p>
               </div>
 
               <div>
                 <p className="text-slate-500">Status</p>
                 <p className="font-semibold text-slate-800">
-                  {order.order_status == 0 ? "Pending" : "Completed"}
+                  {order.order_status_text || "N/A"}
                 </p>
               </div>
 
               <div>
                 <p className="text-slate-500">Items</p>
                 <p className="font-semibold text-slate-800">
-                  {order.product_qty}
+                  {summary.product_qty ?? order.products?.length ?? 0}
                 </p>
               </div>
+
+              {order.transaction_id && (
+                <div>
+                  <p className="text-slate-500">Transaction ID</p>
+                  <p className="font-semibold text-slate-800 break-all">{order.transaction_id}</p>
+                </div>
+              )}
+
+              {order.courier_tracking_id && (
+                <div>
+                  <p className="text-slate-500">Courier Tracking ID</p>
+                  <p className="font-semibold text-slate-800 break-all">{order.courier_tracking_id}</p>
+                </div>
+              )}
+
+              {note && (
+                <div className="col-span-2">
+                  <p className="text-slate-500">Note</p>
+                  <p className="font-semibold text-slate-800">{note}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -263,8 +308,8 @@ export default function OrderDetails() {
               <thead>
                 <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
                   <th className="px-6 py-4">Product</th>
-                  <th className="px-6 py-4">Variant</th>
-                  <th className="px-6 py-4">Color / Size</th>
+                  <th className="px-6 py-4">Size</th>
+                  <th className="px-6 py-4">Color</th>
                   <th className="px-6 py-4">Unit Price</th>
                   <th className="px-6 py-4">Qty</th>
                   <th className="px-6 py-4 text-right">Total</th>
@@ -272,31 +317,43 @@ export default function OrderDetails() {
               </thead>
 
               <tbody>
-                {order?.order_products?.map((item) => {
-                  const total =
-                    Number(item.unit_price) * Number(item.qty);
+                {order?.products?.map((item, i) => {
+                  const total = Number(item.total_price ?? Number(item.unit_price) * Number(item.qty));
 
                   return (
                     <tr
-                      key={item.id}
+                      key={`${item.product_id}-${i}`}
                       className="border-t border-slate-100 hover:bg-slate-50/50"
                     >
                       <td className="px-6 py-5 font-medium text-slate-800">
-                        {item.product_name}
+                        <Link
+                          to={item.slug ? `/product-details/${item.slug}` : "#"}
+                          className="flex items-center gap-3 hover:text-[#ea5b3a]"
+                        >
+                          {item.image && (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="h-12 w-12 shrink-0 rounded-lg border border-slate-100 object-cover"
+                            />
+                          )}
+                          <span>
+                            {item.name}
+                            {item.unit_type && item.unit ? (
+                              <span className="block text-xs font-normal text-slate-400">
+                                {item.unit} {item.unit_type}
+                              </span>
+                            ) : null}
+                          </span>
+                        </Link>
                       </td>
 
                       <td className="px-6 py-5 text-slate-600">
-                        {item.variation &&
-                        item.variation !== "null"
-                          ? item.variation
-                          : "N/A"}
+                        {item.size || "N/A"}
                       </td>
 
                       <td className="px-6 py-5 text-slate-600">
-                        {item.variation_color_id &&
-                        item.variation_color_id !== "null"
-                          ? item.variation_color_id
-                          : "N/A"}
+                        {item.color || "N/A"}
                       </td>
 
                       <td className="px-6 py-5 text-slate-700">
@@ -328,9 +385,16 @@ export default function OrderDetails() {
               </div>
 
               <div className="flex justify-between">
-                <span className="text-slate-500">Discount(-) :</span>
+                <span className="text-slate-500">Coupon Discount(-) :</span>
                 <span className="font-semibold">
-                  {currency(discount)}
+                  {currency(coupon)}
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-slate-500">Special Discount(-) :</span>
+                <span className="font-semibold">
+                  {currency(special)}
                 </span>
               </div>
 
