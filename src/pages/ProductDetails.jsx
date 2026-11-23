@@ -207,7 +207,8 @@ export default function ProductDetails() {
     }`;
 
   const primaryButton = (enabled, color) =>
-    `h-12 flex-1 rounded-md text-sm font-bold uppercase tracking-wide text-white transition ${
+    // mobile (column): full width, fixed height that can't shrink; sm+ (row): share the row equally
+    `h-12 w-full shrink-0 rounded-md text-sm font-bold uppercase tracking-wide text-white transition sm:w-auto sm:flex-1 ${
       enabled ? color : "cursor-not-allowed bg-neutral-300"
     }`;
 
@@ -372,7 +373,7 @@ export default function ProductDetails() {
               <button
                 onClick={() => dispatch(toggleWishlist(wishlistItem))}
                 aria-pressed={inWishlist}
-                className={`flex h-12 items-center justify-center gap-2 rounded-md border px-5 text-sm font-bold uppercase tracking-wide transition ${
+                className={`flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-md border px-5 text-sm font-bold uppercase tracking-wide transition sm:w-auto ${
                   inWishlist
                     ? "border-[#ea5b3a] bg-[#ea5b3a]/10 text-[#ea5b3a]"
                     : "border-neutral-300 text-neutral-800 hover:border-neutral-500"
