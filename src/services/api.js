@@ -504,6 +504,37 @@ export const loginApi = async (email, password) => {
   }
 };
 
+// POST auth/forgot-password (form-data: email) -> OTP email e jay
+export const forgotPasswordApi = async (email) => {
+  try {
+    const formData = new FormData();
+    formData.append("email", email.trim());
+    const res = await axios.post(`${BASE_URL}auth/forgot-password`, formData, {
+      headers: { Accept: "application/json" },
+    });
+    return res.data;
+  } catch (error) {
+    return error.response?.data || { status: false, message: "Server Error" };
+  }
+};
+
+// POST auth/reset-password (form-data: email, otp, password, password_confirmation)
+export const resetPasswordApi = async ({ email, otp, password, password_confirmation }) => {
+  try {
+    const formData = new FormData();
+    formData.append("email", email.trim());
+    formData.append("otp", otp.trim());
+    formData.append("password", password);
+    formData.append("password_confirmation", password_confirmation);
+    const res = await axios.post(`${BASE_URL}auth/reset-password`, formData, {
+      headers: { Accept: "application/json" },
+    });
+    return res.data;
+  } catch (error) {
+    return error.response?.data || { status: false, message: "Server Error" };
+  }
+};
+
 export const logoutApi = async () => {
   const token = localStorage.getItem("token");
 
